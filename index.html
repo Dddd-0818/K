@@ -10,6 +10,9 @@
     <link rel="apple-touch-icon" href="https://i.postimg.cc/ZqNxQ1vs/IMG-7364.jpg">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css" rel="stylesheet">
    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
    <script src="https://unpkg.com/lucide@latest"></script>
    <script src="https://unpkg.com/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
    <script src="https://unpkg.com/idb@7/build/umd.js"></script>
@@ -69,9 +72,36 @@
         .page::-webkit-scrollbar-track { background: transparent; }
         .page::-webkit-scrollbar-thumb { background-color: rgba(128, 128, 128, 0.5); border-radius: 20px; }
         .page-content { display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, auto); gap: 25px; padding: 10px 4px 10px 0; box-sizing: border-box; }
-        .pagination { flex-shrink: 0; display: flex; justify-content: center; align-items: center; gap: 8px; height: 20px; margin-bottom: 5px; }
-        .pagination .dot { width: 7px; height: 7px; border-radius: 50%; background-color: var(--frosted-glass-bg); transition: transform 0.3s ease, background-color 0.4s ease; }
-        .pagination .dot.active { transform: scale(1.3); background-color: var(--text-color); }
+        .pagination { 
+            flex-shrink: 0; 
+            display: flex; 
+            
+            /* 【核心修复】强制居中对齐，而不是分散对齐 */
+            justify-content: center !important; 
+            align-items: center; 
+            
+            /* 【核心修复】控制两个点之间的距离，8px 是比较紧凑的距离 */
+            gap: 8px !important; 
+            
+            height: 20px; 
+            margin-bottom: 5px; 
+            width: 100%; /* 确保容器占满宽度，这样居中才有意义 */
+        }
+        
+        /* 同时确保点本身没有奇怪的边距把它们撑开 */
+        .pagination .dot {
+            margin: 0 !important;
+            /* 下面是原有的样式，保持不变 */
+            width: 7px; 
+            height: 7px; 
+            border-radius: 50%; 
+            background-color: var(--frosted-glass-bg); 
+            transition: transform 0.3s ease, background-color 0.4s ease; 
+        }
+        .pagination .dot.active { 
+            transform: scale(1.3); 
+            background-color: var(--text-color); 
+        }
         .dock { flex-shrink: 0; min-height: 90px; width: 100%; border-radius: var(--dock-border-radius); display: flex; justify-content: space-around; align-items: center; padding: 0 20px; box-sizing: border-box; z-index: 10; }
         .frosted-module { background: var(--frosted-glass-bg); backdrop-filter: blur(var(--blur-intensity)); -webkit-backdrop-filter: blur(var(--blur-intensity)); border-radius: var(--widget-border-radius); border: var(--frosted-glass-border); transition: background 0.4s ease, border 0.4s ease, transform 0.2s ease; }
         .upload-widget { cursor: pointer; background-size: cover; background-position: center; background-repeat: no-repeat; }
@@ -8225,10 +8255,10 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
 /* 文字样式 */
 .salon-msg-narration p {
     font-family: 'Noto Serif SC', serif;
-    font-size: 15px;
+    font-size: 13.5px;
     color: #fde68a;
     font-style: italic;
-    line-height: 2.0;
+    line-height: 1.8;
     text-shadow: 0 2px 4px rgba(0,0,0,0.9);
     margin: 0;
 }
@@ -8289,7 +8319,6 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
 }
 
 /* 2. 顶部元数据 (名字 + 时间) */
-/* 2. 顶部元数据 (名字 + 时间) */
 .salon-msg-meta {
     /* 继承全局字体，不强制衬线体 */
     font-size: 12px;
@@ -8309,9 +8338,10 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
 /* 1. 名字 (DOM中的第一个span) - 保持主题色 */
 /* 左侧角色名：淡粉 */
 .salon-msg-row.left .salon-msg-meta span:first-child {
-    color: #fda4af; 
-    font-weight: bold;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    /* 名字颜色跟随变量 */
+    color: var(--char-color, #fda4af) !important; 
+    font-weight: 600 !important;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 /* 右侧我的名字：淡金 */
 .salon-msg-row.right .salon-msg-meta span:first-child {
@@ -8339,9 +8369,9 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
 .salon-msg-bubble {
     position: relative;
     /* 【已删除 font-family】继承全局字体 */
-    font-size: 19px; /* 电影字幕般的大字号 */
+    font-size: 14px; /* 电影字幕般的大字号 */
     line-height: 1.6;
-    font-weight: 500; /* 稍微加粗一点点，更有质感 */
+    font-weight: 400; /* 稍微加粗一点点，更有质感 */
     color: #f5f5f4;   /* 暖白文字 */
     
     /* 极强的文字阴影，保证在任何图片背景上都看得清 */
@@ -8357,18 +8387,38 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
 
 /* --- 核心：复刻原版的渐变竖线 --- */
 
-/* 左侧竖线 (角色 - 玫瑰色渐变) */
+.salon-msg-row.left .salon-msg-bubble {
+    position: relative !important;
+    overflow: visible !important; /* 防止线条被切掉 */
+    margin-left: 12px !important; /* 给左边留出一点空隙放线条 */
+}
+
+/* 2. 重新定义左侧竖线 (使用 ::before) */
 .salon-msg-row.left .salon-msg-bubble::before {
-    content: '';
-    position: absolute;
-    top: 2px; 
-    bottom: 2px; 
-    left: 0;
-    width: 2px; /* 细线 */
-    border-radius: 2px;
-    /* 渐变：透明 -> 实色 -> 透明 (原版逻辑) */
-    background: linear-gradient(to bottom, rgba(244, 63, 94, 0), rgba(244, 63, 94, 0.8), rgba(244, 63, 94, 0));
-    opacity: 0.8;
+    content: '' !important; /* 【关键】没有这句，线条就不存在 */
+    display: block !important;
+    
+    /* 定位 */
+    position: absolute !important;
+    left: -10px !important; /* 位于文字左侧 10px 处 */
+    top: 4px !important;
+    bottom: 4px !important;
+    
+    /* 尺寸 */
+    width: 2px !important;
+    border-radius: 2px !important;
+    
+    /* 颜色：使用动态变量 --char-color */
+    /* 渐变效果：两头淡，中间实 */
+    background: linear-gradient(
+        to bottom, 
+        rgba(255, 255, 255, 0), 
+        var(--char-color, #fda4af),  /* 莫兰迪色在这里生效 */
+        rgba(255, 255, 255, 0)
+    ) !important;
+    
+    opacity: 0.9 !important;
+    z-index: 1 !important;
 }
 
 /* 右侧竖线 (我 - 琥珀色渐变) */
@@ -8498,19 +8548,53 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
     box-shadow: 0 0 30px rgba(255,255,255,0.1);
 }
 .salon-avatar-edit-icon {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.2s;
-    border-radius: 50%; cursor: pointer;
+    position: absolute !important; /* 绝对定位 */
+    inset: 0 !important; /* 上下左右全部贴边 = 铺满 */
+    width: 100% !important;
+    height: 100% !important;
+    
+    display: flex !important;
+    align-items: center !important; /* 垂直居中 */
+    justify-content: center !important; /* 水平居中 */
+    
+    background: rgba(0, 0, 0, 0.3) !important; /* 半透明黑底 */
+    border-radius: 50%; /* 也是圆形 */
+    opacity: 1 !important;
+    z-index: 10;
+    cursor: pointer;
 }
-.salon-large-avatar:hover .salon-avatar-edit-icon { opacity: 1; }
 
 .salon-name-edit {
-    background: transparent; border: none;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-    color: #fff; font-family: 'Playfair Display', serif;
-    font-size: 24px; font-style: italic; text-align: center;
-    width: 80%; padding-bottom: 5px; outline: none;
+    background: transparent !important; /* 【核心】去掉白色背景 */
+    border: none !important; /* 去掉四周的框 */
+    outline: none !important; /* 去掉点击时的蓝框 */
+    
+    color: #ffffff !important; /* 白字 */
+    font-size: 20px !important; /* 字大一点 */
+    font-weight: 600 !important;
+    text-align: center !important; /* 文字居中 */
+    font-family: inherit !important;
+    
+    width: 100% !important;
+    padding: 5px 0 !important;
+}
+
+/* 3. 下划线容器 (包裹着输入框和笔图标的那个横线) */
+.salon-name-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70%; /* 控制横线长度 */
+    margin: 0 auto; /* 容器水平居中 */
+    
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3); /* 默认灰线 */
+    padding-bottom: 5px;
+    transition: border-color 0.3s;
+}
+
+/* 聚焦时，横线变金色 */
+.salon-name-wrapper:focus-within {
+    border-bottom-color: #fde68a; 
 }
 
 /* 选项组 */
@@ -8674,13 +8758,40 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
 }
 
 /* 2. 左侧标识文字 (Muses) */
+@keyframes text-breathe-bright {
+    0%, 100% { 
+        /* 常态：保留你喜欢的深酒红 */
+        color: #6C1E26; 
+        /* 稍微加一点亮度滤镜，防止太暗 */
+        filter: brightness(1.2);
+        /* 基础阴影 */
+        text-shadow: 0 0 5px rgba(108, 30, 38, 0.5);
+    }
+    50% { 
+        /* 呼吸态：强制提亮 2 倍，让它像霓虹灯一样亮起来 */
+        filter: brightness(2.2);
+        /* 叠加一层明亮的鲜红光晕 */
+        text-shadow: 
+            0 0 10px rgba(255, 50, 50, 0.6),
+            0 0 20px rgba(255, 0, 0, 0.3);
+    }
+}
+
+/* 2. 应用样式 */
 .typing-identity-text {
-    font-family: 'Playfair Display', serif; /* 保持衬线体 */
-    font-style: italic;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.4);
+    /* 字体 */
+    font-family: 'Sacramento', cursive ;
+    font-size: 26px; /* 再稍微大一点点，因为深色视觉收缩 */
+    
+    /* === 核心修改：你指定的酒红色 === */
+    color: #6C1E26;
+    
+    /* 动画：稍微放慢一点频率 (1.5s -> 2s)，更有呼吸感 */
+    animation: text-breathe 2s ease-in-out infinite;
+    
     letter-spacing: 1px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    line-height: 1;
+    margin-top: -6px; /* 微调对齐 */
 }
 
 /* 3. 药丸气泡 (移植自 Cinematic Messenger) */
@@ -8750,6 +8861,802 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
     padding-bottom: 50px;
 }
 
+/* =================================================================
+   ===   [UI重构 V3] 沙龙专属：黑金・极夜控制台 (Force Update)   ===
+   ================================================================= */
+
+#salon-popover-menu {
+    position: fixed;
+    z-index: 9999 !important; /* 强制置顶 */
+    
+    /* 布局 */
+    display: flex;
+    align-items: center;
+    gap: 8px !important;
+    padding: 8px 12px !important;
+    
+    /* === 核心材质：极夜黑金 === */
+    /* 背景更深，接近纯黑，带一点点透 */
+    background: rgba(5, 5, 5, 0.85) !important;
+    
+    /* 强力磨砂 */
+    backdrop-filter: blur(30px) !important;
+    -webkit-backdrop-filter: blur(30px) !important;
+    
+    /* === 边框：暗金色高亮 (核心变化点) === */
+    /* 这里加了金色的边框，一眼就能看出区别 */
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    
+    /* === 阴影：深邃悬浮感 === */
+    box-shadow: 
+        0 0 0 1px rgba(0, 0, 0, 0.5), /* 内圈黑线 */
+        0 20px 50px rgba(0, 0, 0, 0.9), /* 大投影 */
+        0 0 15px rgba(212, 175, 55, 0.1) !important; /* 微弱的金光晕 */
+    
+    border-radius: 18px !important;
+    
+    /* 动画状态 */
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+/* 激活状态 */
+#salon-popover-menu.visible {
+    opacity: 1 !important;
+    transform: scale(1) translateY(0) !important;
+    pointer-events: auto !important;
+}
+
+/* === 单个按钮项 === */
+.salon-menu-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    width: 48px !important;
+    height: 54px !important;
+    border-radius: 10px !important;
+    cursor: pointer;
+    transition: all 0.2s ease !important;
+    
+    /* 默认文字颜色：高级灰 */
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 图标 */
+.salon-menu-item i {
+    font-size: 22px !important; /* 图标加大 */
+    margin-bottom: 4px !important;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
+}
+
+/* 文字标签 */
+.salon-menu-item span {
+    font-size: 10px !important;
+    font-weight: normal !important;
+    letter-spacing: 1px;
+    font-family: sans-serif;
+}
+
+/* === 悬停交互 (金色点亮) === */
+.salon-menu-item:hover {
+    background: rgba(212, 175, 55, 0.15) !important; /* 金色背景 */
+    color: #ffd700 !important; /* 纯金文字 */
+    transform: translateY(-3px) !important;
+}
+
+.salon-menu-item:hover i {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6); /* 图标发光 */
+}
+
+/* 点击反馈 */
+.salon-menu-item:active {
+    transform: scale(0.95) !important;
+    background: rgba(212, 175, 55, 0.05) !important;
+}
+
+/* 分割线 */
+.salon-menu-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: 30%;
+    height: 40%;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* 浅色模式适配 (黑白反转) */
+body.light-mode #salon-popover-menu {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15) !important;
+}
+body.light-mode .salon-menu-item {
+    color: #999 !important;
+}
+body.light-mode .salon-menu-item:hover {
+    color: #000 !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ==========================================
+   ===   沙龙多选模式 (Multi-Select UI)   ===
+   ========================================== */
+
+/* 1. 消息选中状态 (高亮) */
+/* 无论是对话行还是旁白，选中后背景变亮，左侧出现金线 */
+.salon-msg-row.selected, 
+.salon-msg-narration.selected {
+    background: rgba(253, 230, 138, 0.1); /* 淡金色背景 */
+    border-radius: 8px;
+    position: relative;
+    transition: background 0.2s;
+}
+
+/* 选中时的左侧金线指示条 */
+.salon-msg-row.selected::before, 
+.salon-msg-narration.selected::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 0; bottom: 0;
+    width: 3px;
+    background: #fde68a; /* 金色 */
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(253, 230, 138, 0.5);
+}
+
+/* 2. 底部操作栏 (默认隐藏) */
+#salon-multi-select-toolbar {
+    position: fixed;
+    bottom: 30px; 
+    left: 50%;
+    transform: translateX(-50%) translateY(100px); /* 默认藏在下面 */
+    width: 90%;
+    max-width: 400px;
+    z-index: 200;
+    
+    /* 黑金磨砂材质 */
+    background: rgba(20, 20, 20, 0.9);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    border-radius: 50px; /* 胶囊形状 */
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 25px;
+    
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 激活状态 */
+#salon-multi-select-toolbar.active {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 计数文字 */
+#salon-multi-count {
+    font-size: 14px;
+    color: #fff;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+/* 按钮组 */
+.salon-multi-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.salon-multi-actions button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.salon-multi-actions button:active { transform: scale(0.9); }
+
+/* 删除按钮 */
+.delete-btn {
+    background: rgba(220, 38, 38, 0.2);
+    color: #fca5a5;
+}
+/* 取消按钮 */
+.cancel-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* ==========================================
+   ===   [优化] 沙龙聊天密度调整 (紧凑版)   ===
+   ========================================== */
+
+/* 1. 聊天容器：缩小整体间隙 */
+#salon-chat-container {
+    /* 从原来的 20px 缩小到 8px，更像微信/Telegram 的节奏 */
+    gap: 8px !important; 
+}
+
+/* 2. 对话行：大幅减少底部留白 */
+.salon-msg-row {
+    /* 从原来的 32px 减少到 10px */
+    margin-bottom: 10px !important; 
+}
+
+/* 3. 旁白/内心戏 (中间那段)：上下也要收紧 */
+.salon-msg-narration {
+    /* 上下间距从 40px 减到 15px */
+    margin: 15px 20px !important; 
+    /* 内部填充也减小，不那么占地 */
+    padding: 10px 0 !important; 
+}
+
+/* 4. (可选) 名字和内容的间距微调 */
+.salon-msg-meta {
+    margin-bottom: 2px !important; /* 让名字贴紧消息内容 */
+}
+
+/* ==========================================
+   ===   [升级] 沙龙文字颜色变量化   ===
+   ========================================== */
+
+/* 1. 角色消息文字颜色 */
+.salon-msg-row.left .salon-msg-bubble {
+    /* 默认暖白，可被变量覆盖 */
+    color: var(--salon-char-text-color, #f5f5f4) !important;
+    text-shadow: 0 2px 3px rgba(0,0,0,0.8); /* 保留阴影防看不清 */
+}
+
+/* 2. 用户消息文字颜色 */
+.salon-msg-row.right .salon-msg-bubble {
+    /* 默认暖白 */
+    color: var(--salon-user-text-color, #f5f5f4) !important;
+}
+
+/* 3. 旁白 (System) 文字颜色 */
+.salon-msg-narration p {
+    /* 默认淡金 */
+    color: var(--salon-narrator-color, #fde68a) !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+}
+
+/* 4. 旁白的小星星图标颜色 (跟随旁白文字) */
+.narration-star {
+    color: var(--salon-narrator-color, #fde68a) !important;
+}
+
+/* ============================================================
+   ===  灵魂回响 (Soul Echo) V2 - Atonement (双模适配版)  ===
+   ============================================================ */
+
+/* 1. 定义变量 (默认深色模式 - Dark Room Style) */
+#diary-app {
+    /* 背景：深炭黑带一点暖色噪点 */
+    --paper-bg: #1c1b1a;        
+    /* 主色：提亮的复古绿 (像老电影字幕) */
+    --emerald-green: #5d8a7e;   
+    /* 文字：米白色 (模拟黑纸上的白墨水) */
+    --ink-black: #e6e1d8;       
+    /* 辅助文字：深灰 */
+    --faded-text: #858585;      
+    /* 纸张纹理透明度 */
+    --texture-opacity: 0.05;
+    /* 字体设置 */
+    --font-typewriter: 'Courier Prime', monospace;
+    --font-serif: 'Playfair Display', serif;
+    
+    /* 浮窗遮罩颜色 */
+    --modal-overlay-bg: rgba(0, 0, 0, 0.8);
+    /* 分割线颜色 */
+    --border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 2. 浅色模式适配 (Light Mode - Classic Letter Style) */
+body.light-mode #diary-app {
+    /* 背景：经典的泛黄信纸 */
+    --paper-bg: #f4f1ea;
+    /* 主色：深沉的墨绿 */
+    --emerald-green: #244a3e;
+    /* 文字：打字机墨黑 */
+    --ink-black: #1a1a1a;
+    /* 辅助文字：浅灰 */
+    --faded-text: #6b6b6b;
+    /* 纹理稍微明显一点 */
+    --texture-opacity: 0.08;
+    
+    --modal-overlay-bg: rgba(20, 20, 20, 0.3);
+    --border-color: rgba(36, 74, 62, 0.2);
+}
+
+/* 3. 覆盖默认的APP背景 */
+#diary-app .app-page {
+    background-color: var(--paper-bg) !important;
+    color: var(--ink-black) !important;
+    font-family: var(--font-typewriter) !important;
+    /* 纸张噪点纹理 (通用) */
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E") !important;
+    /* 注意：这里利用 blend-mode 让噪点适应深浅背景 */
+    background-blend-mode: overlay;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* 4. 顶部标题区 (Header) */
+.atonement-header {
+    padding: 50px 25px 20px;
+    border-bottom: 2px solid var(--emerald-green);
+    margin: 0 20px;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    transition: border-color 0.4s ease;
+}
+
+.atonement-title {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    color: var(--emerald-green);
+    letter-spacing: 1px;
+    font-style: italic;
+    font-weight: 700;
+    position: relative;
+    transition: color 0.4s ease;
+}
+
+/* 模拟光标动画 */
+.cursor-blink {
+    display: inline-block;
+    width: 8px;
+    height: 2rem;
+    background-color: var(--emerald-green);
+    animation: blink 1s infinite;
+    vertical-align: sub;
+    margin-left: 2px;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+.atonement-subtitle {
+    margin-top: 8px;
+    font-size: 0.7rem;
+    color: var(--faded-text);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+/* 导航按钮 */
+.atonement-nav-btn {
+    position: absolute;
+    top: 55px;
+    font-size: 24px;
+    color: var(--emerald-green);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.3s, color 0.4s ease;
+}
+.atonement-nav-btn:hover { opacity: 1; }
+.atonement-nav-btn.left { left: 0; }
+.atonement-nav-btn.right { right: 0; }
+
+/* 5. 列表容器 */
+.diary-paper-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px 20px 80px;
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* 6. 日记条目 (Entry) */
+.diary-entry-card {
+    position: relative;
+    padding: 5px 0 5px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 1px solid var(--border-color);
+}
+
+/* 悬停绿线 */
+.diary-entry-card::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 0;
+    height: 0%;
+    width: 3px;
+    background-color: var(--emerald-green);
+    transition: height 0.4s ease;
+}
+.diary-entry-card:hover::before { height: 100%; }
+
+.entry-meta {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--emerald-green);
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.entry-time {
+    font-family: var(--font-typewriter);
+    font-size: 0.75rem;
+    color: var(--faded-text);
+    font-style: normal;
+}
+
+.entry-preview {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink-black); /* 使用变量 */
+    opacity: 0.8;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 删除按钮 */
+.entry-delete-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+    color: #ff4d4d; /* 亮红 */
+    padding: 10px;
+}
+/* 浅色模式下删除按钮深一点 */
+body.light-mode .entry-delete-btn { color: #8a1c1c; }
+
+.diary-entry-card:hover .entry-delete-btn { opacity: 0.6; }
+.diary-entry-card:hover .entry-delete-btn:hover { opacity: 1; }
+
+/* 底部装饰 */
+.atonement-footer {
+    text-align: center;
+    padding: 30px;
+    font-family: var(--font-typewriter);
+    font-size: 0.8rem;
+    letter-spacing: 4px;
+    color: var(--faded-text);
+    opacity: 0.5;
+}
+
+/* ============================================================
+   ===  【最终修复版】阅读浮窗 (The Letter Modal)  ===
+   ============================================================ */
+
+/* 1. 遮罩层 (背景变暗，聚焦信纸) */
+#diary-read-modal.modal-overlay {
+    background: rgba(0, 0, 0, 0.75) !important; /* 深色遮罩 */
+    backdrop-filter: blur(5px); /* 背景模糊 */
+    z-index: 1000;
+}
+
+/* 2. 信纸本体 (强制拟物化，不受深色模式影响) */
+#diary-read-modal .modal-content {
+    /* 强制米黄色信纸背景 */
+    background-color: #f4f1ea !important; 
+    
+    /* 叠加纸张噪点纹理 */
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E") !important;
+    
+    /* 强制深色墨水文字 */
+    color: #1a1a1a !important; 
+    
+    /* 边框和阴影 */
+    border: 1px solid #dcdcdc !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
+    
+    /* 尺寸和间距 */
+    border-radius: 4px !important; /* 纸张直角感 */
+    padding: 50px 30px 40px 30px !important;
+    max-width: 500px !important;
+    width: 90% !important;
+    max-height: 85vh !important;
+    overflow: hidden !important;
+    position: relative;
+}
+
+/* 3. 邮戳 (右上角) */
+.stamp-mark {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    width: 70px;
+    height: 70px;
+    border: 3px double #a8bfa1; /* 浅一点的复古绿 */
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #a8bfa1;
+    font-size: 10px;
+    font-weight: 900;
+    transform: rotate(-15deg);
+    opacity: 0.6;
+    pointer-events: none;
+    line-height: 1.2;
+    letter-spacing: 1px;
+    font-family: sans-serif;
+    mix-blend-mode: multiply; /* 正片叠底效果 */
+}
+
+/* 4. 左上角的 Close 按钮 (还原图1) */
+#close-diary-read-modal-btn {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    font-family: 'Playfair Display', serif; /* 艺术衬线体 */
+    font-style: italic;
+    font-size: 18px;
+    color: #6b6b6b !important; /* 铅笔灰 */
+    cursor: pointer;
+    transition: color 0.3s;
+    z-index: 10;
+}
+#close-diary-read-modal-btn:hover {
+    color: #244a3e !important; /* 悬停变墨绿 */
+}
+
+/* 5. 内容头部 (头像与日期) */
+.letter-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.08); /* 极淡的分割线 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.letter-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    filter: none; 
+    border: 4px solid #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    background-size: cover;
+    background-position: center;
+}
+
+.letter-date {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; /* 大号日期 */
+    color: #1a1a1a;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.letter-time {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.9rem;
+    color: #888;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+/* 6. 正文区域 (修复换行问题的关键！) */
+.letter-body {
+    font-family: 'Courier Prime', monospace; /* 打字机字体 */
+    font-size: 1.05rem;
+    line-height: 1.9; /* 宽松行高 */
+    color: #2c2c2c !important; /* 深灰墨色 */
+    text-align: justify; /* 两端对齐 */
+    
+    /* 【核心修复】保留文本的换行和空格 */
+    white-space: pre-wrap !important; 
+    
+    overflow-y: auto;
+    max-height: 50vh;
+    padding-right: 10px;
+    
+    /* 细滚动条 */
+    scrollbar-width: thin;
+    scrollbar-color: #a8bfa1 transparent;
+}
+
+/* 滚动条美化 */
+.letter-body::-webkit-scrollbar { width: 4px; }
+.letter-body::-webkit-scrollbar-track { background: transparent; }
+.letter-body::-webkit-scrollbar-thumb { background-color: rgba(36, 74, 62, 0.2); border-radius: 2px; }
+
+/* 7. 落款 */
+.letter-footer {
+    margin-top: 40px;
+    text-align: right;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: #5d8a7e; /* 签名用墨绿色 */
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* ============================================================
+   ===  写作浮窗 (Writing Desk) - Atonement Style  ===
+   ============================================================ */
+
+/* 1. 浮窗容器：信纸质感 */
+#diary-write-modal .modal-content {
+    background-color: #f4f1ea !important;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E") !important;
+    border: 1px solid #dcdcdc !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
+    border-radius: 4px !important;
+    padding: 40px 35px !important;
+    max-width: 500px !important;
+    width: 90% !important;
+    color: #1a1a1a !important;
+}
+
+/* 2. 标题输入框：下划线风格 */
+#diary-title-input {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(36, 74, 62, 0.2) !important;
+    border-radius: 0 !important;
+    padding: 10px 0 !important;
+    font-family: 'Playfair Display', serif !important;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    color: #244a3e !important; /* 墨绿色标题 */
+    width: 100% !important;
+    outline: none !important;
+    margin-bottom: 20px !important;
+}
+#diary-title-input::placeholder {
+    color: rgba(36, 74, 62, 0.3) !important;
+    font-style: italic !important;
+}
+
+/* 3. 正文文本域：纯净打字机风格 */
+#diary-content-input {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    width: 100% !important;
+    min-height: 300px !important;
+    resize: none !important;
+    
+    font-family: 'Courier Prime', monospace !important;
+    font-size: 1rem !important;
+    line-height: 1.8 !important;
+    color: #1a1a1a !important;
+    padding: 0 !important;
+    
+    /* 绿色光标 */
+    caret-color: #244a3e !important;
+}
+#diary-content-input::placeholder {
+    color: #999 !important;
+}
+
+/* 4. 心情选择器：复古符号化 */
+#diary-mood-selector {
+    background: transparent !important;
+    border: none !important;
+    gap: 15px !important;
+    padding: 0 !important;
+}
+#diary-mood-selector .mood-item {
+    font-family: 'Courier Prime', monospace !important;
+    font-size: 1.2rem !important;
+    color: #6b6b6b !important;
+    opacity: 0.5 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+}
+#diary-mood-selector .mood-item:hover {
+    transform: scale(1.2);
+    color: #244a3e !important;
+}
+#diary-mood-selector .mood-item.active {
+    opacity: 1 !important;
+    color: #244a3e !important; /* 激活变墨绿 */
+    transform: scale(1.2);
+    font-weight: bold !important;
+    text-shadow: 0 0 10px rgba(36, 74, 62, 0.2);
+}
+
+/* 5. 保存按钮：印章风格 */
+#save-user-diary-btn {
+    background-color: #244a3e !important; /* 墨绿底 */
+    color: #f4f1ea !important; /* 米白字 */
+    border: none !important;
+    border-radius: 2px !important; /* 直角 */
+    padding: 10px 25px !important;
+    font-family: 'Courier Prime', monospace !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 1px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 10px rgba(36, 74, 62, 0.3) !important;
+    transition: all 0.2s ease !important;
+}
+#save-user-diary-btn:hover {
+    background-color: #1a362e !important;
+    transform: translateY(-1px);
+}
+#save-user-diary-btn:active {
+    transform: translateY(1px);
+}
+
+/* =========================================
+   ===   沉浸模式 (隐藏系统栏) CSS       ===
+   ========================================= */
+
+/* 1. 系统栏增加过渡动画 */
+.status-bar {
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
+}
+
+/* 2. 隐藏状态：向上平移并变透明 */
+.status-bar.hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none; /* 隐藏后不可点击，防止误触 */
+}
+
+/* 3. 桌面内容自动上移 (可选，如果你想让内容填补空缺) */
+/* 如果不需要内容上移，可以删掉下面这一段 */
+.status-bar.hidden ~ .main-desktop {
+    margin-top: 0;
+    padding-top: 20px; /* 留一点安全距离 */
+    height: 100%;
+}
+
+/* 4. 顶部感应区 (平时隐藏，只有系统栏消失时才出现) */
+#top-trigger-zone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30px; /* 顶部 30px 区域 */
+    z-index: 9999; /* 保证在最上层 */
+    display: none; /* 默认不显示 */
+    cursor: pointer;
+}
+
+/* 激活时显示 (透明的) */
+#top-trigger-zone.active {
+    display: block;
+}
+
+/* 鼠标悬停时显示一个小提示条，告诉用户这里可以点 (可选) */
+#top-trigger-zone.active:hover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 0 0 4px 4px;
+}
     </style>
 </head>
 
@@ -8916,6 +9823,10 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
             <div class="page-header"><i class="ri-arrow-left-s-line back-button" data-target="desktop"></i><h2>设置</h2></div>
             <div class="settings-grid">
                 <div id="goto-api-settings" class="settings-item"><i class="ri-cloud-line"></i><span>API 设置</span></div>
+                <div id="goto-minimax-settings" class="settings-item">
+    <i class="ri-mic-line"></i> <!-- 用麦克风图标 -->
+    <span>MiniMax 语音配置</span>
+</div>
                 <div id="goto-appearance-settings" class="settings-item"><i class="ri-palette-line"></i><span>外观设置</span></div>
                 
                 <div id="goto-data-settings" class="settings-item">
@@ -8939,6 +9850,36 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
                 <button id="save-settings-button">保存</button>
             </div>
         </div>
+
+<!-- 新增：MiniMax 全局配置页 -->
+<div id="minimax-settings-page" class="settings-page">
+    <div class="page-header">
+        <i class="ri-arrow-left-s-line back-button" data-target="settings-main-page"></i>
+        <h2>语音配置</h2>
+    </div>
+    <div class="settings-grid">
+        <div style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 20px;">
+            <p style="font-size: 13px; opacity: 0.8; line-height: 1.5; margin: 0;">
+                在此填入 MiniMax 开放平台的账号信息。<br>
+                <a href="https://platform.minimaxi.com/user-center/basic-information" target="_blank" style="color: #fde68a; text-decoration: underline;">点击获取 Group ID</a>
+            </p>
+        </div>
+
+        <div class="form-group">
+            <label for="minimax-group-id">Group ID</label>
+            <input type="text" id="minimax-group-id" placeholder="例如：1234567890">
+        </div>
+        
+        <div class="form-group">
+            <label for="minimax-api-key">API Key</label>
+            <input type="password" id="minimax-api-key" placeholder="eyJhbGciOiJIUzI1Ni...">
+        </div>
+
+        <div class="action-buttons" style="margin-top: 20px;">
+            <button id="save-minimax-settings-btn" style="width: 100%;">保存配置</button>
+        </div>
+    </div>
+</div>
         <!-- 外观设置页 -->
         <div id="appearance-settings-page" class="settings-page">
             <div class="page-header"><i class="ri-arrow-left-s-line back-button" data-target="settings-main-page"></i><h2>外观设置</h2></div>
@@ -9264,6 +10205,13 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
             <i class="ri-camera-off-line"></i>
             <span>恢复默认壁纸</span>
         </div>
+           <!-- vvv 新增：音色设置入口 vvv -->
+<div id="set-voice-id-item" class="settings-item">
+    <i class="ri-surround-sound-line"></i>
+    <span>角色音色 (Voice ID)</span>
+    <!-- 显示当前音色的简略信息 -->
+    <span id="current-voice-id-display" style="opacity: 0.6; font-size: 13px; margin-left: auto;">默认</span>
+</div>
 
                 <div id="set-memory-rounds-item" class="settings-item">
                     <i class="ri-history-line"></i>
@@ -9387,15 +10335,25 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
         </div>
     </div>
 
-    <!-- 灵魂回响/日记应用 -->
+    <!-- 灵魂回响/日记应用 (Atonement版) -->
     <div id="diary-app" class="app-navigator">
-        <div id="diary-main-page" class="app-page">
-            <div class="page-header">
-                <i class="ri-arrow-left-s-line left-icon back-button" data-target="desktop"></i>
-                <h2>灵魂回响</h2>
-                <i class="ri-add-line right-icon" id="add-user-diary-btn"></i>
+        <!-- 日记主页 -->
+        <div id="diary-main-page" class="app-page" style="padding: 0; display: flex; flex-direction: column;">
+            
+            <!-- 复古页头 -->
+            <header class="atonement-header">
+                <i class="ri-arrow-left-line atonement-nav-btn left back-button" data-target="desktop"></i>
+                <div class="atonement-title">ATONEMENT<span class="cursor-blink"></span></div>
+                <div class="atonement-subtitle">The Soul Archives</div>
+                <i class="ri-quill-pen-line atonement-nav-btn right" id="add-user-diary-btn"></i>
+            </header>
+
+            <!-- 列表容器 -->
+            <div id="diary-list-container" class="diary-paper-container">
+                <!-- JS 生成内容 -->
             </div>
-            <div id="diary-list-container" style="overflow-y: auto; flex-grow: 1; padding: 20px 10px; display: flex; flex-direction: column; gap: 15px;"></div>
+            
+            <div class="atonement-footer">C.M.</div>
         </div>
     </div>
 
@@ -9878,7 +10836,11 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
                             <input type="file" id="salon-setting-avatar-input" accept="image/*" style="display:none;">
                         </label>
                     </div>
-                    <input type="text" id="salon-setting-name" class="salon-name-edit" value="新故事">
+                     <!-- 群名部分 (新结构：加了 wrapper 和图标) -->
+    <div class="salon-name-wrapper">
+        <input type="text" id="salon-setting-name" class="salon-name-edit" value="新故事">
+        <i class="ri-edit-2-line salon-name-edit-icon"></i>
+    </div>
                 </div>
 
                 <!-- 2. 场景与外观 -->
@@ -9898,7 +10860,29 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
                         <span>设置当前群壁纸 (专属)</span>
                     </button>
                     <input type="file" id="input-upload-wallpaper" accept="image/*" style="display:none;">
+<!-- 在 "场景与外观" 分组里添加这个按钮 -->
+<button id="btn-salon-text-style" class="salon-action-btn">
+    <i class="ri-palette-line"></i>
+    <span>自定义字体颜色</span>
+</button>
                 </div>
+
+<!-- 新增：记忆设置分组 -->
+<div class="salon-setting-group">
+    <div class="salon-group-title">记忆深度 (Memory Depth)</div>
+    <div style="padding: 10px 5px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; color: rgba(255,255,255,0.8); font-size: 14px;">
+            <span>上下文回顾</span>
+            <!-- 显示当前数值 -->
+            <span id="salon-memory-val" style="font-family: monospace; color: #fde68a;">30 条</span>
+        </div>
+        <!-- 滑块：范围 10 - 2000 条 -->
+        <input type="range" id="salon-memory-slider" min="10" max="2000" step="10" value="30" style="width: 100%; cursor: pointer;">
+        <p style="font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 5px;">
+            AI 将读取最近的这些消息作为背景。条数越多，记忆越好，但消耗越大。
+        </p>
+    </div>
+</div>
 
                 <!-- 2.5 The Lore -->
                 <div class="salon-setting-group">
@@ -9915,6 +10899,7 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
                         </div>
                     </button>
                 </div>
+
 
                 <!-- 3. 成员列表 -->
                 <div class="salon-setting-group">
@@ -10534,44 +11519,64 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
         </div>
     </div>
 
-    <!-- 写日记弹窗 -->
+   <!-- 写日记弹窗 (Atonement 风格) -->
     <div id="diary-write-modal" class="modal-overlay">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>写下今日心情</h3>
-                <i id="close-diary-write-modal-btn" class="ri-close-line"></i>
+            <!-- 装饰：DRAFT 印章 -->
+            <div class="stamp-mark" style="border-style: dashed; transform: rotate(10deg); color: #d4af37; border-color: #d4af37; opacity: 0.4;">DRAFT<br>MODE</div>
+            
+            <!-- 顶部：关闭与标题 -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div id="close-diary-write-modal-btn" style="font-family: 'Playfair Display', serif; font-style: italic; color: #6b6b6b; cursor: pointer; font-size: 18px;">discard</div>
+                <div style="font-family: 'Courier Prime', monospace; font-size: 12px; letter-spacing: 2px; opacity: 0.5;">NEW ENTRY</div>
             </div>
-            <div class="form-group">
-                <label for="diary-title-input">标题 (可选)</label>
-                <input type="text" id="diary-title-input" placeholder="给今天起个名字吧">
-            </div>
-            <div class="form-group">
-                <label for="diary-content-input">正文</label>
-                <textarea id="diary-content-input" rows="8" placeholder="记录下你的所思所想..." style="resize: vertical;"></textarea>
-            </div>
-            <div class="mood-selector" id="diary-mood-selector" style="padding-top: 0; border-top: none;">
-                <div class="mood-item" data-mood="happy" title="晴朗">☀️</div>
-                <div class="mood-item" data-mood="thoughtful" title="多云">☁️</div>
-                <div class="mood-item" data-mood="sad" title="下雨">🌧️</div>
-                <div class="mood-item" data-mood="love" title="夜晚">🌙</div>
-                <div class="mood-item active" data-mood="normal" title="普通">😊</div>
-            </div>
-            <div class="action-buttons">
-                <button id="save-user-diary-btn">存入日记本</button>
+
+            <!-- 标题输入 (像信件的抬头) -->
+            <input type="text" id="diary-title-input" placeholder="Subject / Title..." autocomplete="off">
+            
+            <!-- 正文输入 (像打字机) -->
+            <textarea id="diary-content-input" placeholder="Type your thoughts here..."></textarea>
+            
+            <!-- 底部工具栏 -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+                
+                <!-- 心情选择器 (极简风) -->
+                <div class="mood-selector" id="diary-mood-selector">
+                    <div class="mood-item" data-mood="happy" title="晴朗">☀</div>
+                    <div class="mood-item" data-mood="thoughtful" title="多云">☁</div>
+                    <div class="mood-item" data-mood="sad" title="下雨">☂</div>
+                    <div class="mood-item" data-mood="love" title="夜晚">☾</div>
+                    <div class="mood-item active" data-mood="normal" title="普通">✎</div>
+                </div>
+
+                <!-- 保存按钮 -->
+                <button id="save-user-diary-btn">Seal & Save</button>
             </div>
         </div>
     </div>
 
-    <!-- 阅读日记弹窗 -->
+    <!-- 阅读日记弹窗 (信纸版) -->
     <div id="diary-read-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 420px; max-height: 85vh; display: flex; flex-direction: column; font-family: '仿宋', 'KaiTi', serif;">
-            <div class="modal-header">
-                <h3 id="read-diary-title"></h3>
-                <i id="close-diary-read-modal-btn" class="ri-close-line"></i>
+        <div class="modal-content">
+            <!-- 邮戳 -->
+            <div class="stamp-mark">ROYAL<br>MAIL</div>
+            
+            <!-- 左上角文字按钮 -->
+            <div id="close-diary-read-modal-btn">close</div>
+
+            <div class="letter-header">
+                <div id="letter-avatar" class="letter-avatar"></div>
+                <div id="letter-date" class="letter-date"></div>
+                <div id="letter-time" class="letter-time"></div>
             </div>
-            <div id="read-diary-content-container" style="flex-grow: 1; overflow-y: auto; padding: 15px;">
-                <div id="read-diary-meta" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--frosted-glass-border);"></div>
-                <p id="read-diary-content" style="line-height: 1.8; font-size: 16px; white-space: pre-wrap;"></p>
+            
+            <!-- 正文 -->
+            <div id="read-diary-content" class="letter-body"></div>
+            
+            <!-- 落款 -->
+            <div class="letter-footer">
+                Sincerely,<br>
+                <span id="letter-signature"></span>
             </div>
         </div>
     </div>
@@ -10788,6 +11793,86 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
     </div>
 </div>
 
+<!-- 沙龙专属：多选操作栏 -->
+<div id="salon-multi-select-toolbar">
+    <span id="salon-multi-count">已选 0 条</span>
+    <div class="salon-multi-actions">
+        <button id="salon-multi-delete-btn" class="delete-btn">
+            <i class="ri-delete-bin-line"></i>
+        </button>
+        <button id="salon-multi-cancel-btn" class="cancel-btn">
+            <i class="ri-close-line"></i>
+        </button>
+    </div>
+</div>
+
+<!-- 沙龙字体样式设置浮窗 -->
+<div id="salon-style-modal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 380px;">
+        <div class="modal-header">
+            <h3>文字风格</h3>
+            <i id="close-salon-style-btn" class="ri-close-line" style="cursor:pointer;"></i>
+        </div>
+        
+        <div class="content" style="padding: 20px 10px; display: flex; flex-direction: column; gap: 20px;">
+            
+            <!-- 旁白颜色 -->
+            <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label>📜 旁白/独白颜色</label>
+                <input type="color" id="input-salon-narrator-color" value="#fde68a">
+            </div>
+
+            <!-- 角色文字颜色 -->
+            <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label>🎭 角色文字颜色</label>
+                <input type="color" id="input-salon-char-color" value="#f5f5f4">
+            </div>
+
+            <!-- 用户文字颜色 -->
+            <div class="form-group" style="display: flex; justify-content: space-between; align-items: center;">
+                <label>👤 我的文字颜色</label>
+                <input type="color" id="input-salon-user-color" value="#f5f5f4">
+            </div>
+
+            <!-- 预览区域 -->
+            <div style="background: #1c1c1e; padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); margin-top: 10px;">
+                <p id="preview-narrator" style="font-size: 12px; font-style: italic; margin-bottom: 8px; text-align: center;">(旁白：空气突然安静...)</p>
+                <p id="preview-char" style="font-size: 14px; margin-bottom: 5px;">角色：你看我颜色变了吗？</p>
+                <p id="preview-user" style="font-size: 14px; text-align: right;">我：我也变了。</p>
+            </div>
+
+        </div>
+
+        <div class="action-buttons">
+            <button id="reset-salon-style-btn" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.6);">恢复默认</button>
+            <button id="save-salon-style-btn">保存设置</button>
+        </div>
+    </div>
+</div>
+
+<!-- [HTML修改 4] 新增：音色设置浮窗 -->
+<div id="voice-id-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>配置音色</h3>
+            <i id="close-voice-id-modal-btn" class="ri-close-line"></i>
+        </div>
+        <p style="font-size: 13px; opacity: 0.7; margin: -10px 0 15px 0;">
+            输入 MiniMax 的 Voice ID 以启用 TTS 朗读。<br>
+            常用：<span style="user-select: all; background:rgba(255,255,255,0.1); padding:2px 4px; border-radius:4px;">male-qn-qingse</span> (青涩青年)
+        </p>
+        
+        <div class="form-group">
+            <label for="voice-id-input">Voice ID</label>
+            <input type="text" id="voice-id-input" placeholder="输入 ID，留空则使用默认">
+        </div>
+
+        <div class="action-buttons" style="margin-top: 15px;">
+            <button id="save-voice-id-btn">保存</button>
+        </div>
+    </div>
+</div>
+
     <!-- 查看撤回消息详情弹窗 -->
     <div id="withdrawn-details-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 380px;">
@@ -10874,6 +11959,29 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
     
     <!-- 气泡长按菜单 -->
     <div id="bubble-popover-menu"></div>
+    <!-- 沙龙专属：消息操作菜单 (精简中文版) -->
+<div id="salon-popover-menu">
+    <!-- 1. 复制 -->
+    <div class="salon-menu-item" data-action="copy">
+        <i class="ri-file-copy-line"></i>
+        <span>复制</span>
+    </div>
+    <!-- 2. 编辑 -->
+    <div class="salon-menu-item" data-action="edit">
+        <i class="ri-edit-line"></i>
+        <span>编辑</span>
+    </div>
+    <!-- 3. 重试 (Reroll) -->
+    <div class="salon-menu-item" data-action="reroll">
+        <i class="ri-refresh-line"></i>
+        <span>重试</span>
+    </div>
+    <!-- 4. 多选 (用于删除) -->
+    <div class="salon-menu-item" data-action="multi">
+        <i class="ri-checkbox-multiple-line"></i>
+        <span>多选</span>
+    </div>
+</div>
     
     <!-- 主题切换小浮窗 -->
     <div id="theme-popover" class="theme-popover">
@@ -10884,6 +11992,10 @@ body.light-mode .salon-icon-bg { background: rgba(0,0,0,0.05); }
         <div class="popover-item" data-theme="dark">
             <i class="ri-moon-line"></i>
             <span>Dark</span>
+        </div>
+<div class="popover-item" id="toggle-statusbar-btn">
+            <i class="ri-layout-top-line"></i>
+            <span>Hide UI</span>
         </div>
     </div>
     
@@ -11122,6 +12234,9 @@ currentShopItems: [],
 cloudSessionCache: {}, 
 shopInventoriesMap: {},
 salonSelection: new Set(),
+currentSalonBubbleEl: null, // 当前被点击/长按的气泡元素
+isSalonMultiSelectMode: false, // 是否处于沙龙多选模式
+salonSelectedIds: new Set(),
 
         };
 
@@ -11635,7 +12750,43 @@ groupChatWidget: document.getElementById('group-chat-widget'),
     salonLinkBooksBtn: document.getElementById('salon-link-books-btn'),
     salonLinkedCount: document.getElementById('salon-linked-count'),
     salonClearHistoryBtn: document.getElementById('salon-clear-history-btn'),
-    salonDeleteChatBtn: document.getElementById('salon-delete-chat-btn'),
+    salonDeleteChatBtn: document.getElementById('salon-delete-chat-btn'),    
+    salonPopoverMenu: document.getElementById('salon-popover-menu'),
+salonMultiToolbar: document.getElementById('salon-multi-select-toolbar'),
+salonMultiCount: document.getElementById('salon-multi-count'),
+salonMultiDeleteBtn: document.getElementById('salon-multi-delete-btn'),
+salonMultiCancelBtn: document.getElementById('salon-multi-cancel-btn'),
+salonStyleModal: document.getElementById('salon-style-modal'),
+    btnSalonTextStyle: document.getElementById('btn-salon-text-style'),
+    
+    // 输入框
+    inputSalonNarrator: document.getElementById('input-salon-narrator-color'),
+    inputSalonChar: document.getElementById('input-salon-char-color'),
+    inputSalonUser: document.getElementById('input-salon-user-color'),
+    
+    // 预览文字
+    previewNarrator: document.getElementById('preview-narrator'),
+    previewChar: document.getElementById('preview-char'),
+    previewUser: document.getElementById('preview-user'),
+    
+    // 按钮
+    saveSalonStyleBtn: document.getElementById('save-salon-style-btn'),
+    resetSalonStyleBtn: document.getElementById('reset-salon-style-btn'),
+    closeSalonStyleBtn: document.getElementById('close-salon-style-btn'),
+salonMemorySlider: document.getElementById('salon-memory-slider'),
+    salonMemoryVal: document.getElementById('salon-memory-val'),
+gotoMinimaxSettings: document.getElementById('goto-minimax-settings'),
+    minimaxSettingsPage: document.getElementById('minimax-settings-page'),
+    minimaxGroupIdInput: document.getElementById('minimax-group-id'),
+    minimaxApiKeyInput: document.getElementById('minimax-api-key'),
+    saveMinimaxSettingsBtn: document.getElementById('save-minimax-settings-btn'),
+    
+    setVoiceIdItem: document.getElementById('set-voice-id-item'),
+    currentVoiceIdDisplay: document.getElementById('current-voice-id-display'),
+    voiceIdModal: document.getElementById('voice-id-modal'),
+    closeVoiceIdModalBtn: document.getElementById('close-voice-id-modal-btn'),
+    voiceIdInput: document.getElementById('voice-id-input'),
+    saveVoiceIdBtn: document.getElementById('save-voice-id-btn'),
 
             // 颜色选择器
             styleInputs: {
@@ -11988,7 +13139,88 @@ console.log('📦 发送给 AI 的最终数据包:', JSON.stringify(requestBody,
                     const jsonString = jsonMatch ? jsonMatch[1] : content;
                     return JSON.parse(jsonString);
                 } catch (e) { throw new Error("无法解析 API 返回的 JSON 数据。"); }
-            }
+            },
+// --- [V7 成功版] T2A V2 接口 + 正确的 Turbo 模型 ---
+            async generateSpeech(text, voiceId) {
+                // 1. 获取配置
+                const groupSetting = await dbHelper.get(CONSTANTS.STORE_NAMES.USER_SETTINGS, 'minimax_group_id');
+                const keySetting = await dbHelper.get(CONSTANTS.STORE_NAMES.USER_SETTINGS, 'minimax_api_key');
+                
+                const groupId = groupSetting?.value ? groupSetting.value.trim() : '';
+                const apiKey = keySetting?.value ? keySetting.value.trim() : '';
+
+                if (!groupId || !apiKey) {
+                    throw new Error("请先在设置中配置 MiniMax Group ID 和 API Key");
+                }
+
+                // 2. 确定 Voice ID
+                let finalVoiceId = voiceId;
+                if (!finalVoiceId || typeof finalVoiceId !== 'string' || finalVoiceId.trim() === '') {
+                    finalVoiceId = "male-qn-qingse"; 
+                }
+                finalVoiceId = finalVoiceId.trim();
+
+                // 使用 V2 接口
+                const url = `https://api.minimax.chat/v1/t2a_v2?GroupId=${groupId}`;
+                
+                // 【核心修复】Payload 构建
+                // 1. model 必须传，且必须是 "speech-01-turbo" (原来的 speech-01 在这个接口不可用)
+                // 2. 只有 speech-01-turbo 能完美支持定制/克隆音色
+                const payload = {
+                    "model": "speech-01-turbo", 
+                    "text": text,
+                    "stream": false,
+                    "voice_setting": {
+                        "voice_id": finalVoiceId,
+                        "speed": 1.0,
+                        "vol": 1.0,
+                        "pitch": 0
+                    },
+                    "audio_setting": {
+                        "sample_rate": 32000,
+                        "bitrate": 128000,
+                        "format": "mp3",
+                        "channel": 1
+                    }
+                };
+
+                console.log(`[TTS Debug] V2请求 (Model: speech-01-turbo): ${finalVoiceId}`);
+
+                // 3. 发送请求
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({}));
+                    console.error("HTTP Error:", err);
+                    throw new Error(err.base_resp?.status_msg || `HTTP Error ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // 4. 错误处理
+                if (data.base_resp && data.base_resp.status_code !== 0) {
+                    console.error("API Error Data:", data);
+                    throw new Error(`API业务错误: ${data.base_resp.status_msg}`);
+                }
+
+                // 5. 数据处理
+                // V2 接口返回结构通常是 data.data.audio
+                const hex = data.data?.audio || data.audio;
+                if (!hex) throw new Error("API未返回音频数据 (Hex为空)");
+                
+                const bytes = new Uint8Array(Math.ceil(hex.length / 2));
+                for (let i = 0; i < bytes.length; i++) {
+                    bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+                }
+                return new Blob([bytes], { type: 'audio/mp3' });
+            },
         };
 
 // =======================================================
@@ -12062,6 +13294,25 @@ async function compressImageForAI(file) {
                 }, 2500);
             },
             formatTime(s) { return isNaN(s) ? '0:00' : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`; },
+
+formatLargeMoney(amount) {
+                const absVal = Math.abs(amount);
+                
+                if (absVal >= 100000000) {
+                    // 大于1亿，保留2位小数
+                    return (amount / 100000000).toFixed(2) + ' 亿';
+                } else if (absVal >= 10000) {
+                    // 大于1万，保留2位小数
+                    return (amount / 10000).toFixed(2) + ' 万';
+                } else {
+                    // 小于1万，显示完整数字，带千分位
+                    return amount.toLocaleString('en-US', { 
+                        minimumFractionDigits: 2, 
+                        maximumFractionDigits: 2 
+                    });
+                }
+            },
+
             autoScrollToBottom() { 
 DOM.messagesContainer.scrollTop = DOM.messagesContainer.scrollHeight; },
 
@@ -12502,7 +13753,18 @@ ${dossier.user.background || '你的灵魂伴侣。'}
                 ];
             },
 // ^^^ 替换到此结束 ^^^
-       createVideoCallPrompt(dossier, userInput, transcriptHistory = []) {
+       createVideoCallPrompt(dossier, userInput, transcriptHistory = [], recentChatHistory = []) {
+            // --- 1. 格式化最近的文字聊天记录 ---
+            let contextText = "（暂无最近对话，通话可能是突然发起的）";
+            if (recentChatHistory && recentChatHistory.length > 0) {
+                contextText = recentChatHistory.map(msg => {
+                    const speaker = msg.sender === 'user' ? (dossier.user.name || '我') : dossier.character.name;
+                    let content = msg.content;
+                    // 简单处理非文本消息
+                    if (typeof content !== 'string') content = '[非文本消息]';
+                    return `${speaker}: ${content}`;
+                }).join('\n');
+            }
             const systemPrompt = `
 # 核心使命：进行一场沉浸式、剧本化的模拟视频通话
 你将再次扮演【${dossier.character.name}】，你的性格是“${dossier.aiGenerated.personality}”。
@@ -12514,6 +13776,12 @@ ${dossier.character.background}
 
 ## 2. 你眼中的“我” (Your Perception of "Me")
 ${dossier.user.background || '你的灵魂伴侣。'}
+
+## 3. 【重要】通话前的情境 (Context before Call)
+**这是你们接通视频前刚刚发生的文字对话，请根据此上下文决定你现在的表情、语气和第一句话（是刚吵完架？还是在撒娇？还是有急事？）：**
+---
+${contextText}
+---
 
 # 输出规则：【铁律】
 你必须、且只能返回一个JSON数组，绝对不能包含任何额外的解释或文字。数组中的每一个对象都代表一条“字幕”。
@@ -12547,7 +13815,7 @@ ${dossier.user.background || '你的灵魂伴侣。'}
 ---
 现在，请根据我的输入，开始你的表演。
 `;
-           const userPrompt = userInput || "视频通话刚刚接通，请说一句开场白。";
+           const userPrompt = userInput || "视频通话刚刚接通，请根据刚才的聊天氛围，说一句开场白。";
             
             // 【核心修改】将历史记录整合到最终的消息数组中
             return [
@@ -15405,22 +16673,22 @@ function renderStickerManagerGrid() {
 
         async function createMessageElement(message, prevMessage = null) {
              
-            // 规则0：【HTML模块消息】的智能渲染通道 (V3 - 精装版)
+            // 规则0：【HTML模块消息】的智能渲染通道 (V4 - 脚本执行增强版)
             if (message.type === 'html_module') {
                 const htmlContent = message.content;
 
-                // --- 1. 创建所有消息都具备的标准外层结构 ---
+                // --- 1. 创建标准外层结构 ---
                 const messageEl = document.createElement('div');
                 messageEl.className = `chat-message ${message.sender}`;
                 if (message.id) messageEl.dataset.messageId = message.id;
 
-                // --- 2. 添加复选框 (用于多选模式) ---
+                // 2. 复选框
                 const checkboxContainer = document.createElement('div');
                 checkboxContainer.className = 'message-checkbox-container';
                 checkboxContainer.innerHTML = `<div class="message-checkbox"><i class="ri-check-line"></i></div>`;
                 messageEl.appendChild(checkboxContainer);
 
-                // --- 3. 添加头像（如果需要） ---
+                // 3. 头像
                 const showAvatar = !prevMessage || prevMessage.sender !== message.sender || prevMessage.status === 'withdrawn';
                 if (showAvatar) {
                     const avatarEl = document.createElement('div');
@@ -15437,48 +16705,67 @@ function renderStickerManagerGrid() {
                     messageEl.appendChild(placeholder);
                 }
 
-                // --- 4. 创建一个用于对齐和包裹内容+时间戳的容器 ---
-                // 我们复用星座卡片的 wrapper 样式，它能完美实现左对齐
+                // 4. 包裹容器
                 const cardWrapper = document.createElement('div');
-                cardWrapper.className = 'horoscope-card-wrapper';
+                cardWrapper.className = 'horoscope-card-wrapper'; // 复用左对齐样式
 
-                // --- 5. 【核心】智能创建模块本身 (iframe 或 div) ---
+                // --- 5. 【核心修复】智能创建模块 (增强脚本支持) ---
                 let moduleElement;
-                if (htmlContent.trim().toLowerCase().startsWith('<!doctype html')) {
-                    // 分支A: 是完整文档，使用 <iframe>
+                
+                // 判断是否是完整 HTML 文档 (包含 <html> 或 <!DOCTYPE)
+                if (/^\s*<!doctype html/i.test(htmlContent) || /<html/i.test(htmlContent)) {
+                    // === 分支A: 完整文档 -> 使用 iframe (最稳妥) ===
                     moduleElement = document.createElement('iframe');
-                    moduleElement.style.cssText = 'width: 100%; border: none; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);';
-                    moduleElement.scrolling = 'no';
-                    moduleElement.sandbox = 'allow-scripts allow-same-origin';
+                    moduleElement.style.cssText = 'width: 100%; border: none; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background: #fff;';
+                    // 【关键】增加 allow-forms 和 allow-popups，确保交互能用
+                    moduleElement.sandbox = 'allow-scripts allow-same-origin allow-forms allow-popups'; 
                     moduleElement.srcdoc = htmlContent;
+                    
+                    // 自动高度调整
                     moduleElement.addEventListener('load', () => {
                         try {
                             const body = moduleElement.contentWindow.document.body;
                             const html = moduleElement.contentWindow.document.documentElement;
                             const height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-                            moduleElement.style.height = height + 'px';
-                        } catch (e) { moduleElement.style.height = '300px'; }
+                            moduleElement.style.height = (height + 20) + 'px'; // 加一点余量
+                        } catch (e) { 
+                            moduleElement.style.height = '350px'; // 兜底高度
+                        }
                     });
                 } else {
-                    // 分支B: 是HTML片段，使用 <div>
+                    // === 分支B: 只是代码片段 -> 使用 div + 脚本激活 ===
                     moduleElement = document.createElement('div');
                     moduleElement.className = 'chat-html-module';
+                    // 允许点击和交互
+                    moduleElement.style.pointerEvents = 'auto'; 
                     moduleElement.innerHTML = htmlContent;
-                }
-                cardWrapper.appendChild(moduleElement); // 将模块放入包裹容器
 
-                // --- 6. 创建并添加时间戳 ---
+                    // 【核心黑科技】手动提取并运行 script 标签
+                    setTimeout(() => {
+                        const scripts = moduleElement.querySelectorAll('script');
+                        scripts.forEach(oldScript => {
+                            const newScript = document.createElement('script');
+                            // 复制属性 (src, type 等)
+                            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                            // 复制内容
+                            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                            // 替换旧标签 (这会触发浏览器执行新标签)
+                            oldScript.parentNode.replaceChild(newScript, oldScript);
+                        });
+                    }, 100); // 稍微延迟确保 DOM 上屏
+                }
+                
+                cardWrapper.appendChild(moduleElement);
+
+                // 6. 时间戳
                 if (message.timestamp) {
                     const timestampEl = document.createElement('div');
                     timestampEl.className = 'message-timestamp';
                     timestampEl.innerHTML = `<span>${new Date(message.timestamp).toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit', hour12: false})}</span><span class="message-status">已读</span>`;
-                    cardWrapper.appendChild(timestampEl); // 将时间戳也放入包裹容器
+                    cardWrapper.appendChild(timestampEl);
                 }
                 
-                // --- 7. 将包裹容器添加到主消息元素中 ---
                 messageEl.appendChild(cardWrapper);
-                
-                // --- 8. 返回完整的消息元素 ---
                 return messageEl;
             }
 
@@ -18080,12 +19367,47 @@ async function endVideoCall() {
             DOM.videoCallUserAvatar.src = '';
         }
 
+// --- 【新增】视频通话专属 TTS 播放器 (增强调试版) ---
+async function playVideoTTS(text) {
+    // 1. 简单清洗：去掉可能存在的星号、括号
+    const cleanText = text.replace(/[\(\)（）\*]/g, "").trim();
+    if (!cleanText) return;
+
+    console.log("🎤 [视频语音] 准备朗读:", cleanText);
+
+    const dossierId = appState.currentChattingDossierId;
+    if (!dossierId) return console.warn("❌ [视频语音] 丢失角色ID");
+    
+    const dossier = appState.dossiers.find(d => d.id === dossierId);
+    // 获取角色配置的音色，如果没有就用默认
+    const voiceId = dossier?.voiceId || 'male-qn-qingse'; 
+
+    try {
+        // 调用核心函数
+        const audioBlob = await apiHelper.generateSpeech(cleanText, voiceId);
+        
+        if (!audioBlob) throw new Error("API 返回音频为空");
+
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        
+        // 播放并打印日志
+        await audio.play();
+        console.log("✅ [视频语音] 开始播放...");
+
+    } catch (e) {
+        console.error("❌ [视频语音] 播放失败:", e);
+        // 如果是 API 报错，这里会在控制台显示具体原因
+    }
+}
+
 /**
  * 【V2版】将“剧本”追加到屏幕上，并区分说话人
  * @param {Array} scriptItems - 要渲染的字幕对象数组
  * @param {string} speakerName - 说话人的名字 ("我" 或 角色名)
  */
 
+// 【V4版】剧本上屏 + 自动朗读 (修复引号识别)
 function appendVideoCallScript(scriptItems, speakerName) {
     const container = DOM.videoCallScriptContainer;
 
@@ -18097,36 +19419,65 @@ function appendVideoCallScript(scriptItems, speakerName) {
         return;
     }
 
+    // 判断是谁在说话：只要名字不是"我"，就默认是角色
     const speakerType = (speakerName === "我") ? "user" : "character";
 
     scriptItems.forEach(item => {
         const line = document.createElement('div');
         line.className = `script-line ${item.type}`;
-        
-        // 【核心新增】为每一行都添加说话人标记，方便后续读取
         line.dataset.speaker = speakerType;
         
         let content = item.content;
 
-        if (item.type === 'dialogue' && speakerName) {
-            line.innerHTML = `<span class="speaker-name ${speakerType}">${speakerName}:</span> ${content}`;
+        if (item.type === 'dialogue') {
+            // 渲染到屏幕（保留引号，原汁原味）
+            if (speakerName) {
+                line.innerHTML = `<span class="speaker-name ${speakerType}">${speakerName}:</span> ${content}`;
+            } else {
+                line.textContent = content;
+            }
+            
+            // ==========================================
+            // vvvvvvvvv 【触发语音】 vvvvvvvvv
+            // ==========================================
+            if (speakerType === 'character') {
+                // 1. 暴力清除所有类型的引号，只留干货
+                // 匹配：中文双引号、英文双引号、中文单引号
+                let textToRead = content.replace(/["“”'‘’]/g, '').trim();
+                
+                if (textToRead) {
+                    console.log(`🔍 [视频语音] 检测到台词: ${textToRead}`);
+                    // 延迟 300ms 播放，防止和音效冲突
+                    setTimeout(() => {
+                        playVideoTTS(textToRead);
+                    }, 300);
+                }
+            }
+            // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
         } else if (item.type === 'thought') {
+            // 内心独白处理
             content = content.startsWith('*') && content.endsWith('*') 
                 ? content.slice(1, -1) 
                 : content;
             line.textContent = content;
         } else {
+            // 动作/旁白处理
             line.textContent = content;
         }
         
         container.appendChild(line);
     });
 
+    // 自动滚动到底部
     container.scrollTop = container.scrollHeight;
 }
 
 /**
  * 触发AI生成开场白
+ */
+/**
+ * 触发AI生成开场白 (修复版：带上下文记忆)
  */
 async function triggerVideoCallOpening() {
     const dossierId = appState.currentChattingDossierId;
@@ -18138,12 +19489,16 @@ async function triggerVideoCallOpening() {
     DOM.videoCallTypingIndicator.style.display = 'block';
 
     try {
-        // 2. 调用AI获取开场白
-        const messages = promptManager.createVideoCallPrompt(dossier, null); // userInput为null表示请求开场白
+        // --- 【核心修复】获取最近的聊天记录作为背景 ---
+        const fullHistory = await dbHelper.getHistoryForDossier(dossierId);
+        // 只取最近 10 条，避免 token 溢出，足够判断语境了
+        const recentChatContext = fullHistory.slice(-10);
+
+        // 2. 调用AI获取开场白 (传入第4个参数：recentChatContext)
+        const messages = promptManager.createVideoCallPrompt(dossier, null, [], recentChatContext); 
         const aiResponse = await apiHelper.getChatCompletion(messages);
         
         // 3. 解析并渲染剧本
-       // vvv 【核心修复】增加JSON净化逻辑 vvv
         const startIndex = aiResponse.indexOf('[');
         const endIndex = aiResponse.lastIndexOf(']');
         if (startIndex === -1 || endIndex === -1 || endIndex < startIndex) {
@@ -18151,11 +19506,11 @@ async function triggerVideoCallOpening() {
         }
         const jsonString = aiResponse.substring(startIndex, endIndex + 1);
         const script = JSON.parse(jsonString);
-       appendVideoCallScript(script, dossier.character.name);
+        appendVideoCallScript(script, dossier.character.name);
 
     } catch (error) {
         console.error("获取视频通话开场白失败:", error);
-       appendVideoCallScript([{ type: 'dialogue', content: '“喂？...信号好像不太好...”' }], dossier.character.name);
+        appendVideoCallScript([{ type: 'dialogue', content: '“喂？...信号好像不太好...”' }], dossier.character.name);
     } finally {
         // 4. 隐藏“对方正在说话...”
         DOM.videoCallTypingIndicator.style.display = 'none';
@@ -18214,7 +19569,11 @@ async function handleVideoCallSend() {
         DOM.videoCallScriptContainer.scrollTop = DOM.videoCallScriptContainer.scrollHeight;
         
         // 4. 现在，带着“干净”的历史记录和最新的用户输入去请求AI
-        const messages = promptManager.createVideoCallPrompt(dossier, userInput, transcriptHistory);
+        const recentChatContext = appState.currentChatHistory.slice(-10);
+
+        // 传入第4个参数
+        const messages = promptManager.createVideoCallPrompt(dossier, userInput, transcriptHistory, recentChatContext);
+        
         const aiResponse = await apiHelper.getChatCompletion(messages);
         
         const startIndex = aiResponse.indexOf('[');
@@ -18426,7 +19785,7 @@ async function renderWalletPage(filter = 'all') {
         totalBalance += (tx.type === 'income' ? tx.amount : -tx.amount);
     });
     
-    const balanceStr = totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const balanceStr = utils.formatLargeMoney(totalBalance);
 
     // 3. 【账本化】渲染逻辑
     const cardEl = document.getElementById('total-assets-card');
@@ -19310,13 +20669,31 @@ const ActionEngine = {
                 const lastTriggerTime = (await dbHelper.get(CONSTANTS.STORE_NAMES.USER_SETTINGS, lastDiaryKey))?.value || 0;
                 
              if (Date.now() - lastTriggerTime > 43200000 && Math.random() < 0.3) {
-                    console.log(`[灵魂回响] 触发了角色 [${dossier.character.name}] 的自发日记创作。`);
                     
                     // 【关键】在后台静默执行，不阻塞主流程
                     (async () => {
                         try {
-                            // 1. 获取最近的聊天记录作为上下文
+                            // 1. 获取完整的聊天记录
                             const chatHistory = await dbHelper.getHistoryForDossier(dossier.id);
+                            
+                            // === 【核心修改：静默期检测】 ===
+                            if (chatHistory.length === 0) return; // 如果从来没聊过，不写
+
+                            const lastMsg = chatHistory[chatHistory.length - 1];
+                            const timeSinceLastChat = Date.now() - lastMsg.timestamp;
+                            
+                            // ⏱️ 设定阈值：这里设为 24 小时 (毫秒数)
+                            // 意思：如果超过 24 小时没发消息，角色就不再自发写日记了
+                            const SILENCE_LIMIT = 24 * 60 * 60 * 1000; 
+
+                            if (timeSinceLastChat > SILENCE_LIMIT) {
+                                console.log(`[灵魂回响] 与 [${dossier.character.name}] 已断联 ${(timeSinceLastChat/3600000).toFixed(1)} 小时，跳过日记生成。`);
+                                return; // 直接退出，不生成
+                            }
+                            // ===============================
+
+                            console.log(`[灵魂回响] 触发了角色 [${dossier.character.name}] 的自发日记创作。`);
+
                             const recentHistory = chatHistory.slice(-10); // 获取最近10条
 
                             // 2. 将记录传入新的Prompt生成器
@@ -19589,77 +20966,61 @@ async function sendBufferedMessage(textContent = null) {
 /**
  * 【全新】渲染日记列表的核心函数
  */
+/**
+ * 【V3 - Atonement版】渲染日记列表
+ */
 async function renderDiaryList() {
     const container = DOM.diaryListContainer;
-    container.innerHTML = '<p style="opacity: 0.7; text-align: center;">正在翻阅...</p>';
-
+    
+    // 1. 获取数据
     const allDiaries = await dbHelper.getAll(CONSTANTS.STORE_NAMES.DIARIES);
+    
+    // 空状态
     if (allDiaries.length === 0) {
-        container.innerHTML = '<p style="opacity: 0.7; text-align: center;">日记本还是空的，点击右上角“+”写下第一篇吧。</p>';
+        container.innerHTML = `
+            <div style="text-align:center; opacity:0.5; margin-top:50px; font-family: var(--font-typewriter);">
+                Type your first confession...
+            </div>`;
         return;
     }
 
-    // 按时间倒序排列
+    // 2. 排序 (新到旧)
     allDiaries.sort((a, b) => b.timestamp - a.timestamp);
     container.innerHTML = '';
 
-    const moodIcons = {
-        happy: '☀️', sad: '🌧️', thoughtful: '☁️', love: '🌙', normal: '😊'
-    };
-
     for (const diary of allDiaries) {
-        let authorName = '', avatarUrl = '';
+        let authorName = 'Unknown';
 
+        // 获取作者名
         if (diary.authorType === 'user') {
-            authorName = '我';
-            // 从数据库获取全局用户头像
-            const avatarSetting = await dbHelper.get(CONSTANTS.STORE_NAMES.USER_SETTINGS, 'global_user_avatar_asset_id');
-            if (avatarSetting?.value) {
-                const asset = await dbHelper.get(CONSTANTS.STORE_NAMES.ASSETS, avatarSetting.value);
-                if(asset?.file) avatarUrl = URL.createObjectURL(asset.file);
-            }
+            authorName = 'Me'; // 英文更有感觉
         } else {
             const dossier = appState.dossiers.find(d => d.id === diary.authorId);
-            if (dossier) {
-                authorName = dossier.character.name;
-                if (dossier.character.avatarAssetId) {
-                    const asset = await dbHelper.get(CONSTANTS.STORE_NAMES.ASSETS, dossier.character.avatarAssetId);
-                    if(asset?.file) avatarUrl = URL.createObjectURL(asset.file);
-                }
-            }
+            if (dossier) authorName = dossier.character.name;
         }
         
+        // 格式化日期 (英文格式: July 15, 1935)
+        const dateObj = new Date(diary.timestamp);
+        const dateStr = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+        // 构建卡片
         const card = document.createElement('div');
-        // 复用 settings-item 的样式，它自带了边距、背景和hover效果
-        card.className = 'settings-item'; 
+        card.className = 'diary-entry-card';
         card.dataset.diaryId = diary.id;
-        card.style.flexDirection = 'column';
-        card.style.alignItems = 'flex-start';
-        card.style.gap = '8px';
-        card.style.cursor = 'pointer'; // 明确鼠标样式
 
         card.innerHTML = `
-    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+            <div class="entry-meta">
+                <span>${dateStr}</span>
+                <span class="entry-time">${timeStr}</span>
+            </div>
+            <div class="entry-preview">
+                <span style="font-weight:bold; margin-right:5px; color:var(--ink-black);">[${authorName}]</span>
+                ${diary.content}
+            </div>
+            <i class="delete-diary-btn ri-close-line" data-diary-id="${diary.id}" title="Delete"></i>
+        `;
         
-        <!-- 左侧部分：头像和名字 -->
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div class="chat-avatar" style="width: 32px; height: 32px; background-image: url(${avatarUrl}); background-size: cover; background-position: center;"></div>
-            <span style="font-weight: 600;">${authorName}</span>
-        </div>
-        
-        <!-- vvv 【核心修改】右侧部分现在包含删除按钮和心情图标 vvv -->
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <i class="delete-diary-btn ri-delete-bin-line" data-diary-id="${diary.id}" title="删除日记" style="font-size: 18px; opacity: 0.5; cursor: pointer;"></i>
-            <span style="font-size: 20px;">${moodIcons[diary.mood] || '😊'}</span>
-        </div>
-        <!-- ^^^ 修改结束 ^^^ -->
-
-    </div>
-
-    <strong style="font-size: 16px; margin-left: 5px; margin-top: 8px;">${diary.title || '无标题'}</strong>
-    <p style="margin: 0 0 0 5px; opacity: 0.7; font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${diary.content}</p>
-    <span style="font-size: 12px; opacity: 0.5; align-self: flex-end;">${new Date(diary.timestamp).toLocaleDateString()}</span>
-`;
         container.appendChild(card);
     }
 }
@@ -19669,25 +21030,25 @@ async function renderDiaryList() {
  * 打开并渲染阅读日记的浮窗
  * @param {number} diaryId - 要阅读的日记的ID
  */
+/**
+ * 【V3 - 信纸版】打开阅读日记浮窗
+ */
 async function openDiaryReadModal(diaryId) {
     const diary = await dbHelper.get(CONSTANTS.STORE_NAMES.DIARIES, diaryId);
-    if (!diary) {
-        utils.showToast('找不到这篇日记');
-        return;
-    }
+    if (!diary) return utils.showToast('Letter not found.');
 
-    let authorName = '未知作者';
+    let authorName = 'Unknown';
     let avatarUrl = '';
 
-    // 【核心修正】在这里补全了对 user 类型的处理
+    // 1. 获取作者信息和头像
     if (diary.authorType === 'user') {
-        authorName = '我';
+        authorName = 'Me';
         const avatarSetting = await dbHelper.get(CONSTANTS.STORE_NAMES.USER_SETTINGS, 'global_user_avatar_asset_id');
         if (avatarSetting?.value) {
             const asset = await dbHelper.get(CONSTANTS.STORE_NAMES.ASSETS, avatarSetting.value);
             if(asset?.file) avatarUrl = URL.createObjectURL(asset.file);
         }
-    } else { // authorType === 'character'
+    } else {
         const dossier = appState.dossiers.find(d => d.id === diary.authorId);
         if (dossier) {
             authorName = dossier.character.name;
@@ -19698,21 +21059,26 @@ async function openDiaryReadModal(diaryId) {
         }
     }
 
-    DOM.readDiaryTitle.textContent = diary.title || '无标题';
-    
-    const avatarHTML = avatarUrl 
-        ? `<div class="chat-avatar" style="width: 36px; height: 36px; background-image: url(${avatarUrl}); background-size: cover; background-position: center;"></div>` 
-        : '';
+    // 2. 格式化日期
+    const dateObj = new Date(diary.timestamp);
+    const dateStr = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 
-    DOM.readDiaryMeta.innerHTML = `
-        ${avatarHTML}
-        <div style="display: flex; flex-direction: column; gap: 2px;">
-            <span style="font-weight: 600;">${authorName}</span>
-            <span style="font-size: 13px; opacity: 0.7;">${formatRelativeTime(diary.timestamp)}</span>
-        </div>
-    `;
-    DOM.readDiaryContent.textContent = diary.content;
+    // 3. 填充 DOM
+    document.getElementById('letter-date').textContent = dateStr;
+    document.getElementById('letter-time').textContent = timeStr;
+    document.getElementById('read-diary-content').textContent = diary.content;
+    document.getElementById('letter-signature').textContent = authorName;
     
+    const avatarEl = document.getElementById('letter-avatar');
+    if (avatarUrl) {
+        avatarEl.style.backgroundImage = `url('${avatarUrl}')`;
+        avatarEl.style.display = 'block';
+    } else {
+        avatarEl.style.display = 'none'; // 没头像就隐藏
+    }
+
+    // 4. 显示浮窗
     DOM.diaryReadModal.classList.add('visible');
 }
 
@@ -22529,7 +23895,7 @@ async function renderShopItems() {
     const db = await dbHelper.dbPromise;
     const allTx = await db.getAll(CONSTANTS.STORE_NAMES.WALLET_TRANSACTIONS);
     const balance = allTx.reduce((sum, tx) => sum + (tx.type === 'income' ? tx.amount : -tx.amount), 0);
-    DOM.pawnShopBalance.textContent = `¥ ${balance.toLocaleString()}`;
+    DOM.pawnShopBalance.textContent = `¥ ${utils.formatLargeMoney(balance)}`;
 
     const boughtItems = JSON.parse(localStorage.getItem('pawn_bought_items') || '[]');
 
@@ -24245,7 +25611,7 @@ function updateSalonConfirmButton() {
 }
 
 /**
- * 创建新的群聊会话
+ * 创建新的群聊会话 (修复同步版)
  */
 async function createNewSalonGroup() {
     if (appState.salonSelection.size < 2) return;
@@ -24259,36 +25625,43 @@ async function createNewSalonGroup() {
         if (d) memberNames.push(d.character.name);
     }
 
-    // 1. 生成唯一的群 ID (使用 'group_' 前缀)
+    // 1. 生成唯一的群 ID
     const groupId = `group_${Date.now()}`;
     const defaultName = memberNames.join(' & ').substring(0, 20) + (memberNames.join(' & ').length > 20 ? '...' : '');
 
     // 2. 创建会话对象
     const newSession = {
-        dossierId: groupId, // 复用 dossierId 字段存储 ID
-        type: 'group',      // 标记为群聊
-        members: selectedIds, // 存储成员 ID 数组
+        dossierId: groupId,
+        type: 'group',
+        members: selectedIds,
         name: defaultName,
         lastMessage: '沙龙已开启，等待第一声低语...',
         timestamp: Date.now(),
         unreadCount: 0,
-        // 群设置
         wallpaperAssetId: null,
-        libraryBookIds: [] // 群也可以挂书
+        libraryBookIds: []
     };
 
     // 3. 存入数据库
     await dbHelper.set(CONSTANTS.STORE_NAMES.CHAT_SESSIONS, newSession);
 
+    // vvvvvvvvv 【核心修复：同步到全局内存】 vvvvvvvvv
+   appState.chatSessions.push(newSession);
+    
     // 4. 插入一条系统旁白作为开场
     const openingMsg = {
         dossierId: groupId,
         sender: 'system',
-        type: 'narration', // 旁白类型
+        type: 'narration',
         content: '夜色温柔，诸位已至。这里是思想与灵魂交汇的沙龙。',
         timestamp: Date.now()
     };
-    await dbHelper.add(CONSTANTS.STORE_NAMES.CHAT_HISTORY, openingMsg);
+    // 记得把这条开场白也同步到内存，防止进去后看不到
+    const savedId = await dbHelper.add(CONSTANTS.STORE_NAMES.CHAT_HISTORY, openingMsg);
+    openingMsg.id = savedId;
+    
+    // 如果 appState.currentChatHistory 还没初始化，这里不需要 push，
+    // 因为 enterSalonChatUI 会负责读取。
 
     // 5. UI 更新
     utils.showToast('沙龙已创建');
@@ -24296,14 +25669,14 @@ async function createNewSalonGroup() {
     await renderSalonGroupList();
     
     // 6. 进入聊天
-    enterSalonChatUI(newSession); // 注意：这里传的是 session 对象，不是 dossier
+    enterSalonChatUI(newSession); 
 }
 
 // --- 辅助函数：进入聊天页并填充 UI (群聊适配完整版) ---
 // --- [修复 3] 强力清理 DOM 的进入函数 ---
 async function enterSalonChatUI(session) { 
     appState.currentChattingDossierId = session.dossierId;
-
+applySalonTextStyles(session.textStyles);
     // 1. 设置标题和输入框
     let title = session.name || "未命名沙龙";
     DOM.salonActiveTitle.textContent = title;
@@ -24349,6 +25722,7 @@ async function enterSalonChatUI(session) {
 
     // 6. 重新渲染历史
     const history = await dbHelper.getHistoryForDossier(session.dossierId);
+appState.currentChatHistory = history; 
     for (const msg of history) {
         const msgEl = await createSalonMessageElement(msg); 
         container.appendChild(msgEl);
@@ -24382,6 +25756,7 @@ async function enterSalonChatUI(session) {
     // 9. 切换页面
     navigateToPage(DOM.salonApp, 'salon-chat-page');
 }
+
 // ==========================================
 // ===   沙龙 (群聊) 核心发送逻辑       ===
 // ==========================================
@@ -24410,6 +25785,7 @@ async function handleSalonSendMessage(mode) {
         // 存入数据库
         const savedId = await dbHelper.add(CONSTANTS.STORE_NAMES.CHAT_HISTORY, userMsg);
         userMsg.id = savedId;
+appState.currentChatHistory.push(userMsg);
 
         // 渲染上屏 (插在打字机前面)
         const msgEl = await createSalonMessageElement(userMsg);
@@ -24464,9 +25840,15 @@ async function handleSalonSendMessage(mode) {
             }
         }
 
-        // B. 获取历史记录 (最近 20 条)
+        // B. 获取历史记录 
         const history = await dbHelper.getHistoryForDossier(sessionId);
-        const recentHistory = history.slice(-20);
+        
+        const memoryLimit = session.memoryLimit || 30;
+        
+        // 截取最近的 N 条
+        const recentHistory = history.slice(-memoryLimit);
+        
+        console.log(`[沙龙引擎] 正在读取最近 ${recentHistory.length} 条记录作为记忆 (上限: ${memoryLimit})`);
 
         // C. 构建 Prompt (使用我们之前写的 createSalonPrompt)
         const prompt = promptManager.createSalonPrompt(session, memberDossiers, recentHistory, text || null);
@@ -24521,6 +25903,7 @@ async function handleSalonSendMessage(mode) {
             // 入库
             const sid = await dbHelper.add(CONSTANTS.STORE_NAMES.CHAT_HISTORY, aiMsg);
             aiMsg.id = sid;
+appState.currentChatHistory.push(aiMsg);
 
             // 上屏 (插在打字机前面，防止打字机还没完全隐藏时穿帮)
             const el = await createSalonMessageElement(aiMsg);
@@ -24530,6 +25913,10 @@ async function handleSalonSendMessage(mode) {
                 container.insertBefore(el, typingIndicator);
             } else {
                 container.appendChild(el);
+            }
+            
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
             }
             
             container.scrollTop = container.scrollHeight;
@@ -24549,12 +25936,14 @@ async function handleSalonSendMessage(mode) {
     }
 }
 
-// 辅助：创建沙龙消息元素
+// 辅助：创建沙龙消息元素 (带动态配色版)
 async function createSalonMessageElement(msg) {
     const div = document.createElement('div');
+
+    // 绑定 ID
+    if (msg.id) div.dataset.msgId = msg.id;
     
-    // 1. 旁白/系统消息/AI思考 (Cinematic Narration)
-    // 判断条件：类型是 narration，或者发送者是 system
+    // 1. 旁白消息 (保持不变)
     if (msg.type === 'narration' || msg.sender === 'system') {
         div.className = 'salon-msg-narration';
         div.innerHTML = `
@@ -24567,7 +25956,7 @@ async function createSalonMessageElement(msg) {
         return div;
     }
 
-    // 2. 角色/用户消息 (Cinematic Dialogue)
+    // 2. 角色/用户消息
     const isUser = msg.sender === 'user';
     div.className = `salon-msg-row ${isUser ? 'right' : 'left'}`;
     
@@ -24576,9 +25965,37 @@ async function createSalonMessageElement(msg) {
     if (isUser) {
         name = 'ME';
     } else {
-        // 如果消息里存了 authorName 就用存的，否则显示 Character
         name = msg.authorName || 'Character';
     }
+
+    // === 【核心新增】计算角色专属颜色 (莫兰迪特供版) ===
+    if (!isUser) {
+        // 🎨 莫兰迪色盘 (Morandi Palette) - 专为暗色背景优化的“高级灰”
+        const palette = [
+            '#D4A5A5', // 绛红 (Muted Rose) - 温柔
+            '#AFC1D0', // 雾霾蓝 (Haze Blue) - 冷静
+            '#A8BFA1', // 豆沙绿 (Sage Green) - 清新
+            '#C7B3E5', // 烟紫色 (Dusty Lilac) - 神秘
+            '#DCC6A6', // 燕麦拿铁 (Oatmeal) - 温暖
+            '#9BB7B4', // 灰湖绿 (Greyish Teal) - 疏离
+            '#C89F9C', // 干燥玫瑰 (Dry Rose) - 暧昧
+            '#AFAFB9', // 鲨鱼灰 (Shark Grey) - 沉稳
+            '#D1C0A8', // 卡其 (Khaki) - 朴实
+            '#B0C4DE'  // 钢蓝 (Steel Blue) - 理性
+        ];
+
+        // 哈希算法 (保持不变，确保同一个名字永远是同一个颜色)
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash += name.charCodeAt(i);
+        }
+        // 取余数拿到颜色
+        const color = palette[Math.abs(hash) % palette.length];
+
+        // 将颜色注入到 CSS 变量中
+        div.style.setProperty('--char-color', color);
+    }
+    // ===================================
 
     const timeStr = new Date(msg.timestamp).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'});
 
@@ -24591,6 +26008,207 @@ async function createSalonMessageElement(msg) {
     `;
     return div;
 }
+
+/**
+ * 打开沙龙消息菜单 (规范版)
+ * @param {HTMLElement} bubbleEl - 被点击的气泡元素
+ */
+function openSalonMenu(bubbleEl) {
+    // 1. 存入全局状态
+    appState.currentSalonBubbleEl = bubbleEl;
+    
+    const menu = DOM.salonPopoverMenu;
+    const bubbleRect = bubbleEl.getBoundingClientRect();
+    
+    menu.style.display = 'flex';
+    
+    // 菜单尺寸 (4个按钮)
+    const menuWidth = 250; 
+    const menuHeight = 80;
+
+    // 2. 计算居中位置
+    let left = bubbleRect.left + (bubbleRect.width / 2) - (menuWidth / 2);
+    
+    // 边界检查
+    const padding = 10;
+    if (left < padding) left = padding;
+    if (left + menuWidth > window.innerWidth - padding) left = window.innerWidth - menuWidth - padding;
+
+    // 3. 计算垂直位置 (默认在气泡上方)
+    let top = bubbleRect.top - menuHeight - 15; 
+    if (top < 60) { // 如果上方被顶栏挡住，就放到下方
+        top = bubbleRect.bottom + 10;
+    }
+
+    // 4. 应用位置
+    menu.style.left = `${left}px`;
+    menu.style.top = `${top}px`;
+    menu.classList.add('visible');
+}
+
+/**
+ * 关闭沙龙消息菜单 (规范版)
+ */
+function closeSalonMenu() {
+    DOM.salonPopoverMenu.classList.remove('visible');
+    // 清空状态
+    appState.currentSalonBubbleEl = null;
+}
+
+/**
+ * 进入沙龙多选模式
+ * @param {string} initialMsgId - 触发多选的那条消息ID
+ */
+function enterSalonMultiSelectMode(initialMsgId) {
+    appState.isSalonMultiSelectMode = true;
+    appState.salonSelectedIds.clear();
+    
+    // 1. 隐藏输入栏，显示操作栏
+    document.querySelector('.salon-input-wrapper').style.display = 'none';
+    DOM.salonMultiToolbar.classList.add('active');
+    
+    // 2. 选中初始消息
+    if (initialMsgId) {
+        toggleSalonMessageSelection(initialMsgId);
+    }
+    
+    closeSalonMenu(); // 关闭弹窗菜单
+}
+
+/**
+ * 退出沙龙多选模式
+ */
+function exitSalonMultiSelectMode() {
+    appState.isSalonMultiSelectMode = false;
+    appState.salonSelectedIds.clear();
+    
+    // 1. 恢复输入栏，隐藏操作栏
+    document.querySelector('.salon-input-wrapper').style.display = 'block';
+    DOM.salonMultiToolbar.classList.remove('active');
+    
+    // 2. 清除所有视觉上的选中状态
+    document.querySelectorAll('.salon-msg-row.selected, .salon-msg-narration.selected').forEach(el => {
+        el.classList.remove('selected');
+    });
+}
+
+/**
+ * 切换单条消息的选中状态
+ */
+function toggleSalonMessageSelection(msgId) {
+    // 这里的 msgId 可能是数字也可能是字符串，统一转为数字比较稳妥（假设数据库是自增ID）
+    // 但为了兼容旧数据，我们在比较时不强转，而在查找 DOM 时注意
+    const id = parseInt(msgId, 10); 
+    const el = document.querySelector(`div[data-msg-id="${msgId}"]`);
+    
+    if (!el) return;
+
+    if (appState.salonSelectedIds.has(id)) {
+        // 取消选中
+        appState.salonSelectedIds.delete(id);
+        el.classList.remove('selected');
+    } else {
+        // 选中
+        appState.salonSelectedIds.add(id);
+        el.classList.add('selected');
+    }
+    
+    // 更新计数文字
+    DOM.salonMultiCount.textContent = `已选 ${appState.salonSelectedIds.size} 条`;
+}
+
+/**
+ * 【沙龙专属】重试 (Reroll) - 1v1 逻辑版
+ * 逻辑：删除聊天记录末尾所有连续的 AI/System 消息，然后重新生成
+ */
+async function handleSalonReroll(clickedMsgId) {
+    const history = appState.currentChatHistory;
+    if (history.length === 0) return;
+
+    // 1. 寻找末尾的 AI 消息块
+    const idsToDelete = new Set();
+    
+    // 从最后一条开始倒序遍历
+    for (let i = history.length - 1; i >= 0; i--) {
+        const msg = history[i];
+        
+        // 如果遇到了用户发的消息，说明这一轮 AI 回复结束了，停止查找
+        if (msg.sender === 'user') {
+            break;
+        }
+        
+        // 只要是角色(character)或系统(system)发的，都加入删除列表
+        idsToDelete.add(msg.id);
+    }
+
+    // 安全检查：如果末尾没有任何 AI 消息（比如最后一条是用户发的），则不能重试
+    if (idsToDelete.size === 0) {
+        utils.showToast('只能重试 AI 的回复');
+        return;
+    }
+
+    // 2. (可选) 检查点击的消息是否在这个范围内
+    // 如果你希望点击“历史消息”也能触发“重置最新回复”，可以去掉这个判断
+    // 但通常逻辑是：只能点最新的重试
+    if (!idsToDelete.has(parseInt(clickedMsgId, 10))) {
+        utils.showToast('只能重试最新的一轮对话');
+        return;
+    }
+
+    try {
+        utils.showToast('正在重绘梦境...');
+
+        // 3. 数据库删除
+        await dbHelper.deleteMessagesByIds(idsToDelete);
+
+        // 4. UI 删除
+        idsToDelete.forEach(id => {
+            const el = document.querySelector(`div[data-msg-id="${id}"]`);
+            if (el) el.remove();
+        });
+
+        // 5. 内存同步 (过滤掉被删的)
+        appState.currentChatHistory = appState.currentChatHistory.filter(m => !idsToDelete.has(m.id));
+
+        // 6. 更新列表预览
+        // 获取现在最新的那条（应该是用户刚才说的话）
+        const lastMsg = appState.currentChatHistory[appState.currentChatHistory.length - 1];
+        if (lastMsg) {
+            await updateChatSession(appState.currentChattingDossierId, lastMsg.content);
+        }
+
+        // 7. 重新触发 AI
+        // 传入 'final' 模式，且此时输入框为空
+        // promptManager 会检测到最后一条历史是 User 发的，从而触发“User 刚说完话”的逻辑
+        await handleSalonSendMessage('final');
+
+    } catch (e) {
+        console.error("重试失败:", e);
+        utils.showToast('重试出错');
+    }
+}
+
+/**
+ * 【功能函数 1】应用文字颜色到 CSS 变量
+ * @param {object} styles - { narrator, char, user }
+ */
+function applySalonTextStyles(styles) {
+    const root = document.documentElement;
+    // 如果有值就设置，没有值(null/undefined)就移除变量，回退到 CSS 默认色
+    root.style.setProperty('--salon-narrator-color', styles?.narrator || null);
+    root.style.setProperty('--salon-char-text-color', styles?.char || null);
+    root.style.setProperty('--salon-user-text-color', styles?.user || null);
+}
+
+/**
+ * 【功能函数 2】根据输入框的值，实时更新浮窗里的预览文字
+ */
+function updateSalonStylePreview() {
+    if (DOM.previewNarrator) DOM.previewNarrator.style.color = DOM.inputSalonNarrator.value;
+    if (DOM.previewChar) DOM.previewChar.style.color = DOM.inputSalonChar.value;
+    if (DOM.previewUser) DOM.previewUser.style.color = DOM.inputSalonUser.value;
+}
+
 // ===============================================
 // ===   数据管理核心逻辑 (导入/导出/清空)     ===
 // ===============================================
@@ -25222,6 +26840,12 @@ libraryBookIds: [] // <-- 【新增】为新档案初始化一个空数组
             DOM.chatMoreBtn.addEventListener('click', () => {
     const dossier = appState.dossiers.find(d => d.id === appState.currentChattingDossierId);
     updateLinkedBooksDisplay(dossier);
+
+ // [新增] 更新音色显示状态
+    if (dossier && DOM.currentVoiceIdDisplay) {
+        DOM.currentVoiceIdDisplay.textContent = dossier.voiceId || '默认';
+    }
+
     navigateToPage(DOM.chatApp, 'chat-details-page');
 });
             DOM.uploadWidgets.forEach(target => {
@@ -25876,10 +27500,11 @@ DOM.chatDialoguePage.style.backgroundPosition = 'center'; // <-- 修改目标
             if (messageIndex === -1) throw new Error('在内存中找不到该消息');
 
             const messageToUpdate = appState.currentChatHistory[messageIndex];
-            const originalContent = messageToUpdate.content;
             
-            // 特殊处理AI的引用消息，保持引用部分不变
+            // 保留引用格式 (针对单聊AI)
+            const originalContent = messageToUpdate.content;
             const isAIQuote = messageToUpdate.sender === 'character' && originalContent.includes('\n') && originalContent.startsWith('> ');
+            
             if (isAIQuote) {
                 const quotePart = originalContent.split('\n')[0];
                 messageToUpdate.content = `${quotePart}\n${newText}`;
@@ -25887,27 +27512,50 @@ DOM.chatDialoguePage.style.backgroundPosition = 'center'; // <-- 修改目标
                 messageToUpdate.content = newText;
             }
 
-            // 2. 将更新后的整个消息对象存回数据库
+            // 2. 更新数据库
             await dbHelper.set(CONSTANTS.STORE_NAMES.CHAT_HISTORY, messageToUpdate);
 
-            // 3. 直接更新UI上的气泡内容，避免整个页面重绘
-            const messageBubble = document.querySelector(`.chat-message[data-message-id="${messageId}"] .bubble`);
-            if (messageBubble) {
-                messageBubble.textContent = newText;
-                messageBubble.dataset.messageContent = messageToUpdate.content; // 更新data属性
+            // 3. 【核心升级】智能更新 UI (同时支持 单聊 和 沙龙)
+            // 尝试查找单聊气泡
+            const bubbleEl = document.querySelector(`.chat-message[data-message-id="${messageId}"] .bubble`);
+            
+            // 尝试查找沙龙行 (剧本样式)
+            // 注意：沙龙的 ID 是绑在父级 div[data-msg-id] 上的
+            const salonRowEl = document.querySelector(`div[data-msg-id="${messageId}"]`);
+
+            if (bubbleEl) {
+                // === 情况 A: 单聊界面 ===
+                bubbleEl.textContent = newText;
+                bubbleEl.dataset.messageContent = messageToUpdate.content; 
+            } 
+            else if (salonRowEl) {
+                // === 情况 B: 沙龙界面 ===
+                // 可能是普通对话 (.salon-msg-bubble)
+                const salonBubble = salonRowEl.querySelector('.salon-msg-bubble');
+                // 也可能是旁白 (.salon-msg-narration p)
+                const narrationText = salonRowEl.querySelector('p'); 
+
+                if (salonBubble) {
+                    salonBubble.textContent = newText;
+                } else if (narrationText) {
+                    narrationText.textContent = newText;
+                }
             }
             
-            // 4. 更新会话列表的最后一条消息（如果是最后一条的话）
+            // 4. 更新会话预览 (如果是最后一条)
             if (messageIndex === appState.currentChatHistory.length - 1) {
                 await updateChatSession(messageToUpdate.dossierId, newText);
-                // 可以在这里决定是否需要重新渲染chatList，但通常影响不大
             }
 
-            utils.showToast('消息已修改');
-            closeEditModal();
+            utils.showToast('修改成功');
+            
+            // 关闭浮窗
+            DOM.editMessageModal.classList.remove('visible');
+            appState.currentEditingMessageId = null;
+            DOM.editMessageTextarea.value = '';
 
         } catch (error) {
-            console.error('编辑消息失败:', error);
+            console.error('编辑失败:', error);
             utils.showToast(`保存失败: ${error.message}`);
         }
     });
@@ -26603,32 +28251,71 @@ DOM.chatFunctionBtn.addEventListener('click', toggleFunctionPanel);
                 closeVoiceModal();
             });
 
-            // 4. 【核心】使用事件委托，监听对所有语音条的点击
-            DOM.messagesContainer.addEventListener('click', (e) => {
+            // 4. 【核心】使用事件委托，监听对所有语音条的点击            
+       DOM.messagesContainer.addEventListener('click', async (e) => {
                 const voiceBubble = e.target.closest('.voice-bubble');
-                if (!voiceBubble) return; // 如果点的不是语音条，则忽略
+                if (!voiceBubble) return;
 
                 const wrapper = voiceBubble.parentElement;
+                const messageEl = voiceBubble.closest('.chat-message'); // 获取消息容器，用于判断是谁发的
                 const transcriptionEl = wrapper.querySelector('.transcription-text');
                 const timestampEl = wrapper.querySelector('.message-timestamp');
                 const playIcon = voiceBubble.querySelector('.play-icon');
 
                 if (transcriptionEl) {
-                    // 切换显示状态
-                    const isVisible = transcriptionEl.style.display === 'block';
-                    transcriptionEl.style.display = isVisible ? 'none' : 'block';
-                    
-                    // 切换播放图标
-                    playIcon.className = isVisible ? 'ri-play-fill play-icon' : 'ri-pause-fill play-icon';
+                    // --- 1. UI 切换逻辑 (对所有人都生效：展开/收起文字) ---
+                    const isCurrentlyVisible = transcriptionEl.style.display === 'block';
+                    const willBeVisible = !isCurrentlyVisible; // 即将变成的状态
 
-                    // 【关键】根据显示状态，决定时间戳是气泡的一部分还是独立的一部分
-                    if (isVisible) {
-                        // 文字收起 -> 把时间戳移回 wrapper 的末尾
-                        if (timestampEl) wrapper.appendChild(timestampEl); // <--- 核心修正
-                    } else {
-                        // 文字展开 -> 同样是把时间戳移到 wrapper 的末尾
-                        if (timestampEl) wrapper.appendChild(timestampEl); // <--- 逻辑统一
+                    // 切换文字显示
+                    transcriptionEl.style.display = willBeVisible ? 'block' : 'none';
+                    
+                    // 切换图标 (展开变暂停图标，收起变播放图标)
+                    playIcon.className = willBeVisible ? 'ri-pause-fill play-icon' : 'ri-play-fill play-icon';
+
+                    // 调整时间戳位置
+                    if (timestampEl) wrapper.appendChild(timestampEl);
+
+                    // --- 2. 声音播放逻辑 (【仅限角色】) ---
+                    if (messageEl.classList.contains('character')) {
+                        
+                        // 无论展开还是收起，只要有正在播放的音频，先停掉，防止重叠
+                        if (window.currentVoiceAudio) {
+                            window.currentVoiceAudio.pause();
+                            window.currentVoiceAudio = null;
+                        }
+
+                        // 只有在【展开】(willBeVisible为真) 时，才去请求播放
+                        if (willBeVisible) {
+                            try {
+                                const text = voiceBubble.dataset.transcript;
+                                const dossierId = appState.currentChattingDossierId;
+                                const dossier = appState.dossiers.find(d => d.id === dossierId);
+                                const voiceId = dossier?.voiceId || 'male-qn-qingse';
+
+                                utils.showToast("正在生成语音...");
+
+                                const audioBlob = await apiHelper.generateSpeech(text, voiceId);
+                                const audioUrl = URL.createObjectURL(audioBlob);
+                                
+                                const audio = new Audio(audioUrl);
+                                window.currentVoiceAudio = audio;
+                                audio.play();
+
+                                // 播放自然结束时，把图标变回“播放”状 (可选，不影响收起逻辑)
+                                audio.onended = () => {
+                                    playIcon.className = 'ri-play-fill play-icon';
+                                };
+
+                            } catch (err) {
+                                console.error(err);
+                                utils.showToast(`朗读失败: ${err.message}`);
+                                // 出错把图标变回去
+                                playIcon.className = 'ri-play-fill play-icon';
+                            }
+                        }
                     }
+                    // 如果是 user (用户) 的消息，代码执行到这里就结束了，只完成了 UI 切换
                 }
             });
 
@@ -27271,51 +28958,58 @@ DOM.addUserDiaryBtn.addEventListener('click', () => {
 });
 
 // 在日记列表里，点击某一篇日记，打开阅读浮窗
-DOM.diaryListContainer.addEventListener('click', async (e) => {
-    // 1. 优先检查是否点击了删除按钮
-    const deleteBtn = e.target.closest('.delete-diary-btn');
-    if (deleteBtn) {
-        // 如果点击的是删除按钮，则执行删除逻辑
+// --- 【修复版】在日记列表里，点击某一篇日记 ---
+        DOM.diaryListContainer.addEventListener('click', async (e) => {
+            // 1. 优先检查是否点击了删除按钮
+            const deleteBtn = e.target.closest('.delete-diary-btn');
+            
+            if (deleteBtn) {
+                // --- 删除逻辑 ---
+                e.stopPropagation(); // 阻止冒泡
 
-        // a. 阻止事件冒泡，这是最关键的一步！它会防止点击事件继续传递给卡片
-        e.stopPropagation();
+                const diaryId = parseInt(deleteBtn.dataset.diaryId, 10);
+                if (!diaryId) return;
 
-        const diaryId = parseInt(deleteBtn.dataset.diaryId, 10);
-        if (!diaryId) return;
-
-        if (confirm("您确定要永久删除这篇日记吗？此操作无法撤销。")) {
-            try {
-                await dbHelper.delete(CONSTANTS.STORE_NAMES.DIARIES, diaryId);
-                
-                const cardToRemove = deleteBtn.closest('.settings-item[data-diary-id]');
-                if (cardToRemove) {
-                    cardToRemove.style.transition = 'opacity 0.3s, transform 0.3s';
-                    cardToRemove.style.opacity = '0';
-                    cardToRemove.style.transform = 'scale(0.95)';
-                    
-                    setTimeout(() => {
-                        cardToRemove.remove();
-                        if (DOM.diaryListContainer.children.length === 0) {
-                            DOM.diaryListContainer.innerHTML = '<p style="opacity: 0.7; text-align: center;">日记本还是空的，点击右上角“+”写下第一篇吧。</p>';
+                if (confirm("您确定要永久撕毁这页日记吗？此操作无法撤销。")) {
+                    try {
+                        await dbHelper.delete(CONSTANTS.STORE_NAMES.DIARIES, diaryId);
+                        
+                        // 【关键修改】这里查找的类名改成了 .diary-entry-card
+                        const cardToRemove = deleteBtn.closest('.diary-entry-card');
+                        
+                        if (cardToRemove) {
+                            cardToRemove.style.transition = 'opacity 0.3s, transform 0.3s';
+                            cardToRemove.style.opacity = '0';
+                            cardToRemove.style.transform = 'scale(0.95)';
+                            
+                            setTimeout(() => {
+                                cardToRemove.remove();
+                                if (DOM.diaryListContainer.children.length === 0) {
+                                    DOM.diaryListContainer.innerHTML = `
+                                        <div style="text-align:center; opacity:0.5; margin-top:50px; font-family: var(--font-typewriter);">
+                                            Type your first confession...
+                                        </div>`;
+                                }
+                            }, 300);
                         }
-                    }, 300);
+                        utils.showToast('日记已销毁');
+                    } catch (error) {
+                        console.error("删除日记失败:", error);
+                        utils.showToast(`删除失败: ${error.message}`);
+                    }
                 }
-                utils.showToast('日记已删除');
-            } catch (error) {
-                console.error("删除日记失败:", error);
-                utils.showToast(`删除失败: ${error.message}`);
+                
+            } else {
+                // --- 打开阅读逻辑 ---
+                // 2. 【关键修改】这里监听的类名改成了 .diary-entry-card
+                const card = e.target.closest('.diary-entry-card');
+                
+                if (card) {
+                    // 获取 ID 并打开浮窗
+                    openDiaryReadModal(parseInt(card.dataset.diaryId, 10));
+                }
             }
-        }
-        
-    } else {
-        // 2. 如果点击的不是删除按钮，再检查是否点击了卡片本身
-        const card = e.target.closest('.settings-item[data-diary-id]');
-        if (card) {
-            // 如果点击的是卡片，则执行打开阅读浮窗的逻辑
-            openDiaryReadModal(parseInt(card.dataset.diaryId, 10));
-        }
-    }
-});
+        });
 
 // 关闭写作浮窗
 DOM.closeDiaryWriteModalBtn.addEventListener('click', () => DOM.diaryWriteModal.classList.remove('visible'));
@@ -29170,21 +30864,30 @@ DOM.extractMemoryBookBtn.addEventListener('click', async () => {
             // 5. 【新增】确认开启沙龙按钮
             DOM.salonConfirmCreateBtn.addEventListener('click', createNewSalonGroup);
 
-            // 6. 点击聊天页右上角 "..." -> 进入详情页 (更新成员表)
+            // 6. 点击聊天页右上角 "..." -> 进入详情页 (合并版)
             DOM.salonInfoBtn.addEventListener('click', () => {
-                // 进入详情页前，更新一下成员显示
                 const sessionId = appState.currentChattingDossierId;
                 const session = appState.chatSessions.find(s => s.dossierId === sessionId);
                 
-                if(session && document.getElementById('salon-member-name-display')) {
-                     const memberNames = ['我'];
-                     if (session.members && Array.isArray(session.members)) {
-                        session.members.forEach(id => {
-                            const d = appState.dossiers.find(x => x.id === id);
-                            if (d) memberNames.push(d.character.name);
-                        });
+                if (session) {
+                    // --- 原有逻辑：更新成员表 ---
+                    if(document.getElementById('salon-member-name-display')) {
+                        const memberNames = ['我'];
+                        if (session.members && Array.isArray(session.members)) {
+                            session.members.forEach(id => {
+                                const d = appState.dossiers.find(x => x.id === id);
+                                if (d) memberNames.push(d.character.name);
+                            });
+                        }
+                        document.getElementById('salon-member-name-display').textContent = memberNames.join(', ');
                     }
-                    document.getElementById('salon-member-name-display').textContent = memberNames.join(', ');
+
+                    // --- 【新增逻辑】：回显记忆条数 ---
+                    if (DOM.salonMemorySlider && DOM.salonMemoryVal) {
+                        const limit = session.memoryLimit || 30;
+                        DOM.salonMemorySlider.value = limit;
+                        DOM.salonMemoryVal.textContent = `${limit} 条`;
+                    }
                 }
                 
                 navigateToPage(DOM.salonApp, 'salon-details-page');
@@ -29333,36 +31036,65 @@ DOM.extractMemoryBookBtn.addEventListener('click', async () => {
                 }
             });
 
-// --- 6. 清空剧本 (重置聊天记录) ---
-            DOM.salonClearHistoryBtn.addEventListener('click', async () => {
-                const sessionId = appState.currentChattingDossierId;
-                if (confirm("确定要清空当前的聊天记录吗？\n设定和背景图将会保留，仅仅是重开一局。")) {
-                    // 1. 数据库删除消息
-                    await dbHelper.deleteHistoryForDossier(sessionId);
-                    
-                    // 2. 插入新的开场白
-                    const openingMsg = {
-                        dossierId: sessionId,
-                        sender: 'system',
-                        type: 'narration',
-                        content: '剧本已重置。故事重新开始...',
-                        timestamp: Date.now()
-                    };
-                    await dbHelper.add(CONSTANTS.STORE_NAMES.CHAT_HISTORY, openingMsg);
-                    
-                    // 3. 更新会话预览
-                    const session = appState.chatSessions.find(s => s.dossierId === sessionId);
-                    if (session) {
-                        session.lastMessage = "剧本已重置";
-                        await dbHelper.set(CONSTANTS.STORE_NAMES.CHAT_SESSIONS, session);
-                    }
+// --- 6. 清空剧本 (重置聊天记录) - 修复跳转版 ---
+DOM.salonClearHistoryBtn.addEventListener('click', async () => {
+    const sessionId = appState.currentChattingDossierId;
+    if (confirm("确定要清空当前的聊天记录吗？\n设定和背景图将会保留，仅仅是重开一局。")) {
+        
+        // 1. 数据库删除消息
+        await dbHelper.deleteHistoryForDossier(sessionId);
+        
+        // 2. 插入新的开场白
+        const openingMsg = {
+            dossierId: sessionId,
+            sender: 'system',
+            type: 'narration',
+            content: '剧本已重置。故事重新开始...',
+            timestamp: Date.now()
+        };
+        await dbHelper.add(CONSTANTS.STORE_NAMES.CHAT_HISTORY, openingMsg);
+        
+        // 3. 更新会话预览
+        const session = appState.chatSessions.find(s => s.dossierId === sessionId);
+        if (session) {
+            session.lastMessage = "剧本已重置";
+            await dbHelper.set(CONSTANTS.STORE_NAMES.CHAT_SESSIONS, session);
+        }
 
-                    // 4. 如果还在聊天界面，刷新一下
-                    
-                    
-                    utils.showToast("剧本已重置");
-                }
-            });
+        // 4. 【核心修复】更新内存 & 立即重绘界面
+        
+        // A. 清空内存历史
+        appState.currentChatHistory = [openingMsg]; // 只保留新的开场白
+
+        // B. 清空屏幕 DOM
+        const container = document.getElementById('salon-chat-container');
+        container.innerHTML = '';
+        
+        // C. 渲染新的开场白
+        const msgEl = await createSalonMessageElement(openingMsg);
+        container.appendChild(msgEl);
+
+        // D. 【关键】把打字机动画的 DOM 结构补回去 (因为 innerHTML='' 把它删了)
+        // 如果不补这个，下次 AI 回复时找不到元素会报错
+        const typingEl = document.createElement('div');
+        typingEl.id = 'salon-typing-indicator';
+        typingEl.innerHTML = `
+            <span class="typing-identity-text">Muses</span>
+            <div class="typing-pill-cinematic">
+                <span class="typing-text-cinematic">are writing</span>
+                <div class="typing-dot-cinematic"></div>
+                <div class="typing-dot-cinematic"></div>
+                <div class="typing-dot-cinematic"></div>
+            </div>
+        `;
+        container.appendChild(typingEl);
+
+        utils.showToast("剧本已重置");
+
+        // 5. 【核心修复】立即跳转回聊天页
+        navigateToPage(DOM.salonApp, 'salon-chat-page');
+    }
+});
 
             // --- 7. 结束剧情 (彻底删除沙龙) ---
             DOM.salonDeleteChatBtn.addEventListener('click', async () => {
@@ -29404,7 +31136,345 @@ DOM.salonGroupList.addEventListener('click', async (e) => {
         enterSalonChatUI(session);
     }
 });
-          
+
+// --- 沙龙消息点击事件 (规范版) ---
+document.getElementById('salon-chat-container').addEventListener('click', (e) => {
+    // 查找是否点击了消息体 (无论是行还是旁白)
+    const msgContainer = e.target.closest('[data-msg-id]');
+
+    // === 分支 A: 多选模式下，点击任何消息都是切换选中 ===
+    if (appState.isSalonMultiSelectMode) {
+        if (msgContainer) {
+            toggleSalonMessageSelection(msgContainer.dataset.msgId);
+        }
+        return; // 阻止触发其他逻辑
+    }
+
+    // === 分支 B: 普通模式下，点击气泡出菜单 ===
+    const bubble = e.target.closest('.salon-msg-bubble'); // 对话气泡
+    const narration = e.target.closest('.salon-msg-narration'); // 旁白整体也算气泡
+    
+    // 只要点了有内容的地方，就出菜单
+    if (bubble || narration) {
+        e.stopPropagation();
+        // 如果点的是旁白，就把旁白元素本身传进去定位
+        openSalonMenu(bubble || narration);
+    } else {
+        closeSalonMenu();
+    }
+});
+
+// 全局点击关闭
+document.addEventListener('click', (e) => {
+    const menu = DOM.salonPopoverMenu;
+    // 使用 DOM.salonPopoverMenu
+    if (menu.classList.contains('visible') && !menu.contains(e.target)) {
+        closeSalonMenu();
+    }
+});
+
+// --- 沙龙菜单点击事件 ---
+    DOM.salonPopoverMenu.addEventListener('click', async (e) => {
+        const item = e.target.closest('.salon-menu-item');
+        if (!item) return;
+        
+        const action = item.dataset.action;
+        
+        // 获取当前操作的消息 ID
+        const bubbleEl = appState.currentSalonBubbleEl;
+        if (!bubbleEl) {
+            closeSalonMenu();
+            return;
+        }
+        
+        // 向上查找 ID
+        const msgContainer = bubbleEl.closest('[data-msg-id]');
+        const msgId = msgContainer ? msgContainer.dataset.msgId : null;
+
+        if (!msgId) {
+            utils.showToast('无法定位消息');
+            closeSalonMenu();
+            return;
+        }
+
+        // === 功能分流 ===
+        
+        if (action === 'copy') {
+            // 复制文本
+            const text = bubbleEl.textContent || bubbleEl.innerText;
+            navigator.clipboard.writeText(text.trim()).then(() => {
+                utils.showToast('已复制');
+            });
+
+        } else if (action === 'multi') {
+            // 进入多选模式
+            enterSalonMultiSelectMode(msgId);
+
+        } else if (action === 'edit') {
+            // --- 编辑功能 ---
+            // 1. 在内存中找到这条消息数据
+            const messageData = appState.currentChatHistory.find(msg => msg.id === parseInt(msgId, 10));
+            
+            if (messageData) {
+                // 2. 记录当前正在编辑的 ID
+                appState.currentEditingMessageId = messageData.id;
+                
+                // 3. 填入内容到浮窗输入框
+                DOM.editMessageTextarea.value = messageData.content;
+                
+                // 4. 打开编辑浮窗
+                DOM.editMessageModal.classList.add('visible');
+                DOM.editMessageTextarea.focus();
+            } else {
+                utils.showToast('读取消息失败');
+            }
+
+        } else if (action === 'reroll') {
+            // --- 重试 (Reroll) ---
+            handleSalonReroll(msgId); 
+        }
+        
+        // 操作完关闭菜单
+        closeSalonMenu();
+    });
+
+// --- 沙龙多选：取消按钮 ---
+    DOM.salonMultiCancelBtn.addEventListener('click', exitSalonMultiSelectMode);
+
+    // --- 沙龙多选：删除按钮 ---
+    DOM.salonMultiDeleteBtn.addEventListener('click', async () => {
+        const ids = Array.from(appState.salonSelectedIds);
+        if (ids.length === 0) return;
+
+        if (confirm(`确定要删除选中的 ${ids.length} 条剧本吗？`)) {
+            try {
+                // 1. 数据库删除
+                await dbHelper.deleteMessagesByIds(appState.salonSelectedIds);
+                
+                // 2. UI 删除 (找到对应的 DOM 并移除)
+                ids.forEach(id => {
+                    const el = document.querySelector(`div[data-msg-id="${id}"]`);
+                    if (el) el.remove();
+                });
+
+                utils.showToast('删除成功');
+                
+                // 3. 退出模式
+                exitSalonMultiSelectMode();
+
+            } catch (e) {
+                console.error(e);
+                utils.showToast('删除失败');
+            }
+        }
+    });
+
+// === [新增] 沙龙文字颜色设置监听       === // 
+
+    // 1. 实时预览 (监听输入框变化)
+    DOM.inputSalonNarrator.addEventListener('input', updateSalonStylePreview);
+    DOM.inputSalonChar.addEventListener('input', updateSalonStylePreview);
+    DOM.inputSalonUser.addEventListener('input', updateSalonStylePreview);
+
+    // 2. 打开浮窗 & 回显数据
+    DOM.btnSalonTextStyle.addEventListener('click', () => {
+        const sessionId = appState.currentChattingDossierId;
+        // 注意：这里我们要从内存(chatSessions)里找
+        const session = appState.chatSessions.find(s => s.dossierId === sessionId);
+        const styles = session?.textStyles || {}; 
+
+        // 填充输入框 (默认值写死在这里作为兜底)
+        DOM.inputSalonNarrator.value = styles.narrator || '#fde68a';
+        DOM.inputSalonChar.value = styles.char || '#f5f5f4';
+        DOM.inputSalonUser.value = styles.user || '#f5f5f4';
+        
+        updateSalonStylePreview(); // 刷新一下预览
+        DOM.salonStyleModal.classList.add('visible');
+    });
+
+    // 3. 保存设置
+    DOM.saveSalonStyleBtn.addEventListener('click', async () => {
+        const sessionId = appState.currentChattingDossierId;
+        if (!sessionId) return;
+
+        const session = appState.chatSessions.find(s => s.dossierId === sessionId);
+        if (session) {
+            const newStyles = {
+                narrator: DOM.inputSalonNarrator.value,
+                char: DOM.inputSalonChar.value,
+                user: DOM.inputSalonUser.value
+            };
+            
+            // A. 更新内存
+            session.textStyles = newStyles;
+            // B. 更新数据库
+            await dbHelper.set(CONSTANTS.STORE_NAMES.CHAT_SESSIONS, session);
+            // C. 立即应用到界面 (调用全局工具函数)
+            applySalonTextStyles(newStyles);
+            
+            utils.showToast('文字风格已保存');
+            DOM.salonStyleModal.classList.remove('visible');
+        }
+    });
+
+    // 4. 恢复默认
+    DOM.resetSalonStyleBtn.addEventListener('click', () => {
+        // 恢复到默认色值
+        DOM.inputSalonNarrator.value = '#fde68a';
+        DOM.inputSalonChar.value = '#f5f5f4';
+        DOM.inputSalonUser.value = '#f5f5f4';
+        updateSalonStylePreview();
+    });
+
+    // 5. 关闭浮窗
+    DOM.closeSalonStyleBtn.addEventListener('click', () => {
+        DOM.salonStyleModal.classList.remove('visible');
+    });
+
+// === [新增] 沙龙记忆滑块交互逻辑       === // 
+
+    // 1. 监听滑块拖动 (实时更新数字显示)
+    DOM.salonMemorySlider.addEventListener('input', () => {
+        DOM.salonMemoryVal.textContent = `${DOM.salonMemorySlider.value} 条`;
+    });
+
+    // 2. 监听滑块松开/改变 (保存到数据库)
+    DOM.salonMemorySlider.addEventListener('change', async () => {
+        const sessionId = appState.currentChattingDossierId;
+        const newLimit = parseInt(DOM.salonMemorySlider.value, 10);
+        
+        if (!sessionId) return;
+
+        const session = appState.chatSessions.find(s => s.dossierId === sessionId);
+        if (session) {
+            // 更新内存
+            session.memoryLimit = newLimit;
+            // 更新数据库
+            await dbHelper.set(CONSTANTS.STORE_NAMES.CHAT_SESSIONS, session);
+            
+            // 控制台打个标，方便调试
+            console.log(`沙龙记忆已更新为: ${newLimit} 条`);
+        }
+    });
+
+// 在 initializeEventListeners 函数内部添加：
+
+    // --- 1. 全局设置页跳转逻辑 ---
+    DOM.gotoMinimaxSettings.addEventListener('click', async () => {
+        // 每次进入页面时，回显已保存的数据
+        const groupId = await dbHelper.get(CONSTANTS.STORE_NAMES.USER_SETTINGS, 'minimax_group_id');
+        const apiKey = await dbHelper.get(CONSTANTS.STORE_NAMES.USER_SETTINGS, 'minimax_api_key');
+        
+        DOM.minimaxGroupIdInput.value = groupId?.value || '';
+        DOM.minimaxApiKeyInput.value = apiKey?.value || '';
+        
+        navigateToPage(DOM.settingsNavigator, 'minimax-settings-page');
+    });
+
+    // --- 2. 保存 MiniMax 全局配置 ---
+    DOM.saveMinimaxSettingsBtn.addEventListener('click', async () => {
+        const groupId = DOM.minimaxGroupIdInput.value.trim();
+        const apiKey = DOM.minimaxApiKeyInput.value.trim();
+        
+        await dbHelper.set(CONSTANTS.STORE_NAMES.USER_SETTINGS, { value: groupId }, 'minimax_group_id');
+        await dbHelper.set(CONSTANTS.STORE_NAMES.USER_SETTINGS, { value: apiKey }, 'minimax_api_key');
+        
+        utils.showToast('MiniMax 配置已保存');
+        // 保存后自动返回上一页
+        navigateToPage(DOM.settingsNavigator, 'settings-main-page');
+    });
+
+    // --- 3. 聊天详情页：打开音色设置浮窗 ---
+    DOM.setVoiceIdItem.addEventListener('click', () => {
+        const dossierId = appState.currentChattingDossierId;
+        if (!dossierId) return;
+        
+        const dossier = appState.dossiers.find(d => d.id === dossierId);
+        if (dossier) {
+            // 回显当前角色的音色ID
+            DOM.voiceIdInput.value = dossier.voiceId || '';
+            DOM.voiceIdModal.classList.add('visible');
+        }
+    });
+
+    // --- 4. 关闭音色浮窗 ---
+    const closeVoiceSettingsModal = () => DOM.voiceIdModal.classList.remove('visible');
+    
+    DOM.closeVoiceIdModalBtn.addEventListener('click', closeVoiceSettingsModal);
+    DOM.voiceIdModal.addEventListener('click', (e) => {
+        if (e.target === DOM.voiceIdModal) closeVoiceSettingsModal();
+    });
+
+    // --- 5. 保存角色专属音色 ID ---
+    DOM.saveVoiceIdBtn.addEventListener('click', async () => {
+        const dossierId = appState.currentChattingDossierId;
+        const newVoiceId = DOM.voiceIdInput.value.trim();
+        
+        if (!dossierId) return;
+
+        try {
+            const dossier = await dbHelper.get(CONSTANTS.STORE_NAMES.DOSSIERS, dossierId);
+            if (dossier) {
+                // 更新字段
+                dossier.voiceId = newVoiceId;
+                
+                // 存入数据库
+                await dbHelper.set(CONSTANTS.STORE_NAMES.DOSSIERS, dossier);
+                
+                // 同步内存
+                const idx = appState.dossiers.findIndex(d => d.id === dossierId);
+                if (idx > -1) appState.dossiers[idx] = dossier;
+                
+                // 更新详情页上的文字显示
+                DOM.currentVoiceIdDisplay.textContent = newVoiceId || '默认';
+                
+                utils.showToast('音色设置已更新');
+                closeVoiceModal();
+            }
+        } catch (e) {
+            console.error(e);
+            utils.showToast('保存失败');
+        }
+    });
+
+// ===   [新增] 沉浸模式/隐藏系统栏逻辑   === // 
+            // 1. 动态创建一个“顶部感应区” (如果HTML里没写，JS自动创建)
+            let topTrigger = document.getElementById('top-trigger-zone');
+            if (!topTrigger) {
+                topTrigger = document.createElement('div');
+                topTrigger.id = 'top-trigger-zone';
+                document.body.appendChild(topTrigger);
+            }
+
+            const statusBar = document.querySelector('.status-bar');
+            const toggleUiBtn = document.getElementById('toggle-statusbar-btn');
+
+            // 2. 点击菜单里的“Hide UI”按钮
+            toggleUiBtn.addEventListener('click', (e) => {
+                // 隐藏系统栏
+                statusBar.classList.add('hidden');
+                
+                // 激活顶部感应区
+                topTrigger.classList.add('active');
+                
+                // 关闭浮窗
+                DOM.themePopover.classList.remove('visible');
+                
+                // 提示用户如何恢复
+                utils.showToast('已进入沉浸模式 (点击屏幕顶部恢复)');
+                
+                // 阻止冒泡，防止触发其他的点击关闭逻辑
+                e.stopPropagation();
+            });
+
+            // 3. 点击顶部感应区 -> 恢复系统栏
+            topTrigger.addEventListener('click', () => {
+                // 显示系统栏
+                statusBar.classList.remove('hidden');
+                
+                // 隐藏感应区
+                topTrigger.classList.remove('active');
+            });
 }
 
         async function initializeApp() {
