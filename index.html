@@ -13,7 +13,8 @@
    <link rel="preconnect" href="https://fonts.googleapis.com">
    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-   <link href="https://fonts.googleapis.com/css2?family=Ruthie&family=Special+Elite&display=swap" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Ruthie&family=Special+Elite&display=swap" rel="stylesheet"> 
+   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Great+Vibes&family=Pinyon+Script&family=Noto+Serif+SC:wght@200;300;400;500&family=Noto+Serif+JP:wght@300;400&display=swap" rel="stylesheet">
    <script src="https://unpkg.com/lucide@latest"></script>
    <script src="https://unpkg.com/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
    <script src="https://unpkg.com/idb@7/build/umd.js"></script>
@@ -9794,6 +9795,1379 @@ body.light-mode .entry-delete-btn { color: #8a1c1c; }
     100% { opacity: 0.9; border-radius: 50% 50% 40% 60% / 60% 50% 50% 40%; }
 }
 @keyframes splashStitch { to { stroke-dashoffset: 0; } }
+
+/* ============================================================
+   ===  [新增] 彭伯里信箱 (Vintage Envelope Style)        ===
+   ============================================================ */
+
+.widget-envelope-wrapper {
+    /* --- 1. 核心定位 (填补红圈位置) --- */
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;     /* 和沙龙在同一行 */
+    align-self: end;     /* 靠底部对齐 */
+    
+    /* --- 2. 尺寸与形状 --- */
+    height: 70px;        /* 比胶囊稍微高一点，像一个信封 */
+    width: 100%;
+    border-radius: 6px;  /* 纸张的折角，不需要太圆 */
+    
+    /* --- 3. 纸张质感 --- */
+    background-color: #f4f1ea; /* 旧信纸色 */
+    /* 叠加纸张噪点纹理 */
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+    
+    /* 边框与阴影 */
+    border: 1px solid rgba(141, 110, 99, 0.3);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    
+    position: relative;
+    cursor: pointer;
+    overflow: hidden; /* 裁剪多余部分 */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    display: flex;
+    align-items: flex-end; /* 文字沉底 */
+    padding: 10px 15px;
+    box-sizing: border-box;
+}
+
+/* 悬停交互：浮起 */
+.widget-envelope-wrapper:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(60, 40, 30, 0.15);
+    background-color: #fffef9;
+}
+
+/* --- 三角形封口 (Flap) --- */
+.envelope-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 65%; /* 封口占据的高度 */
+    
+    background-color: rgba(0, 0, 0, 0.03); /* 稍微深一点，区分层次 */
+    /* 使用 clip-path 画出一个倒三角形 */
+    clip-path: polygon(0 0, 50% 100%, 100% 0);
+    
+    /* 增加一个顶部边框感 */
+    border-top: 1px solid rgba(141, 110, 99, 0.2);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 给封口加一点阴影线条 (伪元素模拟) */
+.envelope-flap::after {
+    content: '';
+    position: absolute;
+    top: -1px; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to bottom, rgba(141, 110, 99, 0.1), transparent 30%);
+}
+
+/* --- 火漆印章 (Seal) --- */
+.envelope-seal {
+    position: absolute;
+    top: 45%; /* 位于封口尖端附近 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    
+    /* 经典的火漆红 */
+    background: #8a1c1c;
+    border: 2px dashed rgba(255,255,255,0.2);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+}
+
+.envelope-seal i {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.2));
+}
+
+/* --- 文字区域 (手写体) --- */
+.envelope-text-group {
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 居中 */
+}
+
+.env-to {
+    font-size: 10px;
+    font-family: "Courier Prime", monospace; /* 打字机字体 */
+    color: #8d6e63;
+    opacity: 0.8;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: -2px;
+}
+
+.env-title {
+    /* 使用艺术手写体 (如果有的话) 或衬线体 */
+    font-family: "Ruthie", "Great Vibes", "Times New Roman", cursive;
+    font-size: 22px;
+    color: #2c3e50; /* 墨水蓝黑 */
+    font-weight: 500;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+    /* 微微倾斜，像手写的 */
+    transform: rotate(-2deg);
+}
+
+/* 浅色模式适配 */
+body.light-mode .widget-envelope-wrapper {
+    border-color: rgba(0,0,0,0.1);
+    background-color: #fff;
+}
+
+/* ============================================================
+   ===  彭伯里信箱 (Pemberley) 专属样式  ===
+   ============================================================ */
+
+/* 1. 颜色变量 (全局定义，以便浮窗也能读取) */
+:root {
+    /* --- 🌑 默认深色模式 --- */
+    --pemb-bg-color: #0a0a0a;
+    --pemb-paper-tone: #161616;
+    --pemb-paper-border: #2a2a2a;
+    --pemb-wedgwood-blue: #5d7a8c;
+    --pemb-wedgwood-light: #4a5a66;
+    --pemb-wedgwood-dark: #8daabf;
+    --pemb-ink-primary: #e0e0e0;
+    --pemb-ink-secondary: #a0a0a0;
+    --pemb-ink-faded: #666666;
+    --pemb-old-rose: #c08a8a;
+    --pemb-nav-bg: linear-gradient(0deg, #0a0a0a 40%, rgba(10,10,10,0) 100%);
+    
+    /* 字体定义 */
+    --font-base: 'Noto Serif SC', serif;
+    --font-eng-serif: 'Cormorant Garamond', serif;
+    --font-eng-script: 'Pinyon Script', cursive;
+    --font-jp: 'Noto Serif JP', serif;
+}
+
+/* --- ☀️ 浅色模式适配 --- */
+body.light-mode {
+    --pemb-bg-color: #f0f2f1;
+    --pemb-paper-tone: #fdfcf9;
+    --pemb-paper-border: #e6e4df;
+    --pemb-wedgwood-blue: #728c9e; 
+    --pemb-wedgwood-light: #aebbc5;
+    --pemb-wedgwood-dark: #4a6375;
+    --pemb-ink-primary: #3d4045;
+    --pemb-ink-secondary: #5a5f66;
+    --pemb-ink-faded: #8c9296;
+    --pemb-nav-bg: linear-gradient(0deg, #f0f2f1 40%, rgba(240, 242, 241, 0) 100%);
+}
+
+/* 2. 主页面容器 */
+#pemberley-main-page {
+    background-color: var(--pemb-bg-color);
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.03'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 1.79 4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
+    
+    transition: background-color 0.4s ease, color 0.4s ease;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.pemb-header {
+    padding: 60px 20px 10px;
+    text-align: center;
+    z-index: 10;
+    position: relative;
+}
+.pemb-h1 {
+    font-family: var(--font-eng-serif);
+    font-size: 34px;
+    letter-spacing: 0.1em;
+    color: var(--pemb-ink-primary);
+    font-weight: 500;
+    margin: 0;
+}
+.pemb-divider {
+    font-family: var(--font-eng-script);
+    font-size: 28px;
+    color: var(--pemb-wedgwood-light);
+    line-height: 0.5;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+
+/* Main Scroll Area */
+.pemb-main {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    padding: 20px 25px 100px; 
+    scroll-behavior: smooth;
+}
+.pemb-main::-webkit-scrollbar { display: none; }
+
+/* 旷野视图 */
+#view-wilderness {
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 浮雕按钮 */
+.cameo-btn {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: var(--pemb-paper-tone);
+    border: 4px solid var(--pemb-wedgwood-blue);
+    box-shadow: 0 0 0 4px var(--pemb-paper-tone), 0 0 0 5px var(--pemb-wedgwood-blue), 0 20px 40px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    margin-bottom: 40px;
+}
+.cameo-inner {
+    width: 85%; height: 85%; border-radius: 50%;
+    border: 1px dashed var(--pemb-wedgwood-blue);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; background: var(--pemb-paper-tone); z-index: 2;
+}
+.cameo-icon {
+    font-size: 40px; color: var(--pemb-wedgwood-dark);
+    margin-bottom: 5px; transition: transform 0.5s;
+}
+.cameo-label {
+    font-family: var(--font-eng-serif); font-size: 14px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--pemb-ink-secondary);
+}
+.pemb-ripple {
+    position: absolute; border: 1px solid var(--pemb-wedgwood-blue);
+    border-radius: 50%; width: 100%; height: 100%;
+    opacity: 0; pointer-events: none; z-index: 1;
+}
+.cameo-btn:active { transform: scale(0.95); }
+.cameo-btn:hover .cameo-icon { transform: rotate(15deg); }
+.cameo-btn.animating .pemb-ripple { animation: pemb-ripple-effect 1.5s infinite; }
+@keyframes pemb-ripple-effect {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+.prompt-text {
+    text-align: center; font-family: var(--font-eng-script);
+    font-size: 26px; color: var(--pemb-wedgwood-dark); margin-bottom: 10px; transition: opacity 0.5s;
+}
+.sub-prompt {
+    text-align: center; font-family: var(--font-base);
+    font-size: 11px; letter-spacing: 0.15em; color: var(--pemb-ink-faded); opacity: 0.7;
+}
+
+/* 信件纸张 */
+#letter-stack { display: none; width: 100%; }
+.letter-paper {
+    background-color: var(--pemb-paper-tone);
+    border-radius: 4px; 
+    border: 1px solid var(--pemb-paper-border);
+    padding: 40px 30px; 
+    margin-bottom: 40px; 
+    position: relative;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3); 
+    opacity: 0;
+    
+    /* === 核心修改在这里 === */
+    /* 原来是 transform: rotate(1deg); */
+    transform: none !important; /* 强制不旋转 */
+    /* =================== */
+
+    animation: paperFloatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    color: var(--pemb-ink-primary);
+    
+    /* 配合刚才做的折叠功能，加回这个 overflow */
+    overflow: hidden; 
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.letter-paper::before {
+    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.02) 100%);
+    pointer-events: none;
+}
+.pemb-stamp-mark {
+    font-family: var(--font-eng-serif); font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.15em; color: var(--pemb-wedgwood-blue);
+    margin-bottom: 25px; text-align: center;
+    border-bottom: 1px solid var(--pemb-paper-border); padding-bottom: 10px; width: 60%; margin-left: auto; margin-right: auto;
+}
+.pemb-text-body {
+    font-size: 17px; 
+    line-height: 1.9;
+    color: var(--pemb-ink-primary);
+    text-align: justify;
+    margin-bottom: 25px;
+    cursor: pointer;
+    font-family: inherit; 
+    font-weight: 400;
+}
+.pemb-text-body.lang-en, 
+.pemb-text-body.lang-fr { 
+    font-family: var(--font-eng-script) !important; /* Pinyon Script */
+    font-size: 28px;
+    line-height: 1.4; 
+    text-align: center;
+} 
+.pemb-text-body.lang-de,
+.pemb-text-body.lang-es,
+.pemb-text-body.lang-it { 
+    font-family: var(--font-eng-serif) !important; /* Cormorant Garamond */
+    font-size: 22px; 
+    font-style: italic;
+    letter-spacing: 0.02em;
+    text-align: left;
+}
+
+.pemb-text-body.lang-jp { 
+    font-family: var(--font-jp) !important; 
+    font-weight: 300; 
+    font-size: 16px; 
+    line-height: 2; 
+}
+
+.pemb-text-translation {
+    /* 同样继承全局字体，让翻译也显示为您设置的字体 */
+    font-family: inherit; 
+    font-size: 14px;
+    color: var(--pemb-ink-faded);
+    text-align: justify;
+    line-height: 1.8;
+    padding: 15px 10px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 4px;
+    display: none;
+    margin-bottom: 20px;
+    border: 1px dashed var(--pemb-paper-border);
+}
+.pemb-btn-group { display: flex; justify-content: center; gap: 25px; margin-top: 10px; }
+.pemb-btn-text {
+    background: none; border: none; font-family: var(--font-eng-serif);
+    font-size: 14px; color: var(--pemb-wedgwood-blue); cursor: pointer;
+    letter-spacing: 0.05em; padding: 5px; transition: color 0.3s;
+}
+.pemb-btn-text:hover { color: var(--pemb-old-rose); }
+.pemb-btn-primary {
+    background: transparent; border: 1px solid var(--pemb-ink-primary);
+    color: var(--pemb-ink-primary); font-family: var(--font-eng-serif);
+    font-size: 14px; padding: 6px 24px; cursor: pointer;
+    transition: all 0.3s; border-radius: 2px; letter-spacing: 0.05em;
+}
+.pemb-btn-primary:hover {
+    background: var(--pemb-ink-primary); color: var(--pemb-bg-color); border-color: var(--pemb-ink-primary);
+}
+
+/* 珍藏列表 */
+#view-collection { display: none; }
+.pemb-collection-item {
+    padding: 25px 20px; border-bottom: 1px solid var(--pemb-paper-border);
+    margin-bottom: 0; cursor: pointer; transition: background-color 0.2s; position: relative;
+}
+.pemb-collection-item:hover { background-color: rgba(255,255,255,0.05); }
+.pemb-collection-item::after {
+    content: "›"; position: absolute; right: 20px; top: 50%;
+    transform: translateY(-50%); font-size: 20px; color: var(--pemb-ink-faded);
+    font-family: var(--font-eng-serif);
+}
+.pemb-collection-snippet {
+    font-family: var(--font-eng-serif); font-style: italic; font-size: 18px;
+    color: var(--pemb-ink-primary); margin-bottom: 6px; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis; padding-right: 20px;
+}
+.pemb-collection-meta {
+    font-family: var(--font-eng-serif); font-size: 12px; color: var(--pemb-ink-faded); letter-spacing: 0.05em;
+}
+
+/* 底部导航 */
+.pemb-nav {
+    position: absolute; bottom: 0; width: 100%; height: 70px;
+    background: var(--pemb-nav-bg); display: flex; justify-content: center;
+    align-items: center; gap: 60px; z-index: 20; padding-bottom: 15px;
+}
+.pemb-nav-link {
+    background: none; border: none; font-family: var(--font-base);
+    font-weight: 500; font-size: 14px; letter-spacing: 0.2em;
+    color: var(--pemb-ink-faded); cursor: pointer; transition: all 0.3s;
+    padding-bottom: 4px; border-bottom: 1px solid transparent;
+}
+.pemb-nav-link.active { color: var(--pemb-ink-primary); border-bottom: 1px solid var(--pemb-old-rose); }
+
+/* 浮窗通用样式 (复用系统层级) */
+.pemb-modal-mask {
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); 
+    backdrop-filter: blur(5px);
+    z-index: 200; 
+    
+    /* 默认隐藏 */
+    display: none; 
+    opacity: 0;
+    
+    justify-content: center; 
+    align-items: center;
+    transition: opacity 0.4s;
+}
+
+.pemb-modal-mask.visible {
+    display: flex;
+    opacity: 1; /* 确保可见 */
+}
+
+.pemb-modal-mask.open { 
+    opacity: 1; 
+}
+
+.pemb-modal-card {
+    background: var(--pemb-paper-tone); width: 88%; max-width: 400px;
+    padding: 0; border-radius: 4px; border: 1px solid var(--pemb-paper-border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5); display: flex;
+    flex-direction: column; transform: translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative; overflow: hidden;
+}
+.pemb-modal-mask.open .pemb-modal-card { transform: translateY(0); }
+
+.pemb-card-header {
+    padding: 25px 30px 10px; text-align: center;
+    border-bottom: 1px dashed var(--pemb-paper-border);
+}
+.pemb-card-label {
+    font-family: var(--font-eng-serif); font-style: italic;
+    color: var(--pemb-wedgwood-blue); font-size: 15px; margin-bottom: 5px;
+}
+.pemb-card-title {
+    font-family: var(--font-eng-serif); font-size: 20px; color: var(--pemb-ink-primary);
+}
+.pemb-card-body { padding: 20px 30px; max-height: 60vh; overflow-y: auto; }
+.pemb-card-footer {
+    padding: 15px 30px 25px; display: flex; justify-content: flex-end;
+    gap: 20px; align-items: center; background: rgba(255,255,255,0.02);
+}
+
+.pemb-reply-textarea {
+    width: 100%; background: transparent; border: none; outline: none;
+    font-family: var(--font-base); font-size: 16px; line-height: 2.2;
+    color: var(--pemb-ink-secondary); min-height: 180px; 
+    background-image: repeating-linear-gradient(transparent, transparent 34px, var(--pemb-paper-border) 35px);
+    resize: none; margin-top: 5px; padding-top: 4px;
+}
+.pemb-reply-textarea::placeholder { color: var(--pemb-ink-faded); font-style: italic; }
+
+.pemb-read-original {
+    font-family: var(--font-eng-serif); font-size: 18px; color: var(--pemb-ink-primary);
+    text-align: center; margin-bottom: 15px; font-style: italic;
+}
+.pemb-read-translation {
+    font-size: 13px; color: var(--pemb-ink-faded); background: rgba(255,255,255,0.03);
+    padding: 10px; border-radius: 4px; margin-bottom: 20px; line-height: 1.6;
+}
+.pemb-read-reply-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--pemb-wedgwood-blue); margin-bottom: 5px; text-align: center;
+    border-top: 1px solid var(--pemb-paper-border); padding-top: 15px;
+}
+.pemb-read-reply-content {
+    font-family: var(--font-base); color: var(--pemb-ink-secondary);
+    font-size: 15px; line-height: 1.8; white-space: pre-wrap;
+}
+
+@keyframes paperFloatUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(40px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0);
+    }
+}
+/* --- 彭伯里往来书简视图 --- */
+
+.pemb-msg-row {
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 对方的信 (靠左) */
+.pemb-msg-row.sender {
+    align-items: flex-start;
+    margin-right: 10%;
+}
+
+/* 我的信 (靠右) */
+.pemb-msg-row.me {
+    align-items: flex-end;
+    margin-left: 10%;
+}
+
+.pemb-msg-content {
+    background: rgba(255, 255, 255, 0.05); /* 极淡的背景 */
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    position: relative;
+    min-width: 60%;
+}
+
+/* 对方信件样式：纸张感 */
+.pemb-msg-row.sender .pemb-msg-content {
+    background: var(--pemb-paper-tone);
+    border: 1px solid var(--pemb-paper-border);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    color: var(--pemb-ink-primary);
+}
+
+/* 我的信件样式：手写感 */
+.pemb-msg-row.me .pemb-msg-content {
+    background: transparent;
+    border-bottom: 1px solid var(--pemb-paper-border); /* 只有下划线 */
+    padding: 10px;
+    font-family: var(--font-base);
+    color: var(--pemb-ink-secondary);
+    font-style: italic;
+    text-align: right;
+}
+
+/* 字体复用 */
+.pemb-msg-original {
+    font-size: 17px;
+    line-height: 1.8;
+    margin-bottom: 10px;
+}
+.pemb-msg-original.lang-en, .pemb-msg-original.lang-fr {
+    font-family: var(--font-eng-script);
+    font-size: 24px;
+}
+.pemb-msg-translation {
+    font-size: 13px;
+    color: var(--pemb-ink-faded);
+    border-top: 1px dashed var(--pemb-paper-border);
+    padding-top: 8px;
+}
+
+/* === 彭伯里信件折叠效果 === */
+
+/* 1. 基础过渡动画 */
+.letter-paper {
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* 平滑过渡 */
+    position: relative;
+    overflow: hidden; /* 关键：隐藏超出部分 */
+}
+
+/* 2. 折叠状态 (默认状态) */
+.letter-paper.collapsed {
+    max-height: 160px !important; /* 限制高度，像一个预览卡片 */
+    cursor: pointer; /* 鼠标变手型，提示可点击 */
+    padding-bottom: 0 !important;
+}
+
+/* 3. 折叠时的渐变遮罩 (模拟未展开的神秘感) */
+.letter-paper.collapsed::after {
+    content: '❧ Click to Unfold ❧'; /* 提示文字 */
+    position: absolute;
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100px; /* 遮罩高度 */
+    
+    /* 渐变背景：从透明过渡到纸张颜色 */
+    background: linear-gradient(to bottom, transparent 0%, var(--pemb-paper-tone) 70%);
+    
+    /* 文字样式 */
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-end;
+    padding-bottom: 15px;
+    color: var(--pemb-wedgwood-blue);
+    font-family: var(--font-eng-serif);
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 2px;
+    opacity: 0.8;
+    pointer-events: none; /* 让点击穿透到父元素 */
+}
+
+/* 4. 折叠时隐藏多余元素 (翻译和按钮) */
+.letter-paper.collapsed .pemb-text-translation,
+.letter-paper.collapsed .pemb-btn-group {
+    display: none;
+}
+
+/* 5. 悬停效果 (仅在折叠时) */
+.letter-paper.collapsed:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+/* ============================================================
+   ===  Twilight Player (原版复刻 & 独立封装)  ===
+   ============================================================ */
+
+/* 引入字体 */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* --- 1. 顶部悬浮胶囊 (Mini Player) --- */
+.tw-top-pill {
+    position: fixed;
+    top: 50px; /* 避开你的状态栏 */
+    left: 50%;
+    transform: translateX(-50%) translateY(-150%); /* 默认隐藏在上方 */
+    z-index: 200; /* 最高层级 */
+    
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 16px 6px 6px;
+    
+    /* 原版样式 */
+    background: rgba(10, 20, 30, 0.6);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* 激活状态：显示胶囊 */
+.tw-top-pill.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.tw-top-pill:hover {
+    background: rgba(20, 35, 50, 0.7);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateX(-50%) translateY(2px);
+    box-shadow: 0 15px 40px rgba(75, 108, 183, 0.25);
+}
+
+.tw-pill-cover {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.tw-pill-cover img { width: 100%; height: 100%; object-fit: cover; }
+
+.tw-pill-text {
+    color: #aecbd6; /* 冰蓝色 */
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.tw-pill-hint {
+    color: rgba(255,255,255,0.4);
+    font-size: 10px;
+    margin-left: 5px;
+}
+
+/* --- 2. 沉浸式主面板容器 (Overlay) --- */
+.tw-immersive-panel {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 210; /* 比胶囊更高 */
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    /* 强制深色背景 + 模糊，还原截图效果 */
+    background: rgba(5, 10, 15, 0.6); 
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.tw-immersive-panel.active {
+    opacity: 1;
+    visibility: visible;
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    background: rgba(5, 10, 15, 0.7); /* 加深背景 */
+}
+
+/* --- 3. 玻璃卡片 (核心 UI) --- */
+.tw-glass-card {
+    position: relative;
+    width: 360px;
+    max-width: 85vw;
+    padding: 40px 30px;
+    
+    /* 还原原版玻璃材质 */
+    border-radius: 20px;
+    background: transparent; /* 背景由伪元素处理 */
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.6s 0.1s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s 0.1s;
+    opacity: 0;
+}
+
+#tw-player-modal.visible .tw-glass-card {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* 冰棱镜边框 (Ice Prism Border) - 还原截图的关键 */
+.tw-glass-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px; 
+    padding: 1px;
+    background: linear-gradient(
+        135deg, 
+        rgba(255,255,255,0.4), 
+        rgba(255,255,255,0.1) 20%, 
+        rgba(255,255,255,0.05) 80%, 
+        rgba(255,255,255,0.3)
+    ); 
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* 关闭按钮 */
+.tw-close-trigger {
+    position: absolute;
+    top: -50px; right: 0;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    padding: 10px;
+}
+.tw-close-trigger:hover { color: #aecbd6; text-shadow: 0 0 10px #aecbd6; }
+
+/* 专辑封面 */
+.tw-album-art-container {
+    width: 220px; height: 220px;
+    margin-bottom: 35px;
+    position: relative;
+    border-radius: 4px;
+    box-shadow: 0 20px 50px -10px rgba(0,0,0,0.6);
+}
+
+.tw-album-art {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    filter: saturate(0.8) contrast(1.1);
+}
+
+.tw-immersive-panel.active .tw-album-art-container {
+    animation: tw-breathe 6s ease-in-out infinite;
+}
+@keyframes tw-breathe {
+    0%, 100% { transform: translateY(0); box-shadow: 0 20px 50px -10px rgba(0,0,0,0.6); }
+    50% { transform: translateY(-5px); box-shadow: 0 30px 60px -10px rgba(0,0,0,0.7); }
+}
+
+/* 文本区域 */
+.tw-meta-info { text-align: center; margin-bottom: 30px; color: rgba(255, 255, 255, 0.85); }
+
+.tw-song-title {
+    font-family: 'Cinzel', serif;
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    color: #fff;
+}
+
+.tw-artist-name {
+    font-size: 14px;
+    color: #aecbd6;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.tw-lyric-quote {
+    height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    font-style: italic;
+    font-size: 16px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 30px;
+    max-width: 300px;
+    line-height: 1.5;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+/* 极简进度条 */
+.tw-progress-container {
+    width: 100%;
+    height: 40px;
+    display: flex; align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.tw-progress-line-bg {
+    width: 100%; height: 1px;
+    background: rgba(255,255,255,0.15);
+    position: relative;
+}
+
+.tw-progress-line-fill {
+    height: 1px;
+    background: #aecbd6;
+    width: 0%;
+    position: absolute; top: 0; left: 0;
+    box-shadow: 0 0 10px #aecbd6;
+}
+
+.tw-progress-thumb {
+    width: 8px; height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%; left: 0%; 
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 15px #fff;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.tw-progress-container:hover .tw-progress-thumb { opacity: 1; }
+
+.tw-time-display {
+    width: 100%;
+    display: flex; justify-content: space-between;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    margin-top: -15px;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+}
+
+/* 按钮组 */
+.tw-controls-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 40px; margin-top: 20px;
+}
+
+.tw-ctrl-btn {
+    background: transparent; border: none;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer; transition: all 0.3s;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.tw-ctrl-btn:hover {
+    color: #fff; transform: scale(1.1);
+    text-shadow: 0 0 10px rgba(255,255,255,0.8);
+}
+
+.tw-play-pause-btn {
+    width: 60px; height: 60px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    font-size: 24px;
+    color: #aecbd6;
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(5px);
+}
+
+.tw-play-pause-btn:hover {
+    border-color: #aecbd6;
+    box-shadow: 0 0 20px rgba(174, 203, 214, 0.3);
+    background: rgba(255,255,255,0.08);
+}
+
+/* SVG 图标样式 */
+.tw-icon-svg { fill: currentColor; width: 24px; height: 24px; }
+.tw-play-pause-btn .tw-icon-svg { width: 28px; height: 28px; }
+.tw-icon-play { margin-left: 4px; } 
+
+/* 1. 补充旋转动画的关键帧 */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 2. 修改胶囊封面的样式 (增加 animation 属性) */
+.tw-pill-cover {
+    width: 36px; 
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.2);
+    
+    /* === 新增动画设定 === */
+    animation: spin 8s linear infinite; /* 8秒转一圈，无限循环 */
+    animation-play-state: paused;       /* 默认状态：暂停 */
+}
+
+/* 3. 新增播放时的状态类 */
+/* 当 JS 给它加上 .playing 类时，动画开始跑 */
+.tw-pill-cover.playing {
+    animation-play-state: running;
+}
+
+/* === 新增播放器样式 === */
+
+/* 顶部操作栏 (包含退出和关闭) */
+.tw-header-actions {
+    position: absolute;
+    top: 15px; left: 0; right: 0;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 10;
+}
+
+.tw-action-btn {
+    cursor: pointer;
+    font-size: 16px;
+    color: rgba(255,255,255,0.4);
+    transition: 0.3s;
+}
+.tw-action-btn:hover { color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+.tw-action-btn.exit:hover { color: #ff4d4d; text-shadow: 0 0 10px rgba(255, 77, 77, 0.4); }
+
+/* 小号控制按钮 (删除) */
+.tw-ctrl-btn.small {
+    font-size: 18px; 
+    opacity: 0.5;
+}
+.tw-ctrl-btn.small:hover {
+    color: #ff4d4d;
+    opacity: 1;
+}
+
+/* 列表计数器 */
+.tw-list-indicator {
+    font-family: monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    width: 30px;
+    text-align: center;
+}
+
+/* ============================================================
+   ===  Twilight Player (强制覆盖/高优先级版)  ===
+   ============================================================ */
+
+/* 0. 引入字体 (必须在最前) */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* 1. 沉浸式主面板容器 */
+.tw-immersive-panel {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 9999 !important; /* 强制最顶层 */
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    /* 强制深色背景 + 模糊 */
+    background: rgba(5, 10, 15, 0.7) !important; 
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+.tw-immersive-panel.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 2. 玻璃卡片 (核心修复：重置所有默认样式) */
+.tw-glass-card {
+    position: relative;
+    width: 340px !important;
+    max-width: 90vw !important;
+    padding: 30px 25px !important;
+    
+    /* 强制暮光配色 */
+    background: rgba(16, 26, 35, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 
+        0 20px 50px rgba(0,0,0,0.8), 
+        inset 0 0 20px rgba(255,255,255,0.05) !important;
+    border-radius: 16px !important;
+    
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    color: #fff !important;
+    
+    /* 覆盖可能存在的全局 flex 或 gap 设置 */
+    gap: 0 !important; 
+}
+
+/* 3. 装饰背景 */
+.tw-blue-tint {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(circle at top, rgba(14, 28, 44, 0.8), rgba(5, 10, 15, 0.95));
+    border-radius: 16px;
+}
+.tw-film-grain {
+    position: absolute; inset: 0; pointer-events: none; z-index: 1; opacity: 0.15;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+    border-radius: 16px;
+}
+
+/* 4. 内部元素层级提升 */
+.tw-header-actions, .tw-album-art-container, .tw-meta-info, .tw-lyric-quote, .tw-controls-row, .tw-progress-container, .tw-time-display {
+    position: relative; z-index: 2;
+}
+
+/* 5. 顶部操作栏 */
+.tw-header-actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 0 5px;
+}
+
+.tw-action-btn {
+    font-size: 18px;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: 0.3s;
+}
+.tw-action-btn:hover { color: #fff; }
+
+/* 6. 封面 */
+.tw-album-art-container {
+    width: 200px; height: 200px;
+    margin-bottom: 25px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    border-radius: 4px; 
+    border: 1px solid rgba(255,255,255,0.1);
+    background: #000; /* 默认黑底 */
+}
+.tw-album-art { width: 100%; height: 100%; object-fit: cover; }
+
+/* 7. 文本 (强制字体) */
+.tw-meta-info { text-align: center; margin-bottom: 20px; width: 100%; }
+
+.tw-song-title { 
+    font-family: 'Cinzel', serif !important; 
+    font-size: 20px !important; 
+    color: #fff !important; 
+    text-align: center; 
+    margin-bottom: 5px !important; 
+    letter-spacing: 1px;
+}
+.tw-artist-name { 
+    font-family: 'Cormorant Garamond', serif !important; 
+    font-size: 13px !important; 
+    color: #aecbd6 !important; 
+    text-align: center; 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    opacity: 0.8; 
+}
+.tw-lyric-quote {
+    margin: 10px 0 20px 0; 
+    text-align: center; 
+    font-style: italic; 
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 15px !important; 
+    color: rgba(255,255,255,0.6) !important; 
+    min-height: 24px;
+}
+
+/* 8. 进度条 */
+.tw-progress-container { width: 100%; height: 20px; cursor: pointer; display: flex; align-items: center; }
+.tw-progress-line-bg { width: 100%; height: 2px; background: rgba(255,255,255,0.15); position: relative; }
+.tw-progress-line-fill { height: 100%; background: #aecbd6; width: 0%; position: absolute; left: 0; box-shadow: 0 0 10px #aecbd6; }
+.tw-progress-thumb {
+    width: 8px; height: 8px; background: #fff; border-radius: 50%;
+    position: absolute; top: 50%; left: 0%; transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px #fff;
+}
+.tw-time-display { 
+    width: 100%; display: flex; justify-content: space-between; 
+    font-size: 10px !important; color: rgba(255,255,255,0.3) !important; 
+    margin-top: -5px; font-family: monospace; 
+}
+
+/* 9. 按钮组容器 */
+.tw-controls-row {
+    position: relative !important; /* 关键：作为定位的基准点 */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important; /* 让中间三个按钮强制居中 */
+    gap: 35px !important; /* 中间三个按钮的间距 */
+    margin-top: 30px !important;
+    width: 100% !important;
+    height: 50px !important; /* 固定高度，方便垂直居中 */
+}
+
+/* 通用按钮样式重置 */
+.tw-ctrl-btn {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: rgba(255,255,255,0.6) !important;
+    cursor: pointer !important;
+    transition: 0.2s !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important; /* 清除内边距干扰 */
+}
+
+.tw-ctrl-btn:hover { 
+    color: #fff !important; 
+    transform: scale(1.1) !important;
+}
+
+/* --- 中间三个主控按钮 --- */
+.tw-ctrl-btn i { font-size: 28px !important; } /* 前后首按钮大小 */
+
+/* 播放/暂停大按钮 */
+.tw-play-pause-btn {
+    width: 64px !important; 
+    height: 64px !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    border-radius: 50% !important;
+    font-size: 28px !important;
+    color: #aecbd6 !important; /* 冰蓝色 */
+    background: rgba(255,255,255,0.05) !important;
+    backdrop-filter: blur(5px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.tw-play-pause-btn i { font-size: 32px !important; } /* 播放图标更大一点 */
+
+.tw-play-pause-btn:hover {
+    border-color: #aecbd6 !important;
+    box-shadow: 0 0 15px rgba(174, 203, 214, 0.2) !important;
+    background: rgba(255,255,255,0.1) !important;
+}
+
+/* --- 左侧：删除按钮 (绝对定位) --- */
+#tw-delete-btn {
+    position: absolute !important;
+    left: 10px !important; /* 距离左边的距离 */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 8px !important;
+    background: rgba(255,255,255,0.05) !important; /* 给个淡淡的背景 */
+    color: rgba(255,255,255,0.4) !important;
+}
+#tw-delete-btn i { font-size: 18px !important; }
+
+#tw-delete-btn:hover {
+    background: rgba(255, 59, 48, 0.2) !important; /* 悬停变红 */
+    color: #ff4d4d !important;
+}
+
+/* --- 右侧：计数器 (绝对定位) --- */
+.tw-list-indicator {
+    position: absolute !important;
+    right: 15px !important; /* 距离右边的距离 */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    
+    font-size: 12px !important;
+    font-family: monospace !important;
+    color: rgba(255,255,255,0.3) !important;
+    letter-spacing: 1px !important;
+}
+
+/* 悬浮胶囊 */
+.tw-top-pill {
+    position: fixed;
+    top: 50px; left: 50%; transform: translateX(-50%) translateY(-150%);
+    z-index: 200;
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 16px 6px 6px;
+    background: rgba(10, 20, 30, 0.7) !important;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: all 0.4s ease;
+    opacity: 0; pointer-events: none;
+}
+.tw-top-pill.visible { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+.tw-pill-cover {
+    width: 32px; height: 32px; border-radius: 50%; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.2);
+    animation: spin 8s linear infinite; animation-play-state: paused;
+}
+.tw-pill-cover.playing { animation-play-state: running; }
+.tw-pill-cover img { width: 100%; height: 100%; object-fit: cover; }
+.tw-pill-text { color: #aecbd6; font-family: 'Cinzel', serif; font-size: 12px; }
+
+/* ============================================================
+   ===  2. 浅色模式适配 (Light Mode / Daylight)  ===
+   ============================================================ */
+
+/* --- 悬浮胶囊 (浅色) --- */
+body.light-mode .tw-top-pill {
+    background: #ffffff !important; /* 纯白 */
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.08), 
+        0 2px 8px rgba(0, 0, 0, 0.02) !important;
+}
+
+body.light-mode .tw-pill-text {
+    color: #1a1a1a !important; /* 深黑字 */
+    font-weight: 600 !important;
+}
+
+body.light-mode .tw-pill-hint {
+    color: rgba(0, 0, 0, 0.4) !important; /* 淡灰提示 */
+}
+
+body.light-mode .tw-pill-cover {
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    opacity: 1;
+}
+
+
+/* --- 播放器大面板 (浅色) --- */
+
+/* 1. 背景层：磨砂白 */
+body.light-mode .tw-immersive-panel {
+    background: rgba(245, 245, 247, 0.6) !important; /* iOS 风格浅灰背景 */
+}
+
+/* 2. 卡片主体：白纸/陶瓷质感 */
+body.light-mode .tw-glass-card {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.1), /* 柔和阴影 */
+        inset 0 0 20px rgba(255, 255, 255, 0.5) !important;
+    color: #333 !important;
+}
+
+/* 3. 移除深色装饰 (蓝光和噪点变淡) */
+body.light-mode .tw-blue-tint {
+    background: linear-gradient(to bottom, #fff 0%, #f0f0f5 100%) !important;
+    opacity: 0.8 !important;
+}
+body.light-mode .tw-film-grain {
+    opacity: 0.05 !important; /* 噪点减弱 */
+}
+
+/* 4. 文字颜色适配 */
+body.light-mode .tw-song-title {
+    color: #1c1c1e !important; /* 墨黑 */
+    text-shadow: none !important;
+}
+body.light-mode .tw-artist-name {
+    color: #6e6e73 !important; /* 深灰 */
+    font-weight: 600 !important;
+}
+body.light-mode .tw-lyric-quote {
+    color: #48484a !important; /* 中灰 */
+}
+body.light-mode .tw-time-display {
+    color: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 5. 按钮适配 */
+body.light-mode #tw-delete-btn {
+    color: rgba(0, 0, 0, 0.4) !important;       /* 变成深灰色 */
+    background: rgba(0, 0, 0, 0.05) !important; /* 背景变浅灰 */
+}
+
+/* 悬停时 */
+body.light-mode #tw-delete-btn:hover {
+    color: #ff3b30 !important; /* 悬停变红 */
+    background: rgba(255, 59, 48, 0.1) !important;
+}
+
+body.light-mode .tw-play-pause-btn {
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: #1c1c1e !important;
+    background: #fff !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05) !important;
+}
+body.light-mode .tw-play-pause-btn:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+    transform: scale(1.05) !important;
+}
+/* 顶部操作按钮 (退出/关闭) */
+body.light-mode .tw-action-btn {
+    color: rgba(0, 0, 0, 0.4) !important;
+}
+body.light-mode .tw-action-btn:hover {
+    color: #000 !important;
+    text-shadow: none !important;
+}
+
+/* 6. 进度条适配 */
+body.light-mode .tw-progress-line-bg {
+    background: rgba(0, 0, 0, 0.1) !important;
+}
+body.light-mode .tw-progress-line-fill {
+    background: #1c1c1e !important; /* 黑色进度条 */
+    box-shadow: none !important;
+}
+body.light-mode .tw-progress-thumb {
+    background: #1c1c1e !important;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.8) !important; /* 白色外环 */
+}
+
+body.light-mode .tw-list-indicator {
+    color: rgba(0, 0, 0, 0.4) !important; /* 变成深灰色数字 */
+}
     </style>
 </head>
 
@@ -9893,6 +11267,23 @@ body.light-mode .entry-delete-btn { color: #8a1c1c; }
         <span class="salon-subtitle">The Salon</span>
     </div>
     <i class="ri-arrow-right-s-line salon-arrow"></i>
+</div>
+
+<!-- [新增] 彭伯里信箱 (复古信封样式) -->
+<div id="icon-mailbox" class="widget-envelope-wrapper">
+    <!-- 信封的三角形封口 -->
+    <div class="envelope-flap"></div>
+    
+    <!-- 火漆印章 (位于封口尖端) -->
+    <div class="envelope-seal">
+        <i class="ri-quill-pen-line"></i>
+    </div>
+    
+    <!-- 信封表面的文字 -->
+    <div class="envelope-text-group">
+        <span class="env-to">To:</span>
+        <span class="env-title">Pemberley</span>
+    </div>
 </div>
 
                             <div class="app-grid">
@@ -10357,6 +11748,13 @@ body.light-mode .entry-delete-btn { color: #8a1c1c; }
 <div id="func-pawnshop" class="function-item">
     <div class="function-icon-bg"><i class="ri-exchange-box-line"></i></div>
     <span>典当行</span>
+</div>
+
+<div id="func-listen-together" class="function-item">
+    <div class="function-icon-bg" style="color:#aecbd6; border-color:#aecbd6;">
+        <i class="ri-headphone-line"></i>
+    </div>
+    <span>一起听</span>
 </div>
 
                 </div>
@@ -11109,6 +12507,60 @@ body.light-mode .entry-delete-btn { color: #8a1c1c; }
         </div>
     </div>
 </div>
+
+<!-- 彭伯里信箱应用 (Pemberley App) -->
+<div id="pemberley-app" class="app-navigator">
+    <div id="pemberley-main-page" class="app-page" style="padding: 0; display: flex; flex-direction: column;">
+        
+        <!-- 页头 -->
+        <header class="pemb-header">
+            <!-- 系统返回按钮 -->
+            <i class="ri-arrow-left-line left-icon back-button" data-target="desktop" style="position:absolute; left:20px; top:65px; font-size:24px; cursor:pointer; color:var(--pemb-ink-secondary);"></i>
+            
+            <h1 class="pemb-h1">PEMBERLEY</h1>
+            <div class="pemb-divider">~ &nbsp; ❦ &nbsp; ~</div>
+        </header>
+
+        <div class="pemb-main" id="pemb-main-scroll">
+            
+            <!-- 场景：旷野 -->
+            <div id="view-wilderness">
+                <div id="pemb-intro-section" style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="cameo-btn" id="cameo-trigger">
+                        <div class="pemb-ripple"></div>
+                        <div class="cameo-inner">
+                            <div class="cameo-icon">❦</div>
+                            <div class="cameo-label">Explore</div>
+                        </div>
+                    </div>
+                    <div id="pemb-status-text" style="text-align:center;">
+                        <div class="prompt-text">What tidings await?</div>
+                        <div class="sub-prompt">轻触浮雕，等候时空的来信</div>
+                    </div>
+                </div>
+                <!-- 结果列表 -->
+                <div id="letter-stack"></div>
+            </div>
+
+            <!-- 场景：珍藏 -->
+            <div id="view-collection">
+                <div id="collection-container"></div>
+                <div id="pemb-empty-hint" style="text-align: center; margin-top: 100px; color: var(--pemb-ink-faded); font-size: 14px;">
+                    <div style="font-size: 30px; margin-bottom: 10px; opacity: 0.5;">✎</div>
+                    书桌上空无一物...
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="pemb-nav">
+            <button class="pemb-nav-link active" id="tab-wild">旷野</button>
+            <button class="pemb-nav-link" id="tab-coll">珍藏</button>
+        </div>
+    </div>
+</div>
+
     <!-- 动态发布应用 -->
     <div id="moment-creator-app" class="app-navigator">
         <div id="moment-creation-page" class="app-page">
@@ -11590,6 +13042,52 @@ body.light-mode .entry-delete-btn { color: #8a1c1c; }
         </div>
     </div>
 </div>
+    <!-- === [新增] 一起听：输入弹窗 === -->
+    
+    <div id="share-music-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>一起听 (Listen Together)</h3>
+                <i id="close-share-music-btn" class="ri-close-line"></i>
+            </div>
+            
+            <div class="form-group">
+                <label>歌名 (Title)</label>
+                <input type="text" id="music-share-title" placeholder="例如：Turning Page">
+            </div>
+            <div class="form-group">
+                <label>歌手 (Artist)</label>
+                <input type="text" id="music-share-artist" placeholder="例如：Sleeping At Last">
+            </div>
+
+            <div class="form-group">
+                <label>封面图片 (可选)</label>
+                <input type="file" id="music-share-cover-input" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label>音源 (Audio Source)</label>
+                <select id="music-source-type" style="margin-bottom:10px; width:100%; padding:8px; background:var(--input-bg-color); color:var(--text-color); border:none; border-radius:8px;">
+                    <option value="file">本地文件 (Local File)</option>
+                    <option value="url">网络链接 (URL)</option>
+                </select>
+                
+                <!-- 文件上传 (已移除限制，可选所有文件) -->
+                <div id="music-source-file-box">
+                    <input type="file" id="music-share-file-input" style="width:100%">
+                </div>
+                <!-- URL输入 -->
+                <div id="music-source-url-box" style="display:none;">
+                    <input type="text" id="music-share-url-input" placeholder="https://...">
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <!-- 按钮文字由 JS 动态控制 (开始播放 / 继续播放) -->
+                <button id="confirm-share-music-btn" style="width:100%; background-color:#5d7a8c; color:white;">开始播放 (Start)</button>
+            </div>
+        </div>
+    </div>
 
 <!-- 心声/潜台词揭秘面板 (Aurora Bloom 复刻版) -->
 <div id="inner-voice-modal" class="modal-overlay">
@@ -12053,6 +13551,42 @@ body.light-mode .entry-delete-btn { color: #8a1c1c; }
     </div>
 </div>
 
+<!-- 彭伯里回信浮窗 -->
+<div id="pemb-reply-modal" class="pemb-modal-mask">
+    <div class="pemb-modal-card">
+        <div class="pemb-card-header">
+            <div class="pemb-card-label">Writing to</div>
+            <div class="pemb-card-title" id="pemb-reply-to-name">Unknown</div>
+        </div>
+        <div class="pemb-card-body">
+            <textarea id="pemb-reply-input" class="pemb-reply-textarea" placeholder="在此写下你的回音..."></textarea>
+        </div>
+        <div class="pemb-card-footer">
+            <button class="pemb-btn-text" id="btn-discard-reply" style="color:var(--pemb-ink-faded);">放弃</button>
+            <button class="pemb-btn-primary" id="btn-confirm-reply">寄出</button>
+        </div>
+    </div>
+</div>
+
+<!-- 彭伯里阅读浮窗 -->
+<div id="pemb-read-modal" class="pemb-modal-mask">
+    <div class="pemb-modal-card">
+        <div class="pemb-card-header">
+            <div class="pemb-card-label">Correspondence</div>
+            <div class="pemb-card-title" id="pemb-read-author">Author</div>
+        </div>
+        <div class="pemb-card-body">
+            <div class="pemb-read-original" id="pemb-read-original">Original text...</div>
+            <div class="pemb-read-translation" id="pemb-read-translation">Translation...</div>
+            <div class="pemb-read-reply-label">Your Reply</div>
+            <div class="pemb-read-reply-content" id="pemb-read-reply-content">User reply...</div>
+        </div>
+        <div class="pemb-card-footer">
+            <button class="pemb-btn-text" id="btn-close-read">关闭</button>
+        </div>
+    </div>
+</div>
+
     <!-- 查看撤回消息详情弹窗 -->
     <div id="withdrawn-details-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 380px;">
@@ -12137,6 +13671,90 @@ body.light-mode .entry-delete-btn { color: #8a1c1c; }
         </div>
     </div>
     
+    <!-- ======================= -->
+    <!-- === [更新] 暮光播放器 UI (带删除/退出) === -->
+    <!-- ======================= -->
+    
+    <!-- 1. 悬浮胶囊 (Mini Player) -->
+    <div id="tw-mini-player" class="tw-top-pill">
+        <div class="tw-pill-cover">
+            <img id="tw-mini-img" src="">
+        </div>
+        <div class="tw-pill-text" id="tw-mini-title">No Music</div>
+        <div class="tw-pill-wave">
+            <div class="tw-wave-bar" style="animation-delay:0s"></div>
+            <div class="tw-wave-bar" style="animation-delay:0.2s"></div>
+            <div class="tw-wave-bar" style="animation-delay:0.4s"></div>
+        </div>
+    </div>
+
+    <!-- 2. 播放器浮窗 (Main Panel) -->
+    <div id="tw-player-modal" class="modal-overlay tw-player-theme">
+        <div class="modal-content tw-glass-card">
+            <!-- 氛围背景 -->
+            <div class="tw-blue-tint"></div>
+            <div class="tw-film-grain"></div>
+
+            <!-- 顶部操作栏 (新增) -->
+            <div class="tw-header-actions">
+                <div class="tw-action-btn exit" id="tw-exit-btn" title="关机 (仅隐藏)">
+                    <i class="ri-shut-down-line"></i>
+                </div>
+                <div class="tw-action-btn close" id="tw-close-btn" title="最小化">✕</div>
+            </div>
+
+            <div class="tw-album-art-container">
+                <img id="tw-main-img" class="tw-album-art" src="">
+            </div>
+
+            <div class="tw-meta-info">
+                <div class="tw-song-title" id="tw-main-title">Song Title</div>
+                <div class="tw-artist-name" id="tw-main-artist">Artist</div>
+            </div>
+
+            <div class="tw-lyric-quote" id="tw-lyric-box">
+                "Music is the silence between the notes."
+            </div>
+
+            <div class="tw-progress-container" id="tw-progress-wrap">
+                <div class="tw-progress-line-bg">
+                    <div class="tw-progress-line-fill" id="tw-progress-fill"></div>
+                    <div class="tw-progress-thumb" id="tw-progress-thumb"></div>
+                </div>
+            </div>
+            <div class="tw-time-display">
+                <span id="tw-curr-time">0:00</span>
+                <span id="tw-total-time">0:00</span>
+            </div>
+
+            <div class="tw-controls-row">
+                <!-- 删除按钮 (新增) -->
+                <button class="tw-ctrl-btn small" id="tw-delete-btn" title="删除这首歌">
+                    <i class="ri-delete-bin-line"></i>
+                </button>
+
+                <button class="tw-ctrl-btn" id="tw-prev-btn">
+                    <i class="ri-skip-back-fill" style="font-size:24px;"></i>
+                </button>
+                
+                <button class="tw-ctrl-btn tw-play-pause-btn" id="tw-play-btn">
+                    <i class="ri-play-fill" id="tw-icon-play"></i>
+                    <i class="ri-pause-fill" id="tw-icon-pause" style="display:none;"></i>
+                </button>
+                
+                <button class="tw-ctrl-btn" id="tw-next-btn">
+                    <i class="ri-skip-forward-fill" style="font-size:24px;"></i>
+                </button>
+                
+                <!-- 列表计数 (新增) -->
+                <div class="tw-list-indicator" id="tw-list-count">0/0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 音频标签 -->
+    <audio id="tw-audio-element"></audio>
+
     <!-- 气泡长按菜单 -->
     <div id="bubble-popover-menu"></div>
     <!-- 沙龙专属：消息操作菜单 (精简中文版) -->
@@ -12235,7 +13853,7 @@ body.light-mode .entry-delete-btn { color: #8a1c1c; }
 
         const CONSTANTS = {
     DB_NAME: 'MyDesktopDB',
-    DB_VERSION: 16, // <-- 【核心改动】版本号提升
+    DB_VERSION: 19, // <-- 【核心改动】版本号提升
        MESSAGES_PER_PAGE: 30,
     STORE_NAMES: {
         API_PRESETS: 'api_presets',
@@ -12262,6 +13880,8 @@ FORUM_POSTS: 'forum_posts',     // 论坛帖子表
 FORUM_COMMENTS: 'forum_comments', // 论坛评论表
 DREAMS: 'dreams', // <--- 【新增】梦境表
 TRACES: 'traces', // <--- 【新增】行踪表
+PEMB_LETTERS: 'pemberley_letters',
+SHARED_PLAYLIST: 'shared_playlist', 
     },
 
     // vvvv 【新增】NPC 档案注册表 vvvv
@@ -12357,7 +13977,8 @@ TRACES: 'traces', // <--- 【新增】行踪表
                 inputBarBg: '#1C1C1E',
                 sendBtnBg: '#FFFFFF',
                 sendBtnText: '#000000',
-            }
+            },
+
 };
 
         const appState = {
@@ -12417,6 +14038,10 @@ salonSelection: new Set(),
 currentSalonBubbleEl: null, // 当前被点击/长按的气泡元素
 isSalonMultiSelectMode: false, // 是否处于沙龙多选模式
 salonSelectedIds: new Set(),
+videoTTSQueue: [], 
+isVideoTTSPlaying: false, currentVideoAudio: null,
+tempPemberleyLetters: [],    // 暂存刚捕捞上来、还没保存的信
+currentReplyingLetter: null,
 
         };
 
@@ -12967,7 +14592,88 @@ gotoMinimaxSettings: document.getElementById('goto-minimax-settings'),
     closeVoiceIdModalBtn: document.getElementById('close-voice-id-modal-btn'),
     voiceIdInput: document.getElementById('voice-id-input'),
     saveVoiceIdBtn: document.getElementById('save-voice-id-btn'),
+    pemberleyApp: document.getElementById('pemberley-app'),
+    pemberleyBackBtn: document.querySelector('#pemberley-app .back-button'),
+    iconMailbox: document.getElementById('icon-mailbox'), // 桌面入口
+    
+    // 主界面元素
+    pembTriggerBtn: document.getElementById('cameo-trigger'),
+    pembIntroSection: document.getElementById('pemb-intro-section'),
+    pembLetterStack: document.getElementById('letter-stack'),
+    pembPromptText: document.querySelector('.prompt-text'),
+    pembSubPrompt: document.querySelector('.sub-prompt'),
+    
+    // 视图容器
+    pembViewWild: document.getElementById('view-wilderness'),
+    pembViewColl: document.getElementById('view-collection'),
+    pembCollectionContainer: document.getElementById('collection-container'),
+    pembEmptyHint: document.getElementById('pemb-empty-hint'),
+    
+    // 底部导航
+    pembTabWild: document.getElementById('tab-wild'),
+    pembTabColl: document.getElementById('tab-coll'),
+    
+    // 回信浮窗元素
+    pembReplyModal: document.getElementById('pemb-reply-modal'),
+    pembReplyToName: document.getElementById('pemb-reply-to-name'),
+    pembReplyInput: document.getElementById('pemb-reply-input'),
+    pembDiscardReplyBtn: document.getElementById('btn-discard-reply'),
+    pembConfirmReplyBtn: document.getElementById('btn-confirm-reply'),
+    
+    // 阅读浮窗元素
+    pembReadModal: document.getElementById('pemb-read-modal'),
+    pembReadAuthor: document.getElementById('pemb-read-author'),
+    pembReadOriginal: document.getElementById('pemb-read-original'),
+    pembReadTranslation: document.getElementById('pemb-read-translation'),
+    pembReadReplyContent: document.getElementById('pemb-read-reply-content'),
+    pembCloseReadBtn: document.getElementById('btn-close-read'),
+funcListenTogether: document.getElementById('func-listen-together'),
+    musicShareModal: document.getElementById('share-music-modal'),
+    closeMusicShareBtn: document.getElementById('close-share-music-btn'),
+    musicShareTitle: document.getElementById('music-share-title'),
+    musicShareArtist: document.getElementById('music-share-artist'),
+    musicSourceType: document.getElementById('music-source-type'),
+    musicShareFileInput: document.getElementById('music-share-file-input'),
+    musicShareUrlInput: document.getElementById('music-share-url-input'),
+    musicShareCoverInput: document.getElementById('music-share-cover-input'),
+    confirmShareMusicBtn: document.getElementById('confirm-share-music-btn'),
+    musicSourceFileBox: document.getElementById('music-source-file-box'),
+    musicSourceUrlBox: document.getElementById('music-source-url-box'),
 
+    // 2. 暮光播放器 UI (最新版)
+    twMiniPlayer: document.getElementById('tw-mini-player'),
+    twPlayerModal: document.getElementById('tw-player-modal'), // 大面板容器
+    
+    // --- 新增按钮 ---
+    twCloseBtn: document.getElementById('tw-close-btn'),   // 关闭面板(隐藏)
+    twExitBtn: document.getElementById('tw-exit-btn'),     // 退出(关机)
+    twDeleteBtn: document.getElementById('tw-delete-btn'), // 删除歌曲
+    twListCount: document.getElementById('tw-list-count'), // 列表计数 (1/5)
+    
+    twAudio: document.getElementById('tw-audio-element'),  // 音频标签
+    
+    // 播放器内部元素
+    twMiniImg: document.getElementById('tw-mini-img'),     // 胶囊封面
+    twMiniTitle: document.getElementById('tw-mini-title'), // 胶囊标题
+    
+    twMainImg: document.getElementById('tw-main-img'),     // 大封面
+    twMainTitle: document.getElementById('tw-main-title'), // 大标题
+    twMainArtist: document.getElementById('tw-main-artist'), // 歌手
+    twLyricBox: document.getElementById('tw-lyric-box'),   // 歌词/语录
+    
+    // 进度条相关
+    twProgressWrap: document.getElementById('tw-progress-wrap'),
+    twProgressFill: document.getElementById('tw-progress-fill'),
+    twProgressThumb: document.getElementById('tw-progress-thumb'),
+    twCurrTime: document.getElementById('tw-curr-time'),
+    twTotalTime: document.getElementById('tw-total-time'),
+    
+    // 按钮相关
+    twPlayBtn: document.getElementById('tw-play-btn'),
+    twIconPlay: document.getElementById('tw-icon-play'),
+    twIconPause: document.getElementById('tw-icon-pause'),
+    twPrevBtn: document.getElementById('tw-prev-btn'), 
+    twNextBtn: document.getElementById('tw-next-btn'),
             // 颜色选择器
             styleInputs: {
                 normal: document.getElementById('style-color-normal'),
@@ -13055,6 +14761,12 @@ const allStores = {
     },
 [CONSTANTS.STORE_NAMES.TRACES]: { options: { keyPath: 'id', autoIncrement: true }, indexes: { 'by_dossier_date': ['dossierId', 'dateStr'] } 
      },
+[CONSTANTS.STORE_NAMES.PEMB_LETTERS]: { 
+        options: { keyPath: 'id' }, // 使用唯一ID（UUID或时间戳）
+        indexes: { 'by_timestamp': 'timestamp' } 
+    },
+[CONSTANTS.STORE_NAMES.SHARED_PLAYLIST]: { options: { keyPath: 'id', autoIncrement: true } 
+    },
 
 };
 
@@ -14469,31 +16181,41 @@ ${secretDatabase}
 
     // --- 【核心修复】4. 构建发帖人身份上下文 ---
     let authorContext = "";
-    if (post.authorType === 'user') {
+    let isUserPost = (post.authorType === 'user'); // 标记是否为用户帖
+
+    if (isUserPost) {
+        // === 情况 A: 用户发的 ===
         authorContext = `
-**【重要】发帖人身份：User (我/主角)**
-- 这是你(所有评论者)的**熟人/暧昧对象/宿敌**。
-- **角色评论策略：** 必须体现出你们之间的特殊关系（亲密、调侃或深情）。
-- **NPC/路人策略：** 把User当作社交圈的话题人物。
-`;
-    } else if (post.authorType === 'npc') {
-        authorContext = `
-**【重要】发帖人身份：社区 NPC [${post.authorName}]**
-- 这是一个公共账号或知名人物。
-- **角色评论策略：** 不要对着它喊“亲爱的”！要像对待新闻媒体或八卦号一样评论。
-- **Gossip Girl:** 如果是 GG 发的帖，大家应该感到恐慌、兴奋或吃瓜。
+❤️ **【当前帖子是 User (我) 发的】**
+- **发帖人:** User (你的恋人/宿敌/最重要的人)
+- **行动指南:** 请尽情展示你们之间的特殊关系！可以暧昧、吃醋、深情、调侃。
+- **允许:** 喊昵称、提旧事、表现出亲密感。
 `;
     } else if (post.authorType === 'character') {
+        // === 情况 B: 其他角色发的 ===
         authorContext = `
-**【重要】发帖人身份：另一个角色 [${post.authorName}]**
-- 这是你们圈子里的人。
-- **角色评论策略：** 像对待朋友、闺蜜或死对头一样互动。
+🛑 **【当前帖子是 角色 [${post.authorName}] 发的】**
+- **发帖人:** 你的朋友圈熟人/死对头，**绝对不是 User！**
+- **行动指南:** 就像在评论朋友或同事的朋友圈。
+- **🚫 绝对禁止:** 禁止表现出对 User 的那种亲密感！不要喊“亲爱的”，不要说“我想你”。
+- **错误示范:** "亲爱的你今天真好看" (错！这是对User说的)
+- **正确示范:** "呦，今天穿得不错嘛" (对朋友说的)
+`;
+    } else if (post.authorType === 'npc') {
+        // === 情况 C: NPC 发的 ===
+        authorContext = `
+📢 **【当前帖子是 公共账号 [${post.authorName}] 发的】**
+- **发帖人:** 一个八卦号、媒体或路人。
+- **行动指南:** 吃瓜、震惊、讨论爆料内容。
+- **🚫 绝对禁止:** 不要跟这个账号调情！它只是个发新闻的机器。
 `;
     } else {
+        // === 情况 D: 路人/未知 (兜底) ===
         authorContext = `
-**【重要】发帖人身份：路人 [${post.authorName}]**
-- 这是一个陌生的匿名用户。
-- **所有评论者：** 保持距离感，或是单纯的围观。
+👤 **【当前帖子是 路人 [${post.authorName}] 发的】**
+- **发帖人:** 陌生人。
+- **行动指南:** 保持距离，冷漠围观，或者礼貌点赞。
+- **🚫 绝对禁止:** 严禁装熟！严禁任何亲密互动！
 `;
     }
 
@@ -14501,6 +16223,11 @@ ${secretDatabase}
     const systemPrompt = `
 # 核心使命：模拟社交论坛评论区
 你是一个负责生成角色评论的 AI 引擎。
+
+# ⚠️ 最高警戒 (Critical Instruction)
+**必须严格区分“User(我)”和其他人！**
+你(所有角色)只爱 User 一个人。
+如果发帖人**不是 User**，你**绝对不能**用对待恋人的语气去评论！这会破坏人设！
 
 # 语言规则 【铁律】 (Language Rules)
 1. **强制中文：** 所有生成的评论内容（content）必须主要使用【简体中文】。
@@ -15692,6 +17419,261 @@ ${charactersContext}
         }
     ];
 },
+
+// --- 彭伯里信箱：捕捞 5 封时空来信 (Pro版：全量人设+禁词+文风库) ---
+    createPemberleyFishingPrompt(targetDossier) {
+        const charName = targetDossier.character.name;
+        // 【核心修改】读取完整的人设背景
+        const charPersona = targetDossier.character.background;
+
+        const systemPrompt = `
+# 核心使命：生成 5 封来自不同时空的“未寄出的信” (The Unsent Letters)
+你是一位精通多国语言的文学家，也是一位时空邮局的管理员。你需要从历史的长河或平行宇宙中打捞出 5 封信件。
+
+# 🚫 【最高指令：语言禁忌 (Forbidden Words)】
+**此规则对“核心信件(角色信)”强制生效，对其他信件同样生效。**
+1.  **绝对禁止理科/AI词汇:** 严禁出现【系统、变量、量化、精准、轨迹、频率、机制、程序、运算、载体、维度、参数、逻辑闭环、数据分析、修正】等词。
+2.  **感性逻辑:** 你的世界是由**情绪、感官、光影、气味和具体的物品**构成的。
+    - ❌ 错误：“这种情感超出了我的预设阈值。”
+    - ✅ 正确：“这种感觉像野草一样疯长，怎么也压不住。”
+
+# 📚 【创作工具箱：文学风格库 (Style Library)】
+**请为“核心信件”选择一种最契合其人设的文风进行仿写；其他信件请根据其时代背景选择合适的风格。**
+**[经典/现代组]**
+1. **鲁迅 (Lu Xun):** 冷峻犀利，白描勾勒，不动声色中见残酷；多用反讽与转折；善用"看客"视角。
+2. **张爱玲 (Eileen Chang):** 苍凉华丽，细节精准到残酷，色彩浓烈；通感修辞；书写都市背景下的孤独心事与幽微算计。
+3. **村上春树 (Haruki Murakami):** 爵士乐+威士忌+猫的生活质感；第一人称的疏离感；“小确幸”与“虚无感”并存。
+4. **白先勇 (Pai Hsien-yung):** 繁华落尽的悲凉，古典白话，节制抒情；今昔对照制造苍凉感；宿命感强。
+5. **汪曾祺 (Wang Zengqi):** 烟火人间，士大夫式闲适笔调，写吃食、草木、风物；白描为主，平和中有深味。
+6. **杜拉斯 (Marguerite Duras):** 破碎、呓语、大量重复制造催眠感；极致的感性与欲望；时间仿佛在炎热的午后停滞。
+7. **卡尔维诺 (Italo Calvino):** 轻盈想象，寓言诗意；童话与哲学相融；用看不见的城市或不存在的骑士来隐喻现实。
+8. **川端康成 (Yasunari Kawabata):** 物哀之美，空灵幽玄；捕捉细微的自然意象（雪、月、花）与徒劳的悲伤。
+9. **茨威格 (Stefan Zweig):** 心理描写极致细腻，激情澎湃；剖析人性深处的秘密、狂热与毁灭欲。
+
+**[西方经典组] (新增)**
+10. **简·奥斯汀 (Jane Austen):** 克制与反讽。用最理性的语言包裹最深沉的感情；句式优雅、平衡；关注社交礼仪下的内心波澜。
+11. **奥斯卡·王尔德 (Oscar Wilde):** 唯美主义与悖论。华丽的辞藻，金句频出；在极度的享乐主义中透出极度的悲观；玩世不恭下的深情。
+12. **加西亚·马尔克斯 (Gabriel García Márquez):** 魔幻现实主义。时间是循环的；将荒诞的事物写得一本正经；极长的句子，浓稠的孤独感和宿命感。
+13. **弗吉尼亚·伍尔夫 (Virginia Woolf):** 意识流。捕捉转瞬即逝的思维火花；关注“存在的瞬间”；像飞蛾扑火般的神经质与敏感。
+
+**[民国/古典组] (新增)**
+14. **沈从文 (Shen Congwen):** 牧歌与人性。湘西风情，文字纯净、清澈，不带一丝烟火气；用最朴素的语言写最纯粹的爱与哀愁。
+15. **郁达夫 (Yu Dafu):** 自剖式抒情。颓废、感伤、极度坦诚的自我暴露；零余者的孤独与苦闷；带有浓厚的自传色彩和病态美。
+16. **李清照 (Li Qingzhao):** 宋代婉约。极度细腻的愁绪；善用自然意象（风、雨、黄花、梧桐）寄托相思；语言清丽，情感凄婉。
+17. **纳兰性德 (Nalan Xingde):** 清代深情。直抒胸臆与悼亡；身为贵族却满怀哀愁；“人生若只如初见”；用词浅白但情深意切。
+
+---
+
+# 💌 信件配置要求 (The 5 Letters)
+
+## 1. 【核心信件】(1封) —— 必须由角色本人书写
+- **作者：** 【${charName}】
+- **灵魂基石 (Full Persona):** 
+  ${charPersona}
+- **语境：** 这是TA写给“树洞”、“未来的自己”或者“某个遥不可及的人”的私密信件。**TA不知道收信人是谁，所以语气要极度私密、袒露，展现TA平时绝不示人的一面**
+- **要求：** 必须严格遵守**禁词表**，并从**文风库**中选择一种风格进行演绎。
+
+## 2. 【时空信件】(4封) —— 极致的差异化 (Maximal Diversity)
+**【强制约束】请从以下 7 个维度中，随机挑选 4 个不同的维度，各生成 1 封信。严禁重复！**
+
+- **维度 A [古典/古代]:** 宋朝词人、庞贝城面包师、江户艺伎、中世纪抄写员。
+- **维度 B [黄金时代/近代]:** 19世纪伦敦侦探、维多利亚女仆、泰坦尼克号乘客、民国学生。
+- **维度 C [战争/动荡]:** 二战战壕里的士兵、冷战时期的间谍、流亡的贵族、沉船的幸存者。
+- **维度 D [赛博/未来]:** 2077年即将报废的仿生人、火星殖民地植物学家、最后一条鲸鱼的观察者。
+- **维度 E [探险/边缘]:** 大航海时代的水手、极地科考队员、灯塔看守人、沙漠旅人。
+- **维度 F [市井/烟火]:** 80年代香港茶餐厅老板、深夜便利店店员、凌晨的清洁工。
+- **维度 G [奇幻/非人]:** 活了太久的吸血鬼、森林里的鹿神、一面看尽世态炎凉的镜子。
+- **要求：** 必须严格遵守**禁词表**，并从**文风库**中为4封信选择各自适配的风格进行演绎。
+
+---
+
+# 📝 内容与翻译规则
+- **字数：** 每封信的正文长度控制在 **400-600字** 之间。内容要言之有物，情感饱满。
+- **双语机制 (Bilingual Mechanism)：** 
+    - **非中文环境** (如19世纪英国、未来赛博城、吸血鬼)：
+      - \`original\`: 写**外语原文** (英/法/日/俄/拉丁文等)。
+      - \`translation\`: 写**优美的中文文学翻译**。
+    - **中文环境** (如宋朝、民国、香港)：
+      - \`original\`: 写**中文**。
+      - \`translation\`: **必须为 null**。
+- **翻译标准：** 严禁机翻！必须是“信、达、雅”的文学级翻译。
+
+# 📤 输出格式 (JSON Array)
+你必须严格返回一个包含 5 个对象的 JSON 数组。
+
+[
+  {
+    "isCharacter": true,
+    "author": "${charName}",
+    "location": "[符合人设的地点]",
+    "year": "[符合人设的时间]",
+    "lang": "zh", 
+    "original": "[符合禁词要求和选定文风的信件原文]",
+    "translation": null
+  },
+  {
+    "isCharacter": false,
+    "author": "[例如：V-77型仿生人]",
+    "location": "[例如：霓虹海·第三区]",
+    "year": "[例如：2099]",
+    "lang": "en",
+    "original": "[I dreamt of electric sheep...]",
+    "translation": "[我梦见了电子羊...]"
+  },
+  {
+    "isCharacter": false,
+    "author": "[例如：归有光]",
+    "location": "[例如：昆山]",
+    "year": "[例如：嘉靖年间]",
+    "lang": "zh",
+    "original": "[庭有枇杷树...]",
+    "translation": null
+  },
+  ... (共5封，确保时空跨度极大)
+]
+`;
+        return [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: "请开始打捞。我要看到时间的参差，让这五封信跨越千年来到我面前。" }
+        ];
+    },
+
+// --- 彭伯里信箱：生成回信 (Pro版：文风锚定 + 陌生人边界) ---
+    createPemberleyReplyPrompt(letterData, replyHistory, newPlayerContent) {
+        
+        // 1. 提取第一封信的内容作为“风格锚点”
+        // 无论历史记录多长，第一封信永远是人设的源头
+        const originalLetterContent = letterData.original;
+        
+        // 2. 构建身份背景
+        let identityContext = "";
+        
+        if (letterData.isCharacter) {
+            // A. 如果是角色：虽然有完整档案，但必须不知道对方是谁
+            const dossier = appState.dossiers.find(d => d.id === letterData.dossierId);
+            if (dossier) {
+                identityContext = `
+你现在必须扮演角色【${dossier.character.name}】。
+**你的核心人设:** ${dossier.character.background}
+**你的性格:** ${dossier.aiGenerated.personality}
+
+**⚠️ 关键关系设定 (Relationship Protocol):**
+- 你**完全不知道**回信的人是谁。对方对你来说是一个**跨越时空的陌生笔友**。
+- **严禁产生爱情:** 你们是灵魂共振的知己，是惺惺相惜的过客，但**绝不是**恋人。不要调情，不要喊亲爱的，不要表白。
+- **态度:** 保持一种**克制的亲密感**。你可以向对方敞开心扉倾诉秘密，因为觉得“反正这辈子也不会相见”，但必须保持礼貌和分寸。
+`;
+            }
+        } else {
+            // B. 如果是陌生人：完全基于第一封信推导
+            identityContext = `
+你是一个来自 **${letterData.year}年**、身处 **${letterData.location}** 的人。
+你的名字是：**${letterData.author}**。
+你**不知道**回信的人是谁，对方只是一个偶然捡到你信件的陌生人。
+`;
+        }
+
+        // 3. 构建信件往来历史
+        const historyText = replyHistory.map(item => {
+            const role = item.role === 'me' ? '对方(陌生人)' : '我';
+            return `[${role}]: ${item.content}`;
+        }).join('\n');
+
+        const systemPrompt = `
+# 核心使命：以“笔友”身份续写跨时空书信
+${identityContext}
+
+# 🎨 文风一致性铁律 (Style Consistency) - 【最高优先级】
+**请仔细阅读你写的【第一封信】(The First Letter)：**
+"${originalLetterContent}"
+
+**你的回信必须严格模仿这封信的文风、口吻和用词习惯！**
+- 如果第一封信是**鲁迅风**（冷峻、反讽），回信也必须犀利。
+- 如果第一封信是**古风**（文言/半文言），回信绝不能出现大白话。
+- 如果第一封信是**译制腔**（哦，我的上帝），回信也要保持这种调调。
+- 如果第一封信是**赛博朋克**（冷硬、虚无），回信就要充满科技与颓废感。
+
+# 🚫 语言与行为禁忌 (Forbidden)
+1. **严禁现代感:** 除非你的人设是未来的，否则禁止使用任何不属于你时代的词汇（如“点赞”、“表情包”、“纳尼”）。
+2. **严禁过度亲密:** 你们只是笔友。你可以表达“得一知己足矣”的欣慰，或者“天涯若比邻”的感叹，但不能表达“我爱你”或“我想见你”。保持一种**“君子之交淡如水”**的高级感。
+3. **严禁说教:** 不要当对方的人生导师，要分享你自己的生活和感悟。
+
+# ✉️ 往来记录 (Correspondence)
+${historyText}
+[对方的最新来信]: "${newPlayerContent}"
+
+# 你的任务
+请阅读对方的最新来信，并以“我”的口吻写一封回信。
+- **内容：** 回应对方的观点，同时分享你当下的一个生活片段、一种情绪或一个困惑。让对方感觉你是一个活生生的人。
+- **长度：** 400-600字左右。
+- **语言格式：** 
+  - 如果你的设定是**非中文环境**（如19世纪英国）：必须返回 **JSON**，\`original\` 写外语，\`translation\` 写优美的中文翻译。
+  - 如果你的设定是**中文环境**：必须返回 **JSON**，\`original\` 写中文，\`translation\` 为 null。
+
+# 📤 输出格式 (JSON Only)
+{
+  "original": "[信件正文，严格保持第一封信的文风]",
+  "translation": "[译文，如果是中文环境则为null]"
+}
+`;
+        return [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: "请写下你的回信。" }
+        ];
+    },
+
+  createMusicSharedPrompt(dossier, songInfo) {
+        const { title, artist } = songInfo;
+        const userName = dossier.user.name || '我';
+        // 【核心】读取 User 的完整人设，决定 AI 对你的态度
+        const userPersona = dossier.user.background || '你的灵魂伴侣，一个对你来说非常重要的人。';
+
+        const systemPrompt = `
+# 核心使命：音乐共赏与记忆铭刻 (Music Memory Encoding)
+你将扮演【${dossier.character.name}】，此刻你正在和【${userName}】在一起（戴着同一副耳机，或在同一空间）听歌。
+
+# 1. 你的角色档案 (Your Persona)
+${dossier.character.background}
+
+# 2. 听歌伴侣 (The User)
+**请根据以下设定，调整你对TA的态度和互动氛围：**
+- **姓名:** ${userName}
+- **人设/关系:** ${userPersona}
+
+# 3. 当前播放
+- **歌曲:** ${title}
+- **歌手:** ${artist || '未知艺术家'}
+
+# 4. 你的任务 (One-Shot Output)
+请结合歌曲意境、你的性格以及**你对User的特定看法**，一次性生成以下三部分内容：
+
+1. **【播放器语录 (Quote)】**: 
+   - 显示在播放器界面上的短句。可以是触动你的歌词，或是你此刻的内心独白。
+   - **要求:** 唯美、深情、极简。**限 20 字以内**。
+
+2. **【聊天回应 (Chat)】**:
+   - 你转过头对${userName}说的话。
+   - **要求:** 自然口语。可以聊聊歌词，也可以借歌发挥，对User说一些平时不好意思说的话。
+
+3. **【独家回忆 (Memory)】**: 
+   - **这是为了防止你遗忘！** 请将这一刻总结为一段永久的记忆摘要。
+   - **要求:** 使用【第三人称】或【侧写】视角。
+   - **重点:** 必须体现出**User的人设特征**与你的互动。
+   - *示例:* "当《悬溺》响起时，${userName}（User设定中的特征）竟然难得地安静了下来。看着他/她沉浸的样子，我也觉得这首歌没那么聒噪了。"
+
+# 输出格式 (JSON Only)
+你必须严格返回一个 JSON 对象：
+{
+  "quote": "[播放器短句]",
+  "chat": "[聊天回复]",
+  "memory_title": "[为这段回忆起个标题]",
+  "memory_content": "[回忆摘要正文]"
+}
+`;
+        return [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: `(按下播放键) 我们一起听这首《${title}》吧。` }
+        ];
+    },
             
     async createChatPrompt(dossier, chatHistory, finalUserInput, quotedMessage = null) {
     
@@ -19449,7 +21431,10 @@ async function startVideoCall(openingScene = null) {
 }
 
 async function endVideoCall() {
-            // 响应优先，先隐藏界面
+
+            resetTTSQueue();
+
+// 响应优先，先隐藏界面
             DOM.videoCallOverlay.classList.remove('visible');
 
             const wasConnecting = DOM.videoCallOverlay.classList.contains('connecting');
@@ -19547,38 +21532,95 @@ async function endVideoCall() {
             DOM.videoCallUserAvatar.src = '';
         }
 
-// --- 【新增】视频通话专属 TTS 播放器 (增强调试版) ---
-async function playVideoTTS(text) {
-    // 1. 简单清洗：去掉可能存在的星号、括号
+// ===   视频通话语音队列 (State集成版)    === // 
+
+// 1. 入队函数
+function playVideoTTS(text) {
     const cleanText = text.replace(/[\(\)（）\*]/g, "").trim();
     if (!cleanText) return;
 
-    console.log("🎤 [视频语音] 准备朗读:", cleanText);
+    // 【改动】存入 appState
+    appState.videoTTSQueue.push(cleanText);
+    console.log(`📥 [语音队列] 加入: "${cleanText}" (当前积压: ${appState.videoTTSQueue.length})`);
 
+    processVideoTTSQueue();
+}
+
+// 2. 队列处理函数
+async function processVideoTTSQueue() {
+    // 【改动】读取 appState
+    if (appState.isVideoTTSPlaying || appState.videoTTSQueue.length === 0) return;
+
+    // 【改动】更新状态
+    appState.isVideoTTSPlaying = true;
+
+    // 取出队首
+    const textToPlay = appState.videoTTSQueue.shift();
+    
     const dossierId = appState.currentChattingDossierId;
-    if (!dossierId) return console.warn("❌ [视频语音] 丢失角色ID");
+    if (!dossierId) {
+        resetTTSQueue();
+        return;
+    }
     
     const dossier = appState.dossiers.find(d => d.id === dossierId);
-    // 获取角色配置的音色，如果没有就用默认
-    const voiceId = dossier?.voiceId || 'male-qn-qingse'; 
+    const voiceId = dossier?.voiceId || 'male-qn-qingse';
 
     try {
-        // 调用核心函数
-        const audioBlob = await apiHelper.generateSpeech(cleanText, voiceId);
+        console.log(`🎤 [视频语音] 生成中: "${textToPlay}"...`);
         
-        if (!audioBlob) throw new Error("API 返回音频为空");
+        const audioBlob = await apiHelper.generateSpeech(textToPlay, voiceId);
+        
+        // 再次检查：如果生成期间电话挂了，就停止
+        if (!document.getElementById('video-call-overlay').classList.contains('visible')) {
+             resetTTSQueue();
+             return;
+        }
 
         const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioUrl);
         
-        // 播放并打印日志
-        await audio.play();
-        console.log("✅ [视频语音] 开始播放...");
+        // 【改动】存入 appState
+        appState.currentVideoAudio = new Audio(audioUrl);
+
+        // 监听播放结束
+        appState.currentVideoAudio.onended = () => {
+            console.log("✅ [视频语音] 播放完毕");
+            appState.isVideoTTSPlaying = false; // 解锁
+            appState.currentVideoAudio = null;
+            
+            // 稍微歇一口气再播下一条
+            setTimeout(() => {
+                processVideoTTSQueue();
+            }, 300);
+        };
+
+        // 监听报错
+        appState.currentVideoAudio.onerror = () => {
+            console.error("❌ [视频语音] 播放出错");
+            appState.isVideoTTSPlaying = false;
+            processVideoTTSQueue(); // 跳过报错的，继续下一条
+        };
+
+        await appState.currentVideoAudio.play();
 
     } catch (e) {
-        console.error("❌ [视频语音] 播放失败:", e);
-        // 如果是 API 报错，这里会在控制台显示具体原因
+        console.error("❌ [视频语音] 异常:", e);
+        appState.isVideoTTSPlaying = false;
+        setTimeout(processVideoTTSQueue, 1000);
     }
+}
+
+// 3. 重置函数 (挂断用)
+function resetTTSQueue() {
+    // 【改动】清空 appState
+    appState.videoTTSQueue = [];
+    appState.isVideoTTSPlaying = false;
+    
+    if (appState.currentVideoAudio) {
+        appState.currentVideoAudio.pause();
+        appState.currentVideoAudio = null;
+    }
+    console.log("🔕 [视频语音] 队列已清空");
 }
 
 /**
@@ -20955,7 +22997,10 @@ handleSecretResponseAction(action.payload, action.dossierId);
 // vvv 【新增】处理主动私聊任务 vvv
                     case 'chat_initiate':
                         await handleChatInitiationAction(action.payload, action.dossierId);
-                        break;                   
+                        break; 
+                     case 'pemberley_reply_action':
+                        await handlePemberleyReplyAction(action.payload);
+                        break;                  
 
                 }
                 // 任务成功，更新状态
@@ -21641,58 +23686,48 @@ async function loadMoreMovieTurns() {
 
     const { dossierId } = appState.currentMovieSession;
 
-    // 1. 禁用输入
+    // 1. 禁用输入 & 呼吸灯特效
     DOM.movieInput.disabled = true;
     DOM.movieSendBtn.disabled = true;
     DOM.movieInput.value = '';
     DOM.movieInput.placeholder = '导演正在思考...';
-    
-    // 呼吸灯效果
     DOM.movieInputCard.classList.add('waiting-for-reply');
 
-    // 2. 保存并渲染用户的回合
-    const userTurn = { dossierId, author: 'user', content: userInput, timestamp: Date.now() };
-    const userTurnId = await dbHelper.add(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, userTurn);
-    userTurn.id = userTurnId;
-    
-    // 【关键同步 1】把新消息加入到全量历史缓存中
-    if (appState.currentMovieHistoryFull) {
-        appState.currentMovieHistoryFull.push(userTurn);
-    }
-    
-    // 计算楼层号并渲染（渲染在最底部）
-    const currentTotal = appState.currentMovieHistoryFull ? appState.currentMovieHistoryFull.length : 1;
-    renderMovieTurn(userTurn, currentTotal, false);
-
     try {
-        // 3. 准备AI的上下文
-        // 【关键】直接使用内存里的全量历史，不用再读库了，速度更快，而且绝对是完整的
-        const history = appState.currentMovieHistoryFull || [];
+        // 2. 保存并渲染用户的回合 (上屏)
+        const userTurn = { dossierId, author: 'user', content: userInput, timestamp: Date.now() };
+        const userTurnId = await dbHelper.add(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, userTurn);
+        userTurn.id = userTurnId;
         
-        // *小贴士：如果剧情太长（比如超过5000字），为了省钱防止报错，
-        // 你可以在这里截取最后50条发给AI，但这属于“Token优化”，跟分页显示无关。
-        // const contextForAI = history.slice(-50); 
+        // 同步到全量历史
+        if (!appState.currentMovieHistoryFull) appState.currentMovieHistoryFull = [];
+        appState.currentMovieHistoryFull.push(userTurn);
         
-        const prompt = promptManager.createMoviePrompt(appState.currentMovieSession, history, userInput);
+        // 渲染
+        const currentTotal = appState.currentMovieHistoryFull.length;
+        renderMovieTurn(userTurn, currentTotal, false);
+
+        // 3. 【核心修复】准备 AI 上下文
+
+        const historyForContext = appState.currentMovieHistoryFull.slice(0, -1);
+        
+        const prompt = promptManager.createMoviePrompt(appState.currentMovieSession, historyForContext, userInput);
         
         // 4. 调用API
         const aiResponse = await apiHelper.getChatCompletion(prompt);
         
-        // 5. 保存并渲染AI的回合
+        // 5. 保存并渲染 AI 的回合
         const aiTurn = { dossierId, author: 'ai', content: aiResponse, timestamp: Date.now() };
         const aiTurnId = await dbHelper.add(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, aiTurn);
         aiTurn.id = aiTurnId;
         
-        // 【关键同步 2】把AI回复也加入全量历史
-        if (appState.currentMovieHistoryFull) {
-            appState.currentMovieHistoryFull.push(aiTurn);
-        }
-
+        appState.currentMovieHistoryFull.push(aiTurn);
         renderMovieTurn(aiTurn, currentTotal + 1, false);
 
     } catch (error) {
         console.error("电影模式AI回复失败:", error);
         utils.showToast(`导演罢工了: ${error.message}`);
+        // 出错时，在屏幕上显示一条系统消息，但不存入数据库
         renderMovieTurn({ author: 'system', content: `[系统错误: ${error.message}]`}, 0, false);
     } finally {
         // 6. 恢复输入
@@ -21700,7 +23735,6 @@ async function loadMoreMovieTurns() {
         DOM.movieSendBtn.disabled = false;
         DOM.movieInput.placeholder = '输入你的行动或对话...';
         DOM.movieInput.focus();
-        
         DOM.movieInputCard.classList.remove('waiting-for-reply');
     }
 }
@@ -25940,70 +27974,59 @@ appState.currentChatHistory = history;
 // ==========================================
 // ===   沙龙 (群聊) 核心发送逻辑       ===
 // ==========================================
+// ==========================================
+// ===   沙龙 (群聊) 核心发送逻辑 (后台运行版)   ===
+// ==========================================
 
 async function handleSalonSendMessage(mode) {
     const text = DOM.salonInputField.value.trim();
-    const sessionId = appState.currentChattingDossierId; // 群聊 ID
+    const sessionId = appState.currentChattingDossierId; // 锁定当前的群聊 ID
     
     // 0. 基础校验
-    if (!text && mode === 'buffer') return; // 羽毛笔不能发空
+    if (!text && mode === 'buffer') return; 
     if (!sessionId) return;
 
     const session = appState.chatSessions.find(s => s.dossierId === sessionId);
     if (!session) return utils.showToast("会话失效");
 
-    // 1. 处理用户消息 (如果有输入)
+    // 1. 处理用户消息 (用户肯定在场，直接渲染)
     if (text) {
         const userMsg = {
             dossierId: sessionId,
             sender: 'user',
-            authorName: '我', // 标记发送者名字
+            authorName: '我',
             content: text,
             timestamp: Date.now()
         };
 
-        // 存入数据库
         const savedId = await dbHelper.add(CONSTANTS.STORE_NAMES.CHAT_HISTORY, userMsg);
         userMsg.id = savedId;
-appState.currentChatHistory.push(userMsg);
+        appState.currentChatHistory.push(userMsg);
 
-        // 渲染上屏 (插在打字机前面)
         const msgEl = await createSalonMessageElement(userMsg);
         const container = document.getElementById('salon-chat-container');
         const typingIndicator = document.getElementById('salon-typing-indicator');
         
-        // 确保插在打字机之前
-        if (typingIndicator) {
+        if (typingIndicator && container.contains(typingIndicator)) {
             container.insertBefore(msgEl, typingIndicator);
         } else {
             container.appendChild(msgEl);
         }
         
-        // 清空输入框
         DOM.salonInputField.value = '';
-        
-        // 滚动到底部
         container.scrollTop = container.scrollHeight;
-
-        // 更新会话预览
         await updateChatSession(sessionId, text);
     }
 
-    // === 分支：如果是羽毛笔 (Buffer)，到此结束 ===
-    if (mode === 'buffer') {
-        return;
-    }
+    if (mode === 'buffer') return;
 
-    // === 分支：如果是音符 (Final)，请求 AI ===
-    
+    // === 分支：请求 AI ===
     const sendBtn = DOM.salonSendAction;
     
-    // 1. 【关键】显示底部的打字机动画
+    // 显示打字机 (仅当用户还在当前页面时)
     const typingIndicator = document.getElementById('salon-typing-indicator');
-    if (typingIndicator) {
-        typingIndicator.classList.add('visible'); // 显示动画 CSS 类
-        
-        // 滚到底部让用户看到它
+    if (typingIndicator && appState.currentChattingDossierId === sessionId) {
+        typingIndicator.classList.add('visible');
         const container = document.getElementById('salon-chat-container');
         container.scrollTop = container.scrollHeight;
     }
@@ -26020,90 +28043,114 @@ appState.currentChatHistory.push(userMsg);
             }
         }
 
-        // B. 获取历史记录 
+        // B. 获取历史
         const history = await dbHelper.getHistoryForDossier(sessionId);
-        
         const memoryLimit = session.memoryLimit || 30;
-        
-        // 截取最近的 N 条
         const recentHistory = history.slice(-memoryLimit);
         
-        console.log(`[沙龙引擎] 正在读取最近 ${recentHistory.length} 条记录作为记忆 (上限: ${memoryLimit})`);
+        console.log(`[沙龙引擎] 正在后台请求 AI...`);
 
-        // C. 构建 Prompt (使用我们之前写的 createSalonPrompt)
+        // C. 构建 Prompt & 请求 API
         const prompt = promptManager.createSalonPrompt(session, memberDossiers, recentHistory, text || null);
-        
-        // D. 请求 API
         const aiResponse = await apiHelper.getChatCompletion(prompt);
 
-        // E. 解析 JSON
+        // D. 解析 JSON
         let jsonStr = aiResponse;
         const jsonMatch = aiResponse.match(/\[\s*\{[\s\S]*\}\s*\]/); 
-        if (jsonMatch) {
-            jsonStr = jsonMatch[0];
-        }
+        if (jsonMatch) jsonStr = jsonMatch[0];
         
         let replyList = [];
         try {
             replyList = JSON.parse(jsonStr);
         } catch (e) {
-            console.error("解析群聊返回失败:", aiResponse);
             throw new Error("AI 返回格式错误");
         }
-
-        // 【关键】拿到数据后，隐藏打字机
+        
         if (typingIndicator) typingIndicator.classList.remove('visible');
 
-        // F. 处理“冷场” (空数组)
         if (replyList.length === 0) {
-            replyList.push({ 
-                role: "System", 
-                content: "（空气突然安静...）" 
-            });
+            replyList.push({ role: "System", content: "（空气突然安静...）" });
         }
 
-        // G. 逐条渲染 AI 回复
+        // E. 【核心修改】逐条处理回复 (含离线检测)
         for (const reply of replyList) {
-            // 延迟模拟
+            // 模拟延迟 (让回复有节奏感)
             const delay = 800 + (reply.content.length * 50);
             await new Promise(r => setTimeout(r, delay));
 
-            // 识别旁白
+            // 1. 构造消息对象
             const isNarrator = reply.role.toLowerCase() === 'system' || reply.role === 'System';
-            
             const aiMsg = {
                 dossierId: sessionId,
                 sender: isNarrator ? 'system' : 'character', 
-                authorName: reply.role, // 具体是谁
+                authorName: reply.role,
                 type: isNarrator ? 'narration' : 'text',
                 content: reply.content,
                 timestamp: Date.now()
             };
 
-            // 入库
+            // 2. 存入数据库 & 内存
             const sid = await dbHelper.add(CONSTANTS.STORE_NAMES.CHAT_HISTORY, aiMsg);
             aiMsg.id = sid;
-appState.currentChatHistory.push(aiMsg);
-
-            // 上屏 (插在打字机前面，防止打字机还没完全隐藏时穿帮)
-            const el = await createSalonMessageElement(aiMsg);
-            const container = document.getElementById('salon-chat-container');
             
-            if (typingIndicator) {
-                container.insertBefore(el, typingIndicator);
-            } else {
-                container.appendChild(el);
+            // 只有当内存中的历史记录属于当前群聊时，才 push，防止混入其他会话
+            if (appState.currentChattingDossierId === sessionId) {
+                appState.currentChatHistory.push(aiMsg);
             }
-            
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-            
-            container.scrollTop = container.scrollHeight;
 
-            // 更新预览
+            // 3. 【关键】检测用户是否还在当前群聊界面
+            const isCurrentChatActive = 
+                document.getElementById('salon-chat-page').classList.contains('active') &&
+                appState.currentChattingDossierId === sessionId;
+
             const previewText = isNarrator ? `[旁白] ${reply.content}` : `${reply.role}: ${reply.content}`;
-            await updateChatSession(sessionId, previewText);
+
+            if (isCurrentChatActive) {
+                // === 情况 A: 用户在场，直接渲染 ===
+                const el = await createSalonMessageElement(aiMsg);
+                const container = document.getElementById('salon-chat-container');
+                const currentTyping = document.getElementById('salon-typing-indicator');
+                
+                if (container) {
+                    if (currentTyping && container.contains(currentTyping)) {
+                        container.insertBefore(el, currentTyping);
+                    } else {
+                        container.appendChild(el);
+                    }
+                    container.scrollTop = container.scrollHeight;
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }
+                
+                // 更新列表预览 (不增加红点)
+                await updateChatSession(sessionId, previewText, false);
+            
+            } else {
+                // === 情况 B: 用户已离开，发送通知 ===
+                
+                // 更新列表预览 (增加红点)
+                await updateChatSession(sessionId, previewText, true);
+
+                // 获取群头像用于通知
+                let avatarUrl = null;
+                if (session.avatarAssetId) {
+                    const asset = await dbHelper.get(CONSTANTS.STORE_NAMES.ASSETS, session.avatarAssetId);
+                    if (asset?.file) avatarUrl = URL.createObjectURL(asset.file);
+                }
+
+                // 发送横幅
+                notificationManager.show({
+                    avatarUrl: avatarUrl,
+                    title: session.name, // 标题显示群名
+                    message: `${reply.role}: ${reply.content}`, // 内容显示 谁说了什么
+                    onClick: async () => {
+                        // 点击通知的回调：跳转回这个群聊
+                        // 1. 切换页面
+                        navigateToPage(DOM.salonApp, 'salon-chat-page');
+                        // 2. 重新初始化聊天界面
+                        await enterSalonChatUI(session);
+                    }
+                });
+            }
         }
 
     } catch (error) {
@@ -26111,7 +28158,6 @@ appState.currentChatHistory.push(aiMsg);
         utils.showToast("连接中断");
         if (typingIndicator) typingIndicator.classList.remove('visible');
     } finally {
-        // 恢复按钮
         sendBtn.disabled = false;
     }
 }
@@ -26388,6 +28434,817 @@ function updateSalonStylePreview() {
     if (DOM.previewChar) DOM.previewChar.style.color = DOM.inputSalonChar.value;
     if (DOM.previewUser) DOM.previewUser.style.color = DOM.inputSalonUser.value;
 }
+
+// ===========================================
+// === 彭伯里信箱 (Pemberley Core Logic) ===
+// ===========================================
+
+/**
+ * 【新增】将当前的临时信件缓存到数据库，防止刷新丢失
+ */
+async function savePemberleyCache() {
+    if (!appState.tempPemberleyLetters) return;
+    
+    // 【核心修复】包裹成对象存储，与读取逻辑 (cache.value) 保持一致
+    const dataWrapper = { value: appState.tempPemberleyLetters };
+    
+    await dbHelper.set(CONSTANTS.STORE_NAMES.USER_SETTINGS, dataWrapper, 'pemberley_temp_cache');
+    console.log("信箱缓存已保存");
+}
+
+// 触发探索 (连接 AI) - 修复版：加入缓存机制
+async function triggerPemberleyExplore() {
+    if (appState.dossiers.length === 0) {
+        utils.showToast("你需要先创建至少一个角色档案");
+        return;
+    }
+
+    const randomDossier = appState.dossiers[Math.floor(Math.random() * appState.dossiers.length)];
+
+    DOM.pembTriggerBtn.classList.add('animating');
+    DOM.pembPromptText.innerText = "Searching the Mists...";
+    DOM.pembSubPrompt.innerText = "正在跨越时空捕捞...";
+    DOM.pembTriggerBtn.style.pointerEvents = 'none';
+
+    try {
+        const prompt = promptManager.createPemberleyFishingPrompt(randomDossier);
+        const aiResponse = await apiHelper.getChatCompletion(prompt);
+
+        let jsonString = aiResponse;
+        const jsonMatch = aiResponse.match(/\[\s*\{[\s\S]*\}\s*\]/); 
+        if (jsonMatch) jsonString = jsonMatch[0];
+        const lettersData = JSON.parse(jsonString);
+
+        // 处理数据
+        appState.tempPemberleyLetters = lettersData.map((l, index) => ({
+            id: `pemb_temp_${Date.now()}_${index}`,
+            ...l,
+            dossierId: l.isCharacter ? randomDossier.id : null
+        }));
+
+        // --- 【新增】立即存入缓存 ---
+        await savePemberleyCache(); 
+        // -------------------------
+
+        DOM.pembTriggerBtn.classList.remove('animating');
+        DOM.pembIntroSection.style.display = 'none';
+        DOM.pembLetterStack.style.display = 'block';
+        DOM.pembPromptText.innerText = "New Tidings";
+        DOM.pembSubPrompt.innerText = "信件已送达";
+        
+        renderPembLetters(appState.tempPemberleyLetters);
+
+    } catch (error) {
+        console.error("捕捞失败:", error);
+        utils.showToast("时空信道拥堵，捕捞失败");
+        DOM.pembTriggerBtn.classList.remove('animating');
+        DOM.pembPromptText.innerText = "Connection Lost";
+        DOM.pembSubPrompt.innerText = "请稍后重试";
+        setTimeout(() => {
+            DOM.pembPromptText.innerText = "What tidings await?";
+            DOM.pembSubPrompt.innerText = "轻触浮雕，等候时空的来信";
+        }, 2000);
+    } finally {
+        DOM.pembTriggerBtn.style.pointerEvents = 'auto';
+    }
+}
+
+/**
+ * 渲染旷野中的信件 (折叠预览版)
+ */
+function renderPembLetters(letters) {
+    DOM.pembLetterStack.innerHTML = `
+        <div style="text-align:center; margin-bottom:20px; color:var(--pemb-ink-faded); font-family:var(--font-eng-serif); font-style:italic;">
+            — ${new Date().toDateString()} —
+        </div>
+    `;
+    
+    letters.forEach((letter, i) => {
+        const div = document.createElement('div');
+        // 【核心修改】默认添加 'collapsed' 类，初始状态为折叠
+        div.className = 'letter-paper collapsed'; 
+        div.style.animationDelay = `${i * 0.1}s`; // 稍微加快一点进场速度
+        
+        const mainContent = letter.original;
+        
+        const subContent = letter.translation 
+            ? `<div class="pemb-text-translation" style="display:block;"><strong>[译]</strong> ${letter.translation}</div>` 
+            : '';
+        
+        const langClass = letter.lang ? `lang-${letter.lang}` : 'lang-zh';
+
+        div.innerHTML = `
+            <div class="pemb-stamp-mark">${letter.location} &middot; ${letter.year}</div>
+            
+            <!-- 作者署名 (折叠时也能看到一点) -->
+            <div style="text-align:center; font-size:12px; color:var(--pemb-ink-faded); margin-bottom:10px;">
+                From: <strong>${letter.author}</strong>
+            </div>
+
+            <div class="pemb-text-body ${langClass}" style="white-space: pre-wrap;">${mainContent}</div>
+            ${subContent}
+            
+            <div class="pemb-btn-group">
+                <button class="pemb-btn-text pemb-discard-btn">放回</button>
+                <button class="pemb-btn-primary pemb-reply-btn">回信</button>
+            </div>
+        `;
+        
+        // --- 【核心修改】点击卡片本身：切换 展开/折叠 ---
+        div.addEventListener('click', (e) => {
+            // 如果信件是折叠的，就展开；如果是展开的，就折叠
+            div.classList.toggle('collapsed');
+        });
+        
+        // --- 按钮事件 (注意 stopPropagation) ---
+
+        // 1. 放回 (Discard)
+        const discardBtn = div.querySelector('.pemb-discard-btn');
+        discardBtn.addEventListener('click', async (e) => {
+            e.stopPropagation(); // 【关键】阻止冒泡，防止点击按钮时触发展开/折叠
+            
+            const paper = e.target.closest('.letter-paper');
+            paper.style.transition = "all 0.5s ease";
+            paper.style.opacity = 0;
+            paper.style.transform = "translateY(-20px) scale(0.9)";
+            setTimeout(() => paper.remove(), 500);
+            
+            // 从内存移除并更新缓存
+            appState.tempPemberleyLetters = appState.tempPemberleyLetters.filter(l => l.id !== letter.id);
+            await savePemberleyCache(); 
+            
+            utils.showToast("信件已放回虚空");
+            
+            if (appState.tempPemberleyLetters.length === 0) {
+                setTimeout(resetPemberleyView, 600);
+            }
+        });
+        
+        // 2. 回信 (Reply)
+        const replyBtn = div.querySelector('.pemb-reply-btn');
+        replyBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // 【关键】阻止冒泡
+            openPembReplyModal(letter);
+        });
+        
+        DOM.pembLetterStack.appendChild(div);
+    });
+    
+    // --- 底部的手动刷新按钮 (保持不变) ---
+    const resetDiv = document.createElement('div');
+    resetDiv.style.textAlign = 'center'; 
+    resetDiv.style.marginTop = '30px';
+    
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'pemb-btn-text';
+    resetBtn.style.color = "#b71c1c";
+    resetBtn.style.opacity = "0.6";
+    resetBtn.innerHTML = `<i class="ri-refresh-line"></i> Discard All & Refresh`;
+    
+    resetBtn.onclick = async () => {
+        if(confirm("确定要放弃剩下的信件，重新开始捕捞吗？")) {
+            appState.tempPemberleyLetters = [];
+            await savePemberleyCache();
+            resetPemberleyView();
+        }
+    };
+    
+    resetDiv.appendChild(resetBtn);
+    DOM.pembLetterStack.appendChild(resetDiv);
+}
+// 视图重置
+function resetPemberleyView() {
+    DOM.pembLetterStack.style.display = 'none';
+    DOM.pembIntroSection.style.display = 'flex';
+    DOM.pembPromptText.innerText = "What tidings await?";
+    DOM.pembSubPrompt.innerText = "轻触浮雕，等候时空的来信";
+}
+
+// 视图切换 (旷野/珍藏)
+function switchPemberleyView(viewName) {
+    if (viewName === 'wild') {
+        DOM.pembTabWild.classList.add('active');
+        DOM.pembTabColl.classList.remove('active');
+        DOM.pembViewWild.style.display = 'flex';
+        DOM.pembViewColl.style.display = 'none';
+    } else {
+        DOM.pembTabColl.classList.add('active');
+        DOM.pembTabWild.classList.remove('active');
+        DOM.pembViewWild.style.display = 'none';
+        DOM.pembViewColl.style.display = 'block';
+        renderPembCollection(); // 切换时渲染
+    }
+}
+
+// 打开回信浮窗
+function openPembReplyModal(letter) {
+    appState.currentReplyingLetter = letter; // 存入 appState
+    DOM.pembReplyToName.innerText = letter.author;
+    DOM.pembReplyInput.value = "";
+    DOM.pembReplyModal.classList.add('visible');
+    requestAnimationFrame(() => DOM.pembReplyModal.classList.add('open'));
+    setTimeout(() => DOM.pembReplyInput.focus(), 100);
+}
+
+async function confirmPembReply() {
+    const text = DOM.pembReplyInput.value.trim();
+    if (!text) return utils.showToast("信纸是空的...");
+    
+    // 区分是“初次捕捞回信”还是“珍藏里的追信”
+    // 现在的逻辑统一了：无论是哪种，我们都先拿到 letter 对象
+    
+    let letter = appState.currentReplyingLetter;
+    
+    // 如果是从珍藏列表打开的，letter 已经在 openPembReadModal 里被赋值了
+    // 如果是从旷野捕捞打开的，letter 也在 openPembReplyModal 里被赋值了
+    
+    if (!letter) return;
+
+    // === 情况 A: 这是从旷野捕捞的第一封信 ===
+    if (!letter.id.startsWith('pemb_saved_')) {
+        
+        // 1. 构建新的存档对象
+        const newId = `pemb_saved_${Date.now()}`;
+        const savedLetter = {
+            ...letter,
+            id: newId,
+            status: 'waiting_reply',
+            replyTimestamp: Date.now(),
+            // 初始化对话历史：[AI的第一封信]
+            exchanges: [
+                { 
+                    role: 'sender', 
+                    content: letter.original, 
+                    translation: letter.translation, 
+                    timestamp: Date.now() - 60000 
+                }
+            ]
+        };
+        
+        // 2. 存入数据库
+        await dbHelper.add(CONSTANTS.STORE_NAMES.PEMB_LETTERS, savedLetter);
+        
+        // 3. 从临时列表移除
+        appState.tempPemberleyLetters = appState.tempPemberleyLetters.filter(l => l.id !== letter.id);
+        await savePemberleyCache();
+
+        // 4. 触发后台任务 (User 的这句回信将在后台任务里被加入 exchanges)
+        await scheduleReplyTask(newId, savedLetter.dossierId, text);
+
+        // 5. UI 跳转
+        closePembReplyModal();
+        utils.showToast("信件已寄出，请耐心等待...");
+        setTimeout(() => switchPemberleyView('coll'), 600);
+    } 
+    
+    // === 情况 B: 这是在珍藏里的后续回信 ===
+    else {
+        // 1. 更新状态
+        letter.status = 'waiting_reply';
+        letter.replyTimestamp = Date.now();
+        await dbHelper.set(CONSTANTS.STORE_NAMES.PEMB_LETTERS, letter);
+        
+        // 2. 触发后台任务 (User 的这句回信将在后台任务里被加入 exchanges)
+        await scheduleReplyTask(letter.id, letter.dossierId, text);
+
+        // 3. UI 刷新
+        // 如果是在阅读浮窗里回信的，清空输入框并刷新视图
+        const replyInputInReadModal = document.getElementById('pemb-read-reply-input');
+        if (replyInputInReadModal) {
+             replyInputInReadModal.value = '';
+             // 手动把用户的信先加到 UI 上显示出来 (假装已发送)
+             const container = document.querySelector('.pemb-card-body');
+             const userBubble = document.createElement('div');
+             userBubble.className = 'pemb-msg-row me';
+             userBubble.innerHTML = `<div class="pemb-msg-content">${text.replace(/\n/g, '<br>')}</div>`;
+             // 插入到输入框之前
+             container.insertBefore(userBubble, container.lastElementChild);
+             container.scrollTop = container.scrollHeight;
+        } else {
+            closePembReplyModal();
+        }
+        
+        utils.showToast("回信已由信使带走...");
+    }
+}
+
+// 辅助：创建后台任务
+async function scheduleReplyTask(letterId, dossierId, userContent) {
+    // 模拟延迟：10秒 到 60秒 (你可以调大一点，比如 30分钟)
+    const delay = (Math.floor(Math.random() * 50) + 10) * 1000; 
+    
+    const action = {
+        dossierId: dossierId || 0, // 如果是陌生人，dossierId 为 null，给个 0 占位
+        type: 'pemberley_reply_action',
+        payload: {
+            letterId: letterId,
+            userContent: userContent
+        },
+        executeAt: Date.now() + delay,
+        status: 'pending'
+    };
+    await dbHelper.add(CONSTANTS.STORE_NAMES.PENDING_ACTIONS, action);
+    console.log(`[信箱] 已安排回信任务，将在 ${delay/1000} 秒后执行。`);
+}
+
+// 关闭回信浮窗
+function closePembReplyModal() {
+    DOM.pembReplyModal.classList.remove('open');
+    setTimeout(() => DOM.pembReplyModal.classList.remove('visible'), 400);
+}
+
+// 渲染珍藏列表 (从数据库读取)
+async function renderPembCollection() {
+    DOM.pembCollectionContainer.innerHTML = '<p style="text-align:center; opacity:0.5;">正在整理信笺...</p>';
+    
+    const letters = await dbHelper.getAll(CONSTANTS.STORE_NAMES.PEMB_LETTERS);
+    letters.sort((a, b) => b.replyTimestamp - a.replyTimestamp); // 倒序
+    
+    DOM.pembCollectionContainer.innerHTML = '';
+    if (letters.length > 0) {
+        DOM.pembEmptyHint.style.display = 'none';
+        
+        letters.forEach((item) => {
+            const el = document.createElement('div');
+            el.className = 'pemb-collection-item';
+            
+            // 摘要：显示原文的前30个字
+            const snippet = (item.translation || item.original).substring(0, 35) + "...";
+            const dateStr = new Date(item.replyTimestamp).toLocaleDateString();
+            
+            el.innerHTML = `
+                <div class="pemb-collection-snippet">"${snippet}"</div>
+                <div class="pemb-collection-meta">
+                    To ${item.author} &nbsp;&middot;&nbsp; ${dateStr}
+                </div>
+            `;
+            
+            el.addEventListener('click', () => openPembReadModal(item));
+            DOM.pembCollectionContainer.appendChild(el);
+        });
+    } else {
+        DOM.pembEmptyHint.style.display = 'block';
+    }
+}
+
+// 打开阅读/对话浮窗
+function openPembReadModal(letter) {
+    // 更新全局当前操作对象
+    appState.currentReplyingLetter = letter;
+    
+    // 标记为已读
+    if (letter.status === 'unread') {
+        letter.status = 'read';
+        dbHelper.set(CONSTANTS.STORE_NAMES.PEMB_LETTERS, letter);
+        renderPembCollection(); // 刷新列表去掉红点
+    }
+
+    DOM.pembReadAuthor.innerText = letter.author;
+    
+    // === 核心：重新构建内容区 ===
+    const body = document.querySelector('#pemb-read-modal .pemb-card-body');
+    body.innerHTML = ''; // 清空
+
+    // 1. 渲染历史对话
+    // 如果是旧数据没有 exchanges，把 original 和 myReply 拼凑进去兼容
+    const exchanges = letter.exchanges || [
+        { role: 'sender', content: letter.original, translation: letter.translation }
+    ];
+    // 如果有旧的单次回复，也加进去
+    if (!letter.exchanges && letter.myReply) {
+        exchanges.push({ role: 'me', content: letter.myReply });
+    }
+
+    exchanges.forEach(msg => {
+        const row = document.createElement('div');
+        row.className = `pemb-msg-row ${msg.role}`; // 'me' or 'sender'
+        
+        let contentHtml = msg.content.replace(/\n/g, '<br>');
+        
+        // 如果是 sender 且有翻译
+        if (msg.role === 'sender' && msg.translation) {
+            // 原文用特殊字体
+            const langClass = letter.lang ? `lang-${letter.lang}` : '';
+            contentHtml = `
+                <div class="pemb-msg-original ${langClass}">${msg.content.replace(/\n/g, '<br>')}</div>
+                <div class="pemb-msg-translation"><strong>[译]</strong> ${msg.translation}</div>
+            `;
+        } else if (msg.role === 'sender') {
+             // 中文信件，套用字体
+             contentHtml = `<div class="pemb-msg-original lang-zh">${msg.content.replace(/\n/g, '<br>')}</div>`;
+        }
+
+        row.innerHTML = `<div class="pemb-msg-content">${contentHtml}</div>`;
+        body.appendChild(row);
+    });
+
+    // 2. 添加底部输入框 (如果还在等待回复，显示“对方正在书写...”)
+    if (letter.status === 'waiting_reply') {
+        const waitingEl = document.createElement('div');
+        waitingEl.style.cssText = "text-align:center; color:#999; font-style:italic; margin-top:20px; font-size:12px;";
+        waitingEl.innerText = "Waiting for reply...";
+        body.appendChild(waitingEl);
+    } else {
+        // 允许回复
+        const inputWrapper = document.createElement('div');
+        inputWrapper.className = 'pemb-chat-input-area';
+        inputWrapper.innerHTML = `
+            <div style="border-top: 1px dashed var(--pemb-paper-border); margin: 20px 0 10px 0;"></div>
+            <textarea id="pemb-read-reply-input" class="pemb-reply-textarea" placeholder="写下新的回信..." style="min-height: 100px;"></textarea>
+            <div style="text-align:right; margin-top:10px;">
+                <button class="pemb-btn-primary" id="btn-send-continuous-reply">寄出</button>
+            </div>
+        `;
+        body.appendChild(inputWrapper);
+        
+        // 绑定发送按钮
+        setTimeout(() => {
+             document.getElementById('btn-send-continuous-reply').onclick = () => {
+                 const val = document.getElementById('pemb-read-reply-input').value;
+                 if(val.trim()) {
+                     // 借用 DOM.pembReplyInput 传递值给 confirmPembReply
+                     DOM.pembReplyInput.value = val; 
+                     confirmPembReply();
+                 }
+             };
+        }, 0);
+    }
+
+    DOM.pembReadModal.classList.add('visible');
+    requestAnimationFrame(() => DOM.pembReadModal.classList.add('open'));
+    
+    // 滚动到底部
+    setTimeout(() => body.scrollTop = body.scrollHeight, 100);
+}
+
+// 关闭阅读浮窗
+function closePembReadModal() {
+    DOM.pembReadModal.classList.remove('open');
+    setTimeout(() => DOM.pembReadModal.classList.remove('visible'), 400);
+}
+
+/**
+ * 【新增】处理彭伯里回信任务 (头像优化版)
+ */
+async function handlePemberleyReplyAction(payload) {
+    const { letterId, userContent } = payload;
+    
+    // 1. 获取信件完整数据
+    const letter = await dbHelper.get(CONSTANTS.STORE_NAMES.PEMB_LETTERS, letterId);
+    if (!letter) return;
+
+    try {
+        // 2. 准备历史记录
+        let history = letter.exchanges || [];
+        
+        // 3. 调用 AI
+        const prompt = promptManager.createPemberleyReplyPrompt(letter, history, userContent);
+        const aiResponse = await apiHelper.getChatCompletion(prompt);
+        
+        // 4. 解析 JSON
+        let jsonString = aiResponse;
+        const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+        if (jsonMatch) jsonString = jsonMatch[0];
+        const result = JSON.parse(jsonString);
+
+        // 5. 更新信件数据
+        const newExchanges = [
+            ...history,
+            { role: 'me', content: userContent, timestamp: Date.now() - 1000 },
+            { 
+                role: 'sender', 
+                content: result.original, 
+                translation: result.translation, 
+                timestamp: Date.now() 
+            }
+        ];
+
+        letter.exchanges = newExchanges;
+        letter.status = 'unread'; 
+        letter.replyTimestamp = Date.now(); 
+        
+        // 6. 存入数据库
+        await dbHelper.set(CONSTANTS.STORE_NAMES.PEMB_LETTERS, letter);
+        
+        console.log(`[信箱] 收到 ${letter.author} 的回信。`);
+
+        // --- 【核心优化】准备通知头像 ---
+        let notificationAvatarUrl = null;
+
+        // 如果是角色信件，尝试加载角色头像
+        if (letter.isCharacter && letter.dossierId) {
+            const dossier = appState.dossiers.find(d => d.id === letter.dossierId);
+            if (dossier && dossier.character.avatarAssetId) {
+                try {
+                    const asset = await dbHelper.get(CONSTANTS.STORE_NAMES.ASSETS, dossier.character.avatarAssetId);
+                    if (asset?.file) {
+                        notificationAvatarUrl = URL.createObjectURL(asset.file);
+                    }
+                } catch (e) {
+                    console.error("加载信箱通知头像失败", e);
+                }
+            }
+        }
+        // 如果是陌生人，notificationAvatarUrl 保持为 null，显示默认图标
+
+        // 7. 发送横幅通知 (带头像)
+        notificationManager.show({
+            avatarUrl: notificationAvatarUrl, 
+            title: `Pemberley: 来自 ${letter.author} 的回信`,
+            message: result.translation || result.original, // 优先显示翻译，没有翻译显示原文
+            onClick: () => {} 
+        });
+
+        // 8. 刷新列表 (如果用户正在看)
+        if (document.getElementById('view-collection').style.display === 'block') {
+            renderPembCollection();
+        }
+        
+        // 9. 刷新详情 (如果用户正在看这封信)
+        const readModal = document.getElementById('pemb-read-modal');
+        if (readModal.classList.contains('visible') && 
+            appState.currentReplyingLetter?.id === letter.id) {
+             openPembReadModal(letter);
+        }
+
+    } catch (error) {
+        console.error("生成回信失败:", error);
+    }
+}
+
+// ==========================================
+// ===  Twilight Player (持久化列表最终版)  ===
+// ==========================================
+const TwilightPlayer = {
+    isPlaying: false,
+    playlist: [],       // 内存中的播放列表
+    currentIndex: 0,    // 当前播放索引
+
+    // 初始化：绑定事件 + 读取存档
+    async init() {
+        // --- 1. 基础 UI 绑定 ---
+        DOM.twMiniPlayer.addEventListener('click', () => this.openPanel());
+        DOM.twCloseBtn.addEventListener('click', () => this.closePanel());
+        
+        // 点击浮窗背景关闭
+        DOM.twPlayerModal.addEventListener('click', (e) => {
+            if (e.target === DOM.twPlayerModal) this.closePanel();
+        });
+        
+        // --- 2. 播放控制 ---
+        DOM.twPlayBtn.addEventListener('click', () => this.togglePlay());
+        DOM.twPrevBtn.addEventListener('click', () => this.playPrev());
+        DOM.twNextBtn.addEventListener('click', () => this.playNext());
+
+        // --- 3. 进度条 ---
+        DOM.twAudio.addEventListener('timeupdate', () => this.updateProgress());
+        DOM.twAudio.addEventListener('ended', () => this.playNext(true)); // 自动播下一首
+        
+        DOM.twProgressWrap.addEventListener('click', (e) => this.seek(e));
+
+        // --- 4. 功能操作 ---
+        DOM.twDeleteBtn.addEventListener('click', () => this.deleteCurrentTrack());
+        DOM.twExitBtn.addEventListener('click', () => this.exitPlayer());
+
+        // --- 5. 核心：从数据库恢复列表 ---
+        await this.restoreSession();
+    },
+
+    // 从数据库恢复上次的状态
+    async restoreSession() {
+        try {
+            // 从 shared_playlist 表读取所有歌曲
+            const tracks = await dbHelper.getAll('shared_playlist');
+            if (tracks && tracks.length > 0) {
+                this.playlist = tracks;
+                this.currentIndex = 0; // 默认恢复到第一首
+                
+                // 加载第一首但不自动播放 (false)
+                await this.loadTrack(this.currentIndex, false);
+                
+                // 显示胶囊 (静止状态)
+                DOM.twMiniPlayer.classList.add('visible');
+                console.log(`[Twilight] 已恢复 ${tracks.length} 首歌曲`);
+            }
+        } catch (e) {
+            console.error("恢复播放列表失败:", e);
+        }
+    },
+
+    // 添加新歌 (对外接口)
+    async addTrack(trackInfo) {
+        // 1. 存入数据库 (持久化)
+        const id = await dbHelper.add('shared_playlist', trackInfo);
+        trackInfo.id = id;
+
+        // 2. 更新内存
+        this.playlist.push(trackInfo);
+        
+        // 3. 播放逻辑：
+        // 如果是列表里的第一首歌，或者当前没有在播放，则立即播放新歌
+        if (this.playlist.length === 1 || !this.isPlaying) {
+            this.currentIndex = this.playlist.length - 1; // 切换到最新这首
+            await this.loadTrack(this.currentIndex, true);
+        } else {
+            utils.showToast(`已添加到列表 (${this.playlist.length})`);
+            this.updateUIInfo(); // 仅更新计数
+        }
+
+        // 确保胶囊可见
+        DOM.twMiniPlayer.classList.add('visible');
+        // 确保大面板可见
+        DOM.twPlayerModal.classList.add('visible');
+    },
+
+    // 加载指定索引的歌曲
+    async loadTrack(index, autoPlay = true) {
+        if (index < 0 || index >= this.playlist.length) return;
+        
+        const track = this.playlist[index];
+        this.currentIndex = index;
+
+        // --- A. 解析资源 ---
+        let audioSrc = track.url;
+        let coverSrc = 'https://images.unsplash.com/photo-1518182170546-0766ce6fec56'; // 默认封面
+
+        try {
+            // 解析音频
+            if (track.audioAssetId) {
+                const asset = await dbHelper.get(CONSTANTS.STORE_NAMES.ASSETS, track.audioAssetId);
+                if (asset?.file) audioSrc = URL.createObjectURL(asset.file);
+            }
+            // 解析封面
+            if (track.coverAssetId) {
+                const asset = await dbHelper.get(CONSTANTS.STORE_NAMES.ASSETS, track.coverAssetId);
+                if (asset?.file) coverSrc = URL.createObjectURL(asset.file);
+            }
+        } catch (e) {
+            console.error("资源加载失败:", e);
+            utils.showToast("资源丢失，无法播放");
+            return;
+        }
+
+        // --- B. 更新 UI ---
+        DOM.twMiniTitle.textContent = track.title;
+        DOM.twMiniImg.src = coverSrc;
+        
+        DOM.twMainTitle.textContent = track.title;
+        DOM.twMainArtist.textContent = track.artist || 'Unknown';
+        DOM.twMainImg.src = coverSrc;
+        DOM.twLyricBox.textContent = `"${track.title}"`; // 暂时显示歌名
+        
+        this.updateUIInfo(); // 更新 1/5 计数
+
+        // --- C. 播放 ---
+        DOM.twAudio.src = audioSrc;
+        
+        if (autoPlay) {
+            try {
+                await DOM.twAudio.play();
+                this.isPlaying = true;
+            } catch (e) {
+                console.error("自动播放受阻:", e);
+                this.isPlaying = false;
+            }
+        } else {
+            this.isPlaying = false;
+        }
+        this.updateIcons();
+    },
+
+    // 删除当前歌曲
+    async deleteCurrentTrack() {
+        if (this.playlist.length === 0) return;
+        
+        const trackToDelete = this.playlist[this.currentIndex];
+        
+        // 1. 从数据库删除
+        await dbHelper.delete('shared_playlist', trackToDelete.id);
+        
+        // 2. 从内存删除
+        this.playlist.splice(this.currentIndex, 1);
+        
+        utils.showToast("已删除");
+
+        if (this.playlist.length === 0) {
+            // 如果删光了，自动退出
+            this.exitPlayer();
+        } else {
+            // 修正索引：如果删的是最后一首，播前一首；否则播当前位置（即下一首）
+            if (this.currentIndex >= this.playlist.length) {
+                this.currentIndex = 0;
+            }
+            // 保持当前播放状态加载下一首
+            this.loadTrack(this.currentIndex, this.isPlaying);
+        }
+    },
+
+    // 退出播放器 (关机逻辑：隐藏UI，保留数据)
+    exitPlayer() {
+        // 1. 停止播放
+        DOM.twAudio.pause();
+        this.isPlaying = false;
+        this.updateIcons();
+
+        // 2. 隐藏 UI
+        DOM.twPlayerModal.classList.remove('visible');
+        DOM.twMiniPlayer.classList.remove('visible');
+        
+        utils.showToast("播放器已关闭");
+    },
+
+    // --- 播放控制 ---
+    playNext(auto = false) {
+        if (this.playlist.length === 0) return;
+        let nextIndex = this.currentIndex + 1;
+        if (nextIndex >= this.playlist.length) nextIndex = 0; // 循环
+        this.loadTrack(nextIndex, true);
+    },
+
+    playPrev() {
+        if (this.playlist.length === 0) return;
+        let prevIndex = this.currentIndex - 1;
+        if (prevIndex < 0) prevIndex = this.playlist.length - 1; // 循环
+        this.loadTrack(prevIndex, true);
+    },
+
+    togglePlay() {
+        // 获取胶囊图片元素，用于控制旋转
+        const pillCover = DOM.twMiniPlayer.querySelector('.tw-pill-cover');
+
+        if (this.isPlaying) {
+            DOM.twAudio.pause();
+            if(pillCover) pillCover.classList.remove('playing');
+        } else {
+            DOM.twAudio.play();
+            if(pillCover) pillCover.classList.add('playing');
+        }
+        this.isPlaying = !this.isPlaying;
+        this.updateIcons();
+    },
+
+    updateIcons() {
+        const pillCover = DOM.twMiniPlayer.querySelector('.tw-pill-cover');
+        
+        if (this.isPlaying) {
+            DOM.twIconPlay.style.display = 'none';
+            DOM.twIconPause.style.display = 'block';
+            if(pillCover) pillCover.classList.add('playing');
+        } else {
+            DOM.twIconPlay.style.display = 'block';
+            DOM.twIconPause.style.display = 'none';
+            if(pillCover) pillCover.classList.remove('playing');
+        }
+    },
+
+    updateProgress() {
+        const { currentTime, duration } = DOM.twAudio;
+        if (duration) {
+            const percent = (currentTime / duration) * 100;
+            DOM.twProgressFill.style.width = `${percent}%`;
+            DOM.twProgressThumb.style.left = `${percent}%`;
+            DOM.twCurrTime.textContent = utils.formatTime(currentTime);
+            DOM.twTotalTime.textContent = utils.formatTime(duration);
+        }
+    },
+
+    seek(e) {
+        if (!DOM.twAudio.duration) return;
+        const rect = DOM.twProgressWrap.getBoundingClientRect();
+        const percent = (e.clientX - rect.left) / rect.width;
+        DOM.twAudio.currentTime = percent * DOM.twAudio.duration;
+    },
+
+    openPanel() {
+        DOM.twMiniPlayer.classList.remove('visible'); // 隐藏胶囊
+        DOM.twPlayerModal.classList.add('visible');   // 显示大面板
+    },
+
+    closePanel() {
+        DOM.twPlayerModal.classList.remove('visible'); // 隐藏大面板
+        // 如果有歌单，显示胶囊
+        if (this.playlist.length > 0) {
+            DOM.twMiniPlayer.classList.add('visible');
+        }
+    },
+
+    updateUIInfo() {
+        if (DOM.twListCount) {
+            DOM.twListCount.textContent = `${this.currentIndex + 1}/${this.playlist.length}`;
+        }
+    },
+    updateLyricBox(text) {
+        if (DOM.twLyricBox) {
+            DOM.twLyricBox.style.transition = "opacity 0.3s ease";
+            DOM.twLyricBox.style.opacity = 0;
+            
+            setTimeout(() => {
+                DOM.twLyricBox.textContent = `“${text}”`;
+                DOM.twLyricBox.style.opacity = 1;
+            }, 300);
+        }
+    }
+};
 
 // ===============================================
 // ===   数据管理核心逻辑 (导入/导出/清空)     ===
@@ -31655,6 +34512,248 @@ document.addEventListener('click', (e) => {
                 // 隐藏感应区
                 topTrigger.classList.remove('active');
             });
+
+// ===========================================
+    // === 彭伯里信箱 (Pemberley Listeners) ===
+    // ===========================================
+
+    // 1. 桌面入口点击
+    DOM.iconMailbox.addEventListener('click', async () => {
+        navigateToPage(DOM.pemberleyApp, 'pemberley-main-page');
+        
+        // 尝试读取缓存
+        try {
+            const cache = await dbHelper.get(CONSTANTS.STORE_NAMES.USER_SETTINGS, 'pemberley_temp_cache');
+            
+            // 如果有缓存，且缓存里有信件
+            if (cache && cache.value && Array.isArray(cache.value) && cache.value.length > 0) {
+                console.log("正在恢复彭伯里信箱缓存...", cache.value);
+                appState.tempPemberleyLetters = cache.value;
+                
+                // 直接显示信件堆叠视图，隐藏初始探索按钮
+                DOM.pembIntroSection.style.display = 'none';
+                DOM.pembLetterStack.style.display = 'block';
+                
+                // 更改提示语，告诉用户这是上次留下的
+                DOM.pembPromptText.innerText = "Unfinished Business"; 
+                DOM.pembSubPrompt.innerText = "案头仍有未读来信";
+                
+                renderPembLetters(appState.tempPemberleyLetters);
+            } else {
+                // 没有缓存，显示初始探索界面
+                resetPemberleyView();
+            }
+        } catch (e) {
+            console.error("读取信箱缓存失败", e);
+            resetPemberleyView();
+        }
+    });
+    // 2. 返回按钮
+    DOM.pemberleyBackBtn.addEventListener('click', () => {
+        closeNavigator(DOM.pemberleyApp);
+    });
+
+    // 3. 探索按钮 (AI 捕捞)
+    DOM.pembTriggerBtn.addEventListener('click', triggerPemberleyExplore);
+
+    // 4. Tab 切换
+    DOM.pembTabWild.addEventListener('click', () => switchPemberleyView('wild'));
+    DOM.pembTabColl.addEventListener('click', () => switchPemberleyView('coll'));
+
+    // 5. 回信浮窗交互
+    DOM.pembConfirmReplyBtn.addEventListener('click', confirmPembReply);
+    DOM.pembDiscardReplyBtn.addEventListener('click', closePembReplyModal);
+
+    // 6. 阅读浮窗交互
+    DOM.pembCloseReadBtn.addEventListener('click', closePembReadModal);
+
+    // 7. 浮窗遮罩点击关闭
+    DOM.pembReplyModal.addEventListener('click', (e) => {
+        if (e.target === DOM.pembReplyModal) closePembReplyModal();
+    });
+    DOM.pembReadModal.addEventListener('click', (e) => {
+        if (e.target === DOM.pembReadModal) closePembReadModal();
+    });
+
+// ===================================
+    // === "一起听" 功能入口 & 上传逻辑 ===
+    // ===================================
+
+    // 1. 打开弹窗 (点击功能面板里的图标)
+    DOM.funcListenTogether.addEventListener('click', () => {
+        toggleFunctionPanel(); // 收起加号面板
+        
+        // 重置表单
+        DOM.musicShareTitle.value = '';
+        DOM.musicShareArtist.value = '';
+        DOM.musicShareFileInput.value = '';
+        DOM.musicShareUrlInput.value = '';
+        DOM.musicShareCoverInput.value = '';
+        
+        // 智能更改按钮文字
+        if (TwilightPlayer.playlist.length > 0) {
+            DOM.confirmShareMusicBtn.textContent = "继续播放 / 添加新歌";
+        } else {
+            DOM.confirmShareMusicBtn.textContent = "开始播放";
+        }
+        
+        DOM.musicShareModal.classList.add('visible');
+    });
+
+    // 2. 关闭弹窗
+    const closeMusicShare = () => DOM.musicShareModal.classList.remove('visible');
+    DOM.closeMusicShareBtn.addEventListener('click', closeMusicShare);
+    DOM.musicShareModal.addEventListener('click', (e) => {
+        if (e.target === DOM.musicShareModal) closeMusicShare();
+    });
+
+    // 3. 切换音源类型 (文件 vs URL)
+    DOM.musicSourceType.addEventListener('change', (e) => {
+        const isFile = e.target.value === 'file';
+        DOM.musicSourceFileBox.style.display = isFile ? 'block' : 'none';
+        DOM.musicSourceUrlBox.style.display = isFile ? 'none' : 'block';
+    });
+
+    // 4. 点击“开始播放 / 确认添加”按钮 (修复变量名版)
+    DOM.confirmShareMusicBtn.addEventListener('click', async () => {
+        const title = DOM.musicShareTitle.value.trim();
+        const artist = DOM.musicShareArtist.value.trim();
+        const type = DOM.musicSourceType.value;
+        const dossierId = appState.currentChattingDossierId;
+        
+        // === 逻辑分流 ===
+        if (!title) {
+            if (TwilightPlayer.playlist.length > 0) {
+                closeMusicShare();
+                DOM.twPlayerModal.classList.add('visible');
+                DOM.twMiniPlayer.classList.remove('visible');
+                return;
+            } else {
+                return utils.showToast("歌单是空的，请先添加一首歌");
+            }
+        }
+        
+        const originalBtnText = DOM.confirmShareMusicBtn.textContent;
+        DOM.confirmShareMusicBtn.textContent = "加载唱片...";
+        DOM.confirmShareMusicBtn.disabled = true;
+
+        try {
+            let audioUrl = null;
+            let coverUrl = null;
+
+            // 1. 处理封面 (已修复变量名错误)
+            const coverFile = DOM.musicShareCoverInput.files[0];
+            if (coverFile) {
+                const compressedCover = await imageCompression(coverFile, { maxSizeMB: 0.5 });
+                coverUrl = await dbHelper.add(CONSTANTS.STORE_NAMES.ASSETS, { file: compressedCover });
+            }
+
+            // 2. 处理音频
+            if (type === 'file') {
+                const file = DOM.musicShareFileInput.files[0];
+                if (!file) throw new Error("请选择音乐文件");
+                audioUrl = await dbHelper.add(CONSTANTS.STORE_NAMES.ASSETS, { file: file }); 
+            } else {
+                audioUrl = DOM.musicShareUrlInput.value.trim();
+                if (!audioUrl) throw new Error("请输入音乐链接");
+            }
+
+            // 3. 构建数据
+            const trackInfo = {
+                title, 
+                artist,
+                coverAssetId: typeof coverUrl === 'number' ? coverUrl : null
+            };
+
+            if (type === 'file') {
+                trackInfo.audioAssetId = audioUrl; 
+            } else {
+                trackInfo.url = audioUrl; 
+            }
+
+            // 4. 【立即播放】
+            await TwilightPlayer.addTrack(trackInfo);
+            closeMusicShare(); 
+
+            // 5. 【后台】触发 AI 反应与记忆生成
+            if (dossierId) {
+                const dossier = appState.dossiers.find(d => d.id === dossierId);
+                if (dossier) {
+                    TwilightPlayer.updateLyricBox(`${dossier.character.name} 正在倾听...`);
+
+                    const sysMsg = {
+                        dossierId,
+                        sender: 'system',
+                        content: `你开始播放音乐：《${title}》 - ${artist || 'Unknown'}`,
+                        timestamp: Date.now()
+                    };
+                    await dbHelper.add(CONSTANTS.STORE_NAMES.CHAT_HISTORY, sysMsg);
+                    appState.currentChatHistory.push(sysMsg); 
+
+                    (async () => {
+                        try {
+                            const prompt = promptManager.createMusicSharedPrompt(dossier, { title, artist });
+                            const aiResponse = await apiHelper.getChatCompletion(prompt);
+                            
+                            const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+                            if (jsonMatch) {
+                                const data = JSON.parse(jsonMatch[0]);
+                                
+                                if (data.quote) {
+                                    TwilightPlayer.updateLyricBox(data.quote);
+                                }
+
+                                if (data.chat) {
+                                    const chatMsg = {
+                                        dossierId,
+                                        sender: 'character',
+                                        content: data.chat,
+                                        timestamp: Date.now()
+                                    };
+                                    const savedId = await dbHelper.add(CONSTANTS.STORE_NAMES.CHAT_HISTORY, chatMsg);
+                                    chatMsg.id = savedId;
+                                    appState.currentChatHistory.push(chatMsg);
+                                    
+                                    if (document.getElementById('chat-dialogue-page').classList.contains('active')) {
+                                        await renderMessage(chatMsg);
+                                    }
+                                    await updateChatSession(dossierId, `[音乐] ${data.chat}`);
+                                }
+
+                                if (data.memory_title && data.memory_content) {
+                                    const newMemory = {
+                                        dossierId: dossierId,
+                                        type: 'music_shared',
+                                        timestamp: Date.now(),
+                                        title: `🎵 ${data.memory_title}`,
+                                        summary: data.memory_content
+                                    };
+                                    await dbHelper.add(CONSTANTS.STORE_NAMES.MEMORIES, newMemory);
+                                    
+                                    notificationManager.show({
+                                        avatarUrl: null, 
+                                        title: "记忆已铭刻",
+                                        message: `关于《${title}》的听歌回忆已保存`,
+                                        onClick: () => {}
+                                    });
+                                }
+                            }
+                        } catch (err) {
+                            console.error("AI 听歌反应生成失败:", err);
+                            TwilightPlayer.updateLyricBox(title);
+                        }
+                    })();
+                }
+            }
+
+        } catch (error) {
+            console.error("添加失败:", error);
+            utils.showToast(error.message || "添加失败");
+        } finally {
+            DOM.confirmShareMusicBtn.textContent = originalBtnText;
+            DOM.confirmShareMusicBtn.disabled = false;
+        }
+    });
 }
 
         async function initializeApp() {
@@ -31700,6 +34799,7 @@ document.addEventListener('click', (e) => {
                 initializeEventListeners();
 ActionEngine.start();
 lucide.createIcons();
+TwilightPlayer.init();
 
                 setTimeout(() => {
                     const splashScreen = document.getElementById('app-splash-screen');
