@@ -11168,6 +11168,141 @@ body.light-mode .tw-progress-thumb {
 body.light-mode .tw-list-indicator {
     color: rgba(0, 0, 0, 0.4) !important; /* 变成深灰色数字 */
 }
+
+/* ============================================================
+   ===   电影模式 Swipe (多重宇宙切换) 样式   ===
+   ============================================================ */
+
+/* 1. 切换控制器容器 */
+.movie-swipe-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 15px; /* 和右边的操作按钮拉开距离 */
+    font-family: monospace; /* 等宽字体，数字不跳动 */
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 2. 左右箭头按钮 */
+.swipe-arrow {
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.2s;
+    user-select: none;
+    padding: 0 4px;
+}
+
+.swipe-arrow:hover {
+    color: #FFD700; /* 悬停变金 */
+    transform: scale(1.2);
+}
+
+/* 禁用状态 (比如已经是第一页时) */
+.swipe-arrow.disabled {
+    opacity: 0.2;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* 3. 页码计数器 */
+.swipe-counter {
+    min-width: 24px;
+    text-align: center;
+}
+
+/* 加载时的旋转动画 */
+.swipe-loading {
+    animation: spin 1s linear infinite;
+    color: #FFD700;
+}
+
+/* =========================================
+   ===   🚑 修复：头像上传显示不全       ===
+   ========================================= */
+
+.avatar-uploader {
+    /* 1. 强制让图片填满整个方框，多余的裁剪 */
+    background-size: cover !important;
+    
+    /* 2. 强制图片居中显示 */
+    background-position: center center !important;
+    
+    /* 3. 防止小图片重复平铺 */
+    background-repeat: no-repeat !important;
+    
+    /* 4. 确保背景色（白色/灰色）也能正常垫底 */
+    background-color: var(--input-bg-color); 
+    
+    /* 5. 确保溢出隐藏（虽然 cover 属性通常不需要，但加个保险） */
+    overflow: hidden;
+}
+
+/* 顺便修复一下可能存在的论坛头像上传器 */
+#forum-avatar-uploader, 
+#user-moment-avatar-uploader,
+#moment-image-uploader {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+/* ============================================================
+   ===   修复：平行宇宙/角色选择列表 浅色模式适配   ===
+   ============================================================ */
+
+/* 1. 浮窗背景：变成纯白/米白，边框变深 */
+body.light-mode #monopoly-char-select-modal .modal-content {
+    background-color: #f9f9f9 !important;
+    border: 1px solid #ccc !important;
+    color: #333 !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1) !important;
+}
+
+/* 2. 头部标题和关闭按钮 */
+body.light-mode #monopoly-char-select-modal .modal-header h3 {
+    color: #333 !important;
+}
+body.light-mode #monopoly-char-select-modal i.ri-close-line {
+    color: #666 !important;
+}
+
+/* 3. 列表项：白底深字 */
+body.light-mode .monopoly-select-item {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #eee !important;
+    color: #333 !important; /* 强制文字变黑 */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+/* 4. 列表项内的文字具体适配 */
+body.light-mode .monopoly-select-item div[style*="color:#fff"], 
+body.light-mode .monopoly-select-item div[style*="color: #fff"] {
+    color: #333 !important; /* 覆盖内联样式的白色 */
+}
+
+/* 5. 副标题/时间戳：深灰色 */
+body.light-mode .monopoly-select-item div[style*="opacity:0.5"] {
+    color: #666 !important;
+    opacity: 1 !important; /* 取消透明度，直接用灰色 */
+}
+
+/* 6. 列表顶部的提示语 */
+body.light-mode #monopoly-char-list > div:first-child {
+    color: #b8860b !important; /* 暗金色提示 */
+    border-bottom-color: #eee !important;
+}
+
+/* 7. 悬停效果 */
+body.light-mode .monopoly-select-item:hover {
+    background-color: #f0f0f0 !important;
+}
+
     </style>
 </head>
 
@@ -13853,7 +13988,7 @@ body.light-mode .tw-list-indicator {
 
         const CONSTANTS = {
     DB_NAME: 'MyDesktopDB',
-    DB_VERSION: 19, // <-- 【核心改动】版本号提升
+    DB_VERSION: 20, // <-- 【核心改动】版本号提升
        MESSAGES_PER_PAGE: 30,
     STORE_NAMES: {
         API_PRESETS: 'api_presets',
@@ -13882,6 +14017,7 @@ DREAMS: 'dreams', // <--- 【新增】梦境表
 TRACES: 'traces', // <--- 【新增】行踪表
 PEMB_LETTERS: 'pemberley_letters',
 SHARED_PLAYLIST: 'shared_playlist', 
+MOVIE_TIMELINES: 'movie_timelines',
     },
 
     // vvvv 【新增】NPC 档案注册表 vvvv
@@ -14766,6 +14902,10 @@ const allStores = {
         indexes: { 'by_timestamp': 'timestamp' } 
     },
 [CONSTANTS.STORE_NAMES.SHARED_PLAYLIST]: { options: { keyPath: 'id', autoIncrement: true } 
+    },
+[CONSTANTS.STORE_NAMES.MOVIE_TIMELINES]: { 
+        options: { keyPath: 'id' }, // 分支存档使用字符串ID (如 "timeline_123456")
+        indexes: { 'by_dossierId': 'dossierId' } // 建立索引以便查询某个角色的所有存档
     },
 
 };
@@ -18293,15 +18433,42 @@ ${historySection}
             DOM.dossierModalOverlay.classList.add('visible');
         }
         async function handleAvatarUpload(file, uploadArea) {
-            if (!file) return null;
-            try {
-                const compressedFile = await imageCompression(file, { maxSizeMB: 0.5, maxWidthOrHeight: 400 });
-                const assetId = await dbHelper.add(CONSTANTS.STORE_NAMES.ASSETS, { file: compressedFile });
-                const url = URL.createObjectURL(compressedFile);
-                uploadArea.style.backgroundImage = `url(${url})`; uploadArea.innerHTML = '';
-                return assetId;
-            } catch (error) { console.error('Avatar upload failed:', error); utils.showToast('头像上传失败。'); return null; }
-        }
+    if (!file) return null;
+    
+    // 1. 设置更严格的压缩选项，强制修正方向
+    const options = { 
+        maxSizeMB: 0.5, 
+        maxWidthOrHeight: 600, // 稍微调大一点，保证清晰
+        useWebWorker: true,    // 【核心】启用 WebWorker 处理，它会自动修正 EXIF 旋转
+        fileType: 'image/jpeg' // 统一转为 jpg，兼容性最好
+    };
+
+    try {
+        utils.showToast('正在处理图片方向...'); // 给个提示
+        
+        // 2. 执行压缩和旋转修复
+        const compressedFile = await imageCompression(file, options);
+        
+        // 3. 存入数据库
+        const assetId = await dbHelper.add(CONSTANTS.STORE_NAMES.ASSETS, { file: compressedFile });
+        
+        // 4. 更新 UI 预览
+        const url = URL.createObjectURL(compressedFile);
+        uploadArea.style.backgroundImage = `url('${url}')`; 
+        
+        // 【关键】应用我们在上一步写的 CSS 补丁，确保它铺满
+        uploadArea.style.backgroundSize = 'cover';
+        uploadArea.style.backgroundPosition = 'center';
+        uploadArea.innerHTML = '';
+        
+        return assetId;
+        
+    } catch (error) { 
+        console.error('Avatar upload failed:', error); 
+        utils.showToast('图片处理失败，请重试'); 
+        return null; 
+    }
+}
         async function populateCharacterSelectModal() {
             DOM.characterSelectList.innerHTML = '<li>加载中...</li>';
             const dossiers = await dbHelper.getAll(CONSTANTS.STORE_NAMES.DOSSIERS);
@@ -23455,7 +23622,7 @@ async function openMovieSettingsModal() {
         }
 
 /**
- * 【V3 - 支持自定义CSS版】点击角色海报后，直接进入电影模式的主页面
+ * 【V3 - 状态恢复版】点击角色海报后，直接进入电影模式的主页面
  * @param {number} dossierId 
  */
 async function enterMovieMode(dossierId) {
@@ -23464,18 +23631,11 @@ async function enterMovieMode(dossierId) {
 
     const sessionSettings = await dbHelper.get(CONSTANTS.STORE_NAMES.MOVIE_SESSIONS, dossierId) || { dossierId };
 
-    // --- 【核心新增】加载并应用自定义 CSS ---
+    // 加载自定义 CSS
     const globalCss = await dbHelper.get(CONSTANTS.STORE_NAMES.USER_SETTINGS, 'global_bubble_css');
     let cssToApply = (typeof globalCss === 'string' ? globalCss : globalCss?.value) || ''; 
-
-    // 如果该角色有专属样式，覆盖全局的
-    if (dossier.bubbleCss) {
-        cssToApply = dossier.bubbleCss;
-    }
-    
-    // 应用样式 (isPrevew = false)
+    if (dossier.bubbleCss) cssToApply = dossier.bubbleCss;
     applyBubbleStyle(cssToApply, false);
-    // ---------------------------------------
 
     const allBooks = await dbHelper.getAll(CONSTANTS.STORE_NAMES.LIBRARY_BOOKS);
     const linkedBookIds = new Set(sessionSettings.libraryBookIds || []);
@@ -23490,13 +23650,22 @@ async function enterMovieMode(dossierId) {
         styleSettings: sessionSettings.styleSettings || {}
     };
 
-    DOM.movieCharacterName.textContent = dossier.character.name;
-    navigateToPage(DOM.movieApp, 'movie-story-page');
+    // ============================================================
+    // === 【核心修复】检查是否有保存的“分支标题” ===
+    // ============================================================
+    if (sessionSettings.activeTimelineName) {
+        // 如果有保存的（例如：角色名 (结局A)），就用保存的
+        DOM.movieCharacterName.innerHTML = sessionSettings.activeTimelineName;
+    } else {
+        // 否则显示默认角色名
+        DOM.movieCharacterName.textContent = dossier.character.name;
+    }
+    // ============================================================
 
-    // 应用导演风格设置 (颜色变量)
+    navigateToPage(DOM.movieApp, 'movie-story-page');
     applyMovieStyles(appState.currentMovieSession.styleSettings);
     
-    // 应用壁纸 (如果有自定义CSS背景，这里会被叠加，CSS优先级取决于具体写法，通常壁纸在伪元素上)
+    // 应用壁纸
     const storyPage = DOM.movieStoryPage;
     storyPage.style.removeProperty('--movie-bg-image');
     if (appState.currentMovieSession.wallpaperAssetId) {
@@ -23507,7 +23676,7 @@ async function enterMovieMode(dossierId) {
         }
     }
 
-    // --- 分页逻辑 (保持不变) ---
+    // 加载历史记录
     DOM.movieScreenContainer.innerHTML = '';
     const fullHistory = await dbHelper.dbPromise.then(db => db.getAllFromIndex(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, 'by_dossierId', dossierId));
     appState.currentMovieHistoryFull = fullHistory; 
@@ -23524,6 +23693,7 @@ async function enterMovieMode(dossierId) {
         renderMovieTurn(turn, offset + index + 1, false); 
     });
 
+    // 如果是全新开局，自动发开场白
     if (fullHistory.length === 0 && appState.currentMovieSession.openingPrompt) {
         const openingTurn = { 
             dossierId, 
@@ -23541,23 +23711,19 @@ async function enterMovieMode(dossierId) {
 }
 
 /**
- * 【升级版】渲染一轮剧情到屏幕上 (支持分页插入)
- * @param {object} turn - 剧情数据
- * @param {number} turnIndex - 楼层号
- * @param {boolean} prepend - 是否是“插入到顶部”（加载历史时用）
+ * 【V5 - 平行宇宙版】渲染一轮剧情
  */
 function renderMovieTurn(turn, turnIndex, prepend = false) {
     const container = DOM.movieScreenContainer;
     
-    // --- 创建卡片本身 ---
     const card = document.createElement('div');
     card.className = 'story-card';
     card.dataset.turnId = turn.id;
 
-    // --- 创建卡片头部 ---
     const cardHeader = document.createElement('div');
     cardHeader.className = 'card-header';
     
+    // 1. 左侧信息
     const headerInfo = `
         <div class="header-info">
             <span>#${turnIndex}</span>
@@ -23565,48 +23731,52 @@ function renderMovieTurn(turn, turnIndex, prepend = false) {
         </div>
     `;
     
+    // 2. 右侧操作区 (Swipe + 分支 + 编辑/删除)
     let headerActions = '';
+    let swipeControls = '';
+
+    // 只有 AI 的消息才显示 Swipe 控件
     if (turn.author === 'ai') {
-        headerActions = `
-            <div class="header-actions">
-                <i class="ri-pencil-line" title="编辑"></i>
-                <i class="ri-refresh-line" title="重投"></i>
-                <i class="ri-delete-bin-line" title="删除"></i>
-            </div>
-        `;
-    } else { 
-        headerActions = `
-            <div class="header-actions">
-                <i class="ri-pencil-line" title="编辑"></i>
-                <i class="ri-delete-bin-line" title="删除"></i>
+        const metadata = turn.metadata || {};
+        const candidates = metadata.candidates || [turn.content];
+        const currentIndex = metadata.currentIndex || 0;
+        swipeControls = `
+            <div class="movie-swipe-controls">
+                <i class="ri-arrow-left-s-line swipe-arrow prev ${currentIndex === 0 ? 'disabled' : ''}"></i>
+                <span class="swipe-counter">${currentIndex + 1}/${candidates.length}</span>
+                <i class="ri-arrow-right-s-line swipe-arrow next"></i>
             </div>
         `;
     }
+
+    // 【核心】在这里加入了 branch-btn (分歧按钮)
+    headerActions = `
+        <div class="header-actions">
+            ${swipeControls}
+            <i class="ri-git-branch-line branch-btn" title="由此创建新分支" style="color:#fde68a; margin-right:8px; cursor:pointer;"></i>
+            <i class="ri-pencil-line edit-btn" title="编辑" style="margin-right:8px; cursor:pointer;"></i>
+            <i class="ri-delete-bin-line delete-btn" title="删除" style="cursor:pointer;"></i>
+        </div>
+    `;
+
     cardHeader.innerHTML = headerInfo + headerActions;
     
-    // --- 创建卡片主体 ---
+    // 3. 内容主体
     const cardBody = document.createElement('div');
     cardBody.className = 'card-body';
-
     let processedContent = turn.content.replace(/\n/g, '<br>');
     processedContent = processedContent.replace(/\*([^*]+)\*/g, '<span class="thought">$1</span>');
     processedContent = processedContent.replace(/“([^”]+)”/g, '<span class="dialogue">“$1”</span>');
     cardBody.innerHTML = processedContent;
 
-    // --- 组装 ---
     card.append(cardHeader, cardBody);
 
-    // --- 【核心逻辑变化】决定插入位置 ---
+    // 4. 插入页面
     if (prepend) {
-        // 加载历史记录时：插入到“加载更多”按钮的后面
         const loadMoreBtn = document.getElementById('movie-load-more-btn');
-        if (loadMoreBtn) {
-            container.insertBefore(card, loadMoreBtn.nextSibling);
-        } else {
-            container.insertBefore(card, container.firstChild);
-        }
+        if (loadMoreBtn) container.insertBefore(card, loadMoreBtn.nextSibling);
+        else container.insertBefore(card, container.firstChild);
     } else {
-        // 新剧情：追加到底部并滚动
         container.appendChild(card);
         container.scrollTop = container.scrollHeight;
     }
@@ -23740,49 +23910,50 @@ async function loadMoreMovieTurns() {
 }
 
 /**
- * 清空当前角色的电影剧情 (V4 - 自动关窗版)
+ * 清空当前角色的电影剧情 (V5 - 标题重置版)
  */
 async function clearMovieHistory() {
     if (!appState.currentMovieSession?.dossierId) return;
     const dossierId = appState.currentMovieSession.dossierId;
+    const dossier = appState.currentMovieSession.dossier; // 获取角色信息
+    
+    // 如果没有传 confirm 参数或者确认了，才执行
+    // (注意：这里我保留了 confirm 逻辑，但也允许外部不弹窗直接调用的情况)
+    // 简单起见，我们假设这是用户点击按钮触发的
     
     if (confirm("【导演指令】\n确定要彻底清空这部电影的所有剧情（包括开场白）吗？\n\n清空后，屏幕将变为空白。")) {
         try {
             const db = await dbHelper.dbPromise;
             
             // 1. 删除历史记录
-            const tx = db.transaction(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, 'readwrite');
-            const index = tx.store.index('by_dossierId');
-            let cursor = await index.openCursor(dossierId);
-            while (cursor) {
-                cursor.delete();
-                cursor = await cursor.continue();
-            }
-            await tx.done;
+            await deleteHistoryForDossier_Movie(dossierId);
 
-            // 2. 清除设定里的“开场白” (防止诈尸)
+            // 2. 更新 Session 设置
             const sessionSettings = await dbHelper.get(CONSTANTS.STORE_NAMES.MOVIE_SESSIONS, dossierId);
             if (sessionSettings) {
                 sessionSettings.openingPrompt = ""; 
+                // 【核心新增】删除保存的分支标题，回归默认
+                delete sessionSettings.activeTimelineName; 
                 await dbHelper.set(CONSTANTS.STORE_NAMES.MOVIE_SESSIONS, sessionSettings);
             }
 
-            // 3. 同步内存状态
+            // 3. 同步内存与UI
             appState.currentMovieHistoryFull = []; 
             if (appState.currentMovieSession) {
                 appState.currentMovieSession.openingPrompt = ""; 
             }
 
-            // 4. 【UI重置】清空屏幕 + 清空设置弹窗里的输入框
             DOM.movieScreenContainer.innerHTML = '';
             DOM.movieOpeningPrompt.value = ''; 
+            
+            // 【核心新增】UI上立即把名字改回原名
+            if (dossier) {
+                DOM.movieCharacterName.textContent = dossier.character.name;
+            }
 
-            // 5. 【核心修复】立即关闭设置浮窗，让你直接看到空白屏幕
             DOM.movieSettingsModal.classList.remove('visible');
             
             utils.showToast('剧情已清空，请Action！');
-            
-            // 6. 聚焦到底部输入框，方便直接开始
             DOM.movieInput.value = '';
             DOM.movieInput.focus();
             
@@ -23792,6 +23963,7 @@ async function clearMovieHistory() {
         }
     }
 }
+
 /**
          * 【新增辅助】重新渲染整个电影屏幕
          * @param {number} dossierId 
@@ -23912,6 +24084,477 @@ async function clearMovieHistory() {
                 // ^^^ 效果结束 ^^^
             }
         }
+
+/**
+ * 【核心】处理电影模式的 Swipe (切卡/重生成) 逻辑
+ * @param {number} turnId - 剧情ID
+ * @param {string} direction - 'prev' (左) 或 'next' (右)
+ */
+async function handleMovieSwipe(turnId, direction) {
+    if (!turnId) return;
+
+    // 1. 获取当前剧情对象
+    const db = await dbHelper.dbPromise;
+    const turn = await db.get(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, turnId);
+    
+    if (!turn || turn.author !== 'ai') return;
+
+    // 2. 初始化 metadata (兼容旧数据)
+    if (!turn.metadata) turn.metadata = {};
+    if (!turn.metadata.candidates) {
+        // 如果之前没存过候选列表，把当前内容作为第一个候选
+        turn.metadata.candidates = [turn.content];
+        turn.metadata.currentIndex = 0;
+    }
+
+    let { candidates, currentIndex } = turn.metadata;
+
+    // === 向左滑 (查看旧结果) ===
+    if (direction === 'prev') {
+        if (currentIndex > 0) {
+            currentIndex--;
+            // 更新数据
+            turn.content = candidates[currentIndex];
+            turn.metadata.currentIndex = currentIndex;
+            await dbHelper.set(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, turn);
+            // 刷新屏幕
+            await rerenderMovieScreen(turn.dossierId);
+        }
+        return;
+    }
+
+    // === 向右滑 (查看新结果 或 生成新结果) ===
+    if (direction === 'next') {
+        // A. 如果后面还有已生成的结果，直接切换
+        if (currentIndex < candidates.length - 1) {
+            currentIndex++;
+            turn.content = candidates[currentIndex];
+            turn.metadata.currentIndex = currentIndex;
+            await dbHelper.set(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, turn);
+            await rerenderMovieScreen(turn.dossierId);
+            return;
+        }
+
+        // B. 如果已经是最新一条，触发 AI 生成新的 (Reroll)
+        // ------------------------------------------------
+        
+        // UI 反馈：找到箭头变成加载动画
+        const card = document.querySelector(`.story-card[data-turn-id="${turnId}"]`);
+        const nextArrow = card.querySelector('.swipe-arrow.next');
+        const counter = card.querySelector('.swipe-counter');
+        
+        if (nextArrow) {
+            nextArrow.className = 'ri-loader-4-line swipe-loading'; // 变成转圈圈
+            nextArrow.style.pointerEvents = 'none';
+        }
+        
+        try {
+            // 1. 获取上下文 (Context)
+            // 注意：上下文应该是 "这条消息之前" 的所有历史
+            // 我们从全量历史中截取
+            const fullHistory = appState.currentMovieHistoryFull || [];
+            const thisTurnIndex = fullHistory.findIndex(t => t.id === turnId);
+            
+            if (thisTurnIndex === -1) throw new Error("历史记录定位失败");
+            
+            // 上下文 = 开头 到 这条消息的前一条
+            const contextHistory = fullHistory.slice(0, thisTurnIndex);
+            
+            // 获取上一条消息作为 Prompt 的触发器 (通常是 User 的话)
+            // 如果这是第一条(开场白)，lastUserContent 为空，PromptManager 会处理
+            const lastUserTurn = contextHistory.length > 0 ? contextHistory[contextHistory.length - 1].content : null;
+
+            // 2. 调用 AI
+            const prompt = promptManager.createMoviePrompt(
+                appState.currentMovieSession, 
+                contextHistory, 
+                lastUserTurn // 这里的 userInput 实际上是上一轮的输入
+            );
+            
+            const newContent = await apiHelper.getChatCompletion(prompt);
+            
+            // 3. 保存新结果
+            // 将新内容推入候选列表
+            turn.metadata.candidates.push(newContent);
+            // 指针移到最新
+            turn.metadata.currentIndex = turn.metadata.candidates.length - 1;
+            // 更新当前显示内容
+            turn.content = newContent;
+            
+            // 4. 写入数据库
+            await dbHelper.set(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, turn);
+            
+            // 5. 更新内存中的全量历史 (这对后续的上下文很重要)
+            appState.currentMovieHistoryFull[thisTurnIndex] = turn;
+
+            // 6. 刷新屏幕
+            await rerenderMovieScreen(turn.dossierId);
+
+        } catch (error) {
+            console.error("Swipe生成失败:", error);
+            utils.showToast("新剧情生成失败");
+            // 恢复图标
+            if (nextArrow) {
+                nextArrow.className = 'ri-arrow-right-s-line swipe-arrow next';
+                nextArrow.style.pointerEvents = 'auto';
+            }
+        }
+    }
+}
+
+// ==========================================
+// ===   [逻辑核心] 电影模式：平行宇宙   ===
+// ==========================================
+
+/**
+ * 1. 创建分支 (Save & Reset)
+ * 逻辑：保存当前剧情为“结局/分支” -> 清空屏幕 -> 准备开始新剧情
+ */
+async function handleCreateBranch(turnId) {
+    const dossierId = appState.currentMovieSession?.dossierId;
+    if (!dossierId) return;
+
+    // 1. 获取要存档的剧情 (全量)
+    // 既然是存档，通常意味着要把当前所有的剧情都存下来
+    const fullHistory = appState.currentMovieHistoryFull || [];
+    
+    if (fullHistory.length === 0) return utils.showToast("没有剧情可存");
+
+    // 2. 命名分支
+    const defaultName = `结局/分支 ${new Date().toLocaleTimeString()}`;
+    const timelineName = prompt("【存档并重置】\n请为当前剧情线命名 (例如：结局A - 遗憾离场)：", defaultName);
+    
+    if (!timelineName) return;
+
+    // 3. 构建存档对象
+    const newTimeline = {
+        id: `timeline_${Date.now()}`,
+        dossierId: dossierId,
+        name: timelineName,
+        history: JSON.parse(JSON.stringify(fullHistory)), // 深度复制
+        timestamp: Date.now()
+    };
+
+    try {
+        // 4. 【保存】写入到时间线表
+        await dbHelper.add(CONSTANTS.STORE_NAMES.MOVIE_TIMELINES, newTimeline);
+        utils.showToast(`已归档为：「${timelineName}」`);
+
+        // 5. 【重置】清空当前屏幕和活动数据库 (核心修改点)
+        // 5.1 清空数据库里的 MOVIE_HISTORY
+        await deleteHistoryForDossier_Movie(dossierId);
+        
+        // 5.2 清空内存
+        appState.currentMovieHistoryFull = [];
+        
+        // 5.3 清空屏幕 DOM
+        DOM.movieScreenContainer.innerHTML = '';
+
+const session = await dbHelper.get(CONSTANTS.STORE_NAMES.MOVIE_SESSIONS, dossierId);
+        if (session) {
+            delete session.activeTimelineName; // 删除后缀
+            await dbHelper.set(CONSTANTS.STORE_NAMES.MOVIE_SESSIONS, session);
+        }
+        
+        // 找回角色原名
+        const dossier = appState.dossiers.find(d => d.id === dossierId);
+        if (dossier) {
+            DOM.movieCharacterName.textContent = dossier.character.name; // UI复原
+        }
+
+        // 6. 【重生】如果有预设的“开场白”，自动重新发出来，让你可以直接开始新剧情
+        if (appState.currentMovieSession.openingPrompt) {
+            const openingTurn = { 
+                dossierId, 
+                author: 'ai', 
+                content: appState.currentMovieSession.openingPrompt, 
+                timestamp: Date.now() 
+            };
+            const savedId = await dbHelper.add(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, openingTurn);
+            openingTurn.id = savedId;
+            
+            // 更新内存和屏幕
+            appState.currentMovieHistoryFull.push(openingTurn);
+            renderMovieTurn(openingTurn, 1);
+            
+            utils.showToast("剧情已重置，开始新的演绎吧！");
+        } else {
+            utils.showToast("屏幕已清空，请开始新剧情。");
+        }
+        
+        // 7. 聚焦输入框
+        DOM.movieInput.value = '';
+        DOM.movieInput.focus();
+
+    } catch (e) {
+        console.error(e);
+        utils.showToast("存档失败: " + e.message);
+    }
+}
+
+/**
+ * 【补丁】辅助函数：清空当前角色的电影剧情 (数据库层)
+ */
+async function deleteHistoryForDossier_Movie(dossierId) {
+    const db = await dbHelper.dbPromise;
+    const tx = db.transaction(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, 'readwrite');
+    const index = tx.store.index('by_dossierId');
+    let cursor = await index.openCursor(dossierId);
+    while (cursor) {
+        cursor.delete();
+        cursor = await cursor.continue();
+    }
+    return tx.done;
+}
+
+/**
+ * 2. 切换时间线 (Smart Switch - V3 智能防覆盖版)
+ * @param {object} timeline - 目标时间线对象
+ */
+async function switchTimeline(timeline) {
+    const dossierId = appState.currentMovieSession.dossierId;
+    const dossier = appState.dossiers.find(d => d.id === dossierId);
+    // 获取当前屏幕上的剧本
+    const currentHistory = appState.currentMovieHistoryFull || [];
+
+    // --- 辅助函数：深度比对两个剧本是否内容一致 ---
+    const isHistoryIdentical = (h1, h2) => {
+        if (!h1 || !h2 || h1.length !== h2.length) return false;
+        if (h1.length === 0) return true;
+        const last1 = h1[h1.length - 1];
+        const last2 = h2[h2.length - 1];
+        // 比对最后一条的内容、作者、时间戳(可选)
+        return last1.content === last2.content && last1.author === last2.author;
+    };
+
+    // 1. 生成新的显示标题
+    const newDisplayName = `${dossier.character.name} <span style="font-size:12px; opacity:0.6;">(${timeline.name})</span>`;
+
+    // ============================================================
+    // === 【修复点1】原地踏步检测：虽不重载，但更新标题 ===
+    // ============================================================
+    if (isHistoryIdentical(currentHistory, timeline.history)) {
+        // 更新 UI 标题
+        DOM.movieCharacterName.innerHTML = newDisplayName;
+        
+        // 更新数据库记录的“当前活跃分支名”
+        const session = await dbHelper.get(CONSTANTS.STORE_NAMES.MOVIE_SESSIONS, dossierId) || { dossierId };
+        if (session.activeTimelineName !== newDisplayName) {
+            session.activeTimelineName = newDisplayName;
+            await dbHelper.set(CONSTANTS.STORE_NAMES.MOVIE_SESSIONS, session);
+        }
+
+        utils.showToast("已切换至当前分支视角");
+        return; // 🛑 终止后续繁重的加载操作
+    }
+
+    utils.showToast(`正在跃迁至：${timeline.name}...`);
+
+    try {
+        const db = await dbHelper.dbPromise;
+
+        // ============================================================
+        // === 【修复点2】智能备份逻辑：只备份“未保存”的进度 ===
+        // ============================================================
+        if (currentHistory.length > 0) {
+            // 1. 先去数据库查一下，当前屏幕的内容，是不是已经完全等于某个“正式存档”了？
+            const allTimelines = await db.getAllFromIndex(CONSTANTS.STORE_NAMES.MOVIE_TIMELINES, 'by_dossierId', dossierId);
+            
+            // 排除掉自动备份本身 (id: autosave_...)
+            const officialTimelines = allTimelines.filter(t => !t.id.startsWith('autosave_'));
+            
+            // 检查是否存在完全匹配
+            const isAlreadySaved = officialTimelines.some(t => isHistoryIdentical(t.history, currentHistory));
+
+            // 2. 只有当它【不是】任何已存的档时，才视为“新跑出来的剧情”，需要自动备份
+            if (!isAlreadySaved) {
+                const currentSnapshot = {
+                    id: `autosave_${dossierId}`, // 固定ID
+                    dossierId: dossierId,
+                    name: "↩️ 切换前现场 (自动备份)", 
+                    history: JSON.parse(JSON.stringify(currentHistory)),
+                    timestamp: Date.now()
+                };
+                await db.put(CONSTANTS.STORE_NAMES.MOVIE_TIMELINES, currentSnapshot);
+                console.log("检测到未保存的新剧情，已执行自动备份。");
+            } else {
+                console.log("当前剧情与已有存档一致，跳过自动备份（防止覆盖有用备份）。");
+            }
+        }
+
+        // B. 清空当前数据库 (屏幕显示表)
+        await deleteHistoryForDossier_Movie(dossierId); 
+
+        // C. 将目标时间线写入 MOVIE_HISTORY (生成新ID，确保分支独立)
+        const addTx = db.transaction(CONSTANTS.STORE_NAMES.MOVIE_HISTORY, 'readwrite');
+        const newHistoryInMemory = [];
+        
+        for (const msg of timeline.history) {
+            const msgCopy = { ...msg };
+            delete msgCopy.id; 
+            const newId = await addTx.store.add(msgCopy); 
+            msgCopy.id = newId;
+            newHistoryInMemory.push(msgCopy);
+        }
+        await addTx.done;
+
+        // D. 更新内存与界面
+        appState.currentMovieHistoryFull = newHistoryInMemory;
+        await rerenderMovieScreen(dossierId);
+        
+        // E. 持久化保存新的标题
+        DOM.movieCharacterName.innerHTML = newDisplayName;
+        
+        const session = await dbHelper.get(CONSTANTS.STORE_NAMES.MOVIE_SESSIONS, dossierId) || { dossierId };
+        session.activeTimelineName = newDisplayName;
+        await dbHelper.set(CONSTANTS.STORE_NAMES.MOVIE_SESSIONS, session);
+        
+        utils.showToast("跃迁完成");
+
+    } catch(e) {
+        console.error("切换时间线失败", e);
+        utils.showToast("跃迁失败");
+    }
+}
+
+/**
+ * 3. 打开时间线管理器 (UI) - 重命名实时同步版
+ */
+async function openTimelineManager() {
+    const dossierId = appState.currentMovieSession?.dossierId;
+    if (!dossierId) return;
+
+    const db = await dbHelper.dbPromise;
+    let timelines = [];
+    try {
+        timelines = await db.getAllFromIndex(CONSTANTS.STORE_NAMES.MOVIE_TIMELINES, 'by_dossierId', dossierId);
+    } catch (e) {
+        console.warn("读取失败", e);
+        utils.showToast("请刷新页面升级数据库");
+        return;
+    }
+    
+    timelines.sort((a, b) => b.timestamp - a.timestamp);
+
+    const list = DOM.monopolyCharList; 
+    list.innerHTML = '';
+    
+    const header = document.createElement('div');
+    header.style.cssText = 'padding:10px; color:#fde68a; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:10px; font-size:14px;';
+    header.textContent = "点击切换时间线 (当前进度将自动保存)";
+    list.appendChild(header);
+
+    if (timelines.length === 0) {
+        list.innerHTML += '<div style="padding:20px; text-align:center; opacity:0.5;">暂无分支存档</div>';
+    }
+
+    timelines.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'monopoly-select-item'; 
+        item.style.cssText = 'display:flex; align-items:center; padding:12px; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer;';
+        
+        const isAutoSave = t.id.startsWith('autosave_');
+        const iconHtml = isAutoSave ? '<i class="ri-loop-left-line" style="margin-right:5px; opacity:0.7;"></i>' : '';
+        const nameStyle = isAutoSave ? 'color:rgba(255,255,255,0.7);' : 'color:#fff;';
+
+        item.innerHTML = `
+            <div style="flex-grow:1; min-width: 0;">
+                <div style="font-weight:bold; ${nameStyle} white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${iconHtml}${t.name}
+                </div>
+                <div style="font-size:12px; opacity:0.5; margin-top:4px;">${new Date(t.timestamp).toLocaleString()} · ${t.history.length} 楼</div>
+            </div>
+            
+            <div style="display: flex; gap: 15px; padding-left: 10px;">
+                <i class="ri-edit-line rename-timeline-btn" title="重命名/转正" style="color: #4ade80; opacity: 0.8; font-size: 18px;"></i>
+                <i class="ri-delete-bin-line delete-timeline-btn" title="删除" style="color: #ff6b6b; opacity: 0.8; font-size: 18px;"></i>
+            </div>
+        `;
+        
+        item.addEventListener('click', async (e) => {
+            e.stopPropagation(); 
+
+            // === A. 重命名逻辑 ===
+            if (e.target.classList.contains('rename-timeline-btn')) {
+                const newName = prompt("重命名存档 (如果是自动备份，改名后将转为永久存档)：", t.name);
+                
+                if (newName !== null && newName.trim() !== "") {
+                    try {
+                        t.name = newName.trim();
+
+                        // 1. 转正逻辑
+                        if (t.id.startsWith('autosave_')) {
+                            const oldId = t.id;
+                            t.id = `timeline_${Date.now()}`; 
+                            await dbHelper.delete(CONSTANTS.STORE_NAMES.MOVIE_TIMELINES, oldId);
+                            utils.showToast("存档已转正并重命名");
+                        } else {
+                            utils.showToast("重命名成功");
+                        }
+
+                        // 2. 保存新记录
+                        await dbHelper.set(CONSTANTS.STORE_NAMES.MOVIE_TIMELINES, t);
+
+                        // ============================================================
+                        // === 【核心修复】检查是否需要更新当前页面的标题 ===
+                        // ============================================================
+                        const currentHistory = appState.currentMovieHistoryFull || [];
+                        
+                        // 简单的“内容指纹”比对：如果长度一样，且最后一条消息一样，就认为是同一个剧情
+                        const isCurrent = (currentHistory.length === t.history.length) &&
+                                          (currentHistory.length > 0) &&
+                                          (currentHistory[currentHistory.length-1].content === t.history[t.history.length-1].content);
+
+                        if (isCurrent) {
+                            // 1. 获取角色名
+                            const dossier = appState.dossiers.find(d => d.id === dossierId);
+                            const charName = dossier ? dossier.character.name : "角色";
+                            
+                            // 2. 生成新标题
+                            const newDisplayName = `${charName} <span style="font-size:12px; opacity:0.6;">(${t.name})</span>`;
+                            
+                            // 3. 立即更新 DOM
+                            DOM.movieCharacterName.innerHTML = newDisplayName;
+                            
+                            // 4. 更新 Session 数据库里的记录 (防止刷新变回旧名)
+                            const session = await dbHelper.get(CONSTANTS.STORE_NAMES.MOVIE_SESSIONS, dossierId);
+                            if (session) {
+                                session.activeTimelineName = newDisplayName;
+                                await dbHelper.set(CONSTANTS.STORE_NAMES.MOVIE_SESSIONS, session);
+                            }
+                            console.log("检测到重命名的是当前活跃时间线，已同步更新界面标题。");
+                        }
+                        // ============================================================
+
+                        openTimelineManager(); // 刷新列表
+
+                    } catch (err) {
+                        console.error(err);
+                        utils.showToast("操作失败");
+                    }
+                }
+            } 
+            // === B. 删除逻辑 ===
+            else if (e.target.classList.contains('delete-timeline-btn')) {
+                if(confirm(`确定删除存档「${t.name}」吗？`)) {
+                    await dbHelper.delete(CONSTANTS.STORE_NAMES.MOVIE_TIMELINES, t.id);
+                    openTimelineManager(); 
+                }
+            } 
+            // === C. 切换逻辑 ===
+            else {
+                switchTimeline(t);
+                DOM.monopolyCharModal.classList.remove('visible'); 
+            }
+        });
+
+        list.appendChild(item);
+    });
+    
+    const titleEl = DOM.monopolyCharModal.querySelector('h3');
+    if(titleEl) titleEl.textContent = "平行宇宙";
+    DOM.monopolyCharModal.classList.add('visible');
+}
 
 // --- 电影模式：杀青存档逻辑 (图标适配版) ---
 async function handleMovieWrapUp() {
@@ -32161,31 +32804,57 @@ DOM.saveMovieSettingsBtn.addEventListener('click', startMovie);
 // 点击“清空剧情”
 DOM.movieClearHistoryBtn.addEventListener('click', clearMovieHistory);
 
-        // vvv 【【【 全新：电影模式卡片操作的事件委托 】】】 vvv
+        // vvv 【【【 电影模式卡片操作 (含 Swipe) 】】】 vvv
+        // 1. 卡片点击事件委托 (包含 Swipe, 分支, 编辑, 删除)
         DOM.movieScreenContainer.addEventListener('click', async (e) => {
             const target = e.target;
-            // 监听加载更多按钮
+            
+            // 加载更多按钮
             if (target.id === 'movie-load-more-btn') {
                 loadMoreMovieTurns();
                 return;
             }
+
             const card = target.closest('.story-card');
             if (!card) return;
 
             const turnId = parseInt(card.dataset.turnId, 10);
             
-            // 判断点击的是哪个按钮
-            if (target.classList.contains('ri-delete-bin-line')) {
-                // 点击了删除按钮
+            // === [新增] 分支按钮 (Branch) ===
+            if (target.classList.contains('branch-btn') || target.classList.contains('ri-git-branch-line')) {
+                handleCreateBranch(turnId);
+                return;
+            }
+
+            // === Swipe 切换 ===
+            if (target.classList.contains('swipe-arrow')) {
+                if (target.classList.contains('disabled') || target.classList.contains('swipe-loading')) return;
+
+                if (target.classList.contains('prev')) {
+                    handleMovieSwipe(turnId, 'prev');
+                } else if (target.classList.contains('next')) {
+                    handleMovieSwipe(turnId, 'next');
+                }
+                return;
+            }
+
+            // === 删除 ===
+            if (target.classList.contains('delete-btn') || target.classList.contains('ri-delete-bin-line')) {
                 handleMovieDelete(turnId);
-            } else if (target.classList.contains('ri-pencil-line')) {
-                // 点击了编辑按钮
+            } 
+            
+            // === 编辑 ===
+            else if (target.classList.contains('edit-btn') || target.classList.contains('ri-pencil-line')) {
                 handleMovieEdit(turnId);
-            } else if (target.classList.contains('ri-refresh-line')) {
-                // 点击了重投按钮
-                handleMovieRetry(turnId);
             }
         });
+
+        // 2. 顶部标题点击 -> 打开时间线管理器
+        DOM.movieCharacterName.style.cursor = 'pointer';
+        // 先移除旧的(防止重复绑定)，再添加新的
+        DOM.movieCharacterName.removeEventListener('click', openTimelineManager); 
+        DOM.movieCharacterName.addEventListener('click', openTimelineManager);
+        
 
 // vvv 【【【 全新：电影编辑浮窗的事件监听 】】】 vvv
         
